@@ -29,6 +29,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
+import com.senegas.kickoff.entities.Scanner;
 import com.senegas.kickoff.pitches.ClassicPitch;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.pitches.PlayerManagerPitch;
@@ -40,12 +41,13 @@ import com.senegas.kickoff.utils.OrthoCamController;
 
 public class Match implements Screen {
 	private OrthogonalTiledMapRenderer renderer;
-    private OrthographicCamera camera;
+    public OrthographicCamera camera;
     private BitmapFont font;
 	private SpriteBatch batch;
 	private Pitch pitch;
-	private Ball ball;
-	private Player player;
+	public Ball ball;
+	public Player player;
+	private Scanner scanner;
 	
 	@Override
 	public void render(float deltaTime) {
@@ -69,9 +71,11 @@ public class Match implements Screen {
         ball.draw(renderer.getBatch());
         renderer.getBatch().end();
 		
-		batch.begin();
+        scanner.draw();
+        
+		batch.begin();		
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
-		font.draw(batch, "Player: " + player.getPosition().x + ", " + player.getPosition().y, 10, camera.viewportHeight - 10);
+		font.draw(batch, "Player: " + player.getPosition().x + ", " + player.getPosition().y, 10, 40);
 		batch.end(); 
 
 		handleInput();
@@ -100,6 +104,8 @@ public class Match implements Screen {
         
         player = new Player(Pitch.WIDTH/3, Pitch.HEIGHT/2);
         ball = new Ball(Pitch.WIDTH/2, Pitch.HEIGHT/2, 400);
+        
+        scanner = new Scanner(this);
         
         //cameraController = new OrthoCamController(camera);
 		Gdx.input.setInputProcessor(player);
@@ -147,7 +153,11 @@ public class Match implements Screen {
         }
         if(Gdx.input.isKeyPressed(Input.Keys.X)) {
         	ball.move(400, 4);
-        }        
+        }    
+        // handle scanner zoom
+        if(Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+        	scanner.toggleZoom();
+        }
 //        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 //                if (camera.position.x > 0 + camera.viewportWidth)
 //                	camera.translate(-3, 0, 0);
