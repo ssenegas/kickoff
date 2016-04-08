@@ -3,7 +3,6 @@ package com.senegas.kickoff.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
@@ -11,7 +10,6 @@ import com.senegas.kickoff.pitches.FootballDimensions;
 import com.senegas.kickoff.screens.Match;
 
 public class Scanner implements FootballDimensions {
-	private ShapeRenderer shapeRenderer;
 	private int zoomFactor;
 	private boolean isVisible;
 	private boolean isViewportVisible;
@@ -27,10 +25,9 @@ public class Scanner implements FootballDimensions {
 		zoomFactor = 3;
 		defaultMode = true;
 		origin = new Vector2(18, Gdx.graphics.getHeight() - 26);
-		shapeRenderer = new ShapeRenderer();
 	}
 	
-	public void draw() {
+	public void draw(ShapeRenderer shapeRenderer) {
 		//batch.end();
 		
 		float ratio = (float) (ZOOM[zoomFactor] / PITCH_WIDTH_IN_PX);

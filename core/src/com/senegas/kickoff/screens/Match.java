@@ -31,6 +31,7 @@ import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.entities.Scanner;
 import com.senegas.kickoff.pitches.ClassicPitch;
+import com.senegas.kickoff.pitches.FootballDimensions;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.pitches.PlayerManagerPitch;
 import com.senegas.kickoff.pitches.SoggyPitch;
@@ -42,6 +43,7 @@ import com.senegas.kickoff.utils.OrthoCamController;
 public class Match implements Screen {
 	private OrthogonalTiledMapRenderer renderer;
     public OrthographicCamera camera;
+    private ShapeRenderer shapeRenderer;
     private BitmapFont font;
 	private SpriteBatch batch;
 	private Pitch pitch;
@@ -71,11 +73,12 @@ public class Match implements Screen {
         ball.draw(renderer.getBatch());
         renderer.getBatch().end();
 		
-        scanner.draw();
+        scanner.draw(shapeRenderer);
         
 		batch.begin();		
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
-		font.draw(batch, "Player: " + player.getPosition().x + ", " + player.getPosition().y, 10, 40);
+		font.draw(batch, "Player: " + (int)player.getPosition().x + ", " + (int)player.getPosition().y, 10, 40);
+		font.draw(batch, "Ball: " + (int)ball.getPosition().x + ", " + (int)ball.getPosition().y + ", " + (int)ball.getPosition().z, 10, 60);
 		batch.end(); 
 
 		handleInput();
@@ -83,8 +86,10 @@ public class Match implements Screen {
 	
 	private void checkCollisions() {
 		if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
-			//System.out.format("collision%n");
-			ball.move(200 * 1.125 + 30, player.getDirection());
+			if (ball.getPosition().z < player.height()/FootballDimensions.CM_PER_PIXEL) { //!Reimp move constant elsewhere
+				//System.out.format("collide%n");
+				ball.move(200 * 1.125 + 30, player.getDirection()); // dribble
+			}
 		}
 	}
 
@@ -99,11 +104,13 @@ public class Match implements Screen {
 		pitch = new ClassicPitch();
 		renderer = new OrthogonalTiledMapRenderer(pitch.getTiledMap());
         camera = new OrthographicCamera();
+        shapeRenderer = new ShapeRenderer();
         //camera.setToOrtho(true);
         camera.zoom = .45f;
         
         player = new Player(Pitch.WIDTH/3, Pitch.HEIGHT/2);
-        ball = new Ball(Pitch.WIDTH/2, Pitch.HEIGHT/2, 400);
+        ball = new Ball((int) (Pitch.PITCH_WIDTH_IN_PX/2 + Pitch.OUTER_TOP_EDGE_X - 8),
+        		        (int) (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8), 400);
         
         scanner = new Scanner(this);
         
@@ -133,6 +140,7 @@ public class Match implements Screen {
 		renderer.dispose();
 		player.getTexture().dispose();
 		ball.getTexture().dispose();
+		shapeRenderer.dispose();
 	}
 	
 	private void handleInput() {
@@ -143,13 +151,13 @@ public class Match implements Screen {
         	camera.zoom -= 0.02;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-        	ball.move(400, 0);
+        	ball.move(400, 6);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.D)) {
         	ball.move(400, 2);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.E)) {
-        	ball.move(400, 6);
+        	ball.move(400, 0);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.X)) {
         	ball.move(400, 4);

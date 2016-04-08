@@ -16,24 +16,27 @@ import com.senegas.kickoff.pitches.Pitch;
 public class Player implements InputProcessor {
 
 	/** Player constant direction */
-	public static final int NORTH = 0;
-	public static final int NORTH_EAST = 1;
-	public static final int EAST = 2;
-	public static final int SOUTH_EAST = 3;
-	public static final int SOUTH = 4;
-	public static final int SOUTH_WEST = 5;
-	public static final int WEST = 6;
-	public static final int NORTH_WEST = 7;
-	public static final int NONE = 8;
+//	public static final int NORTH = 0;
+//	public static final int NORTH_EAST = 1;
+//	public static final int EAST = 2;
+//	public static final int SOUTH_EAST = 3;
+//	public static final int SOUTH = 4;
+//	public static final int SOUTH_WEST = 5;
+//	public static final int WEST = 6;
+//	public static final int NORTH_WEST = 7;
+//	public static final int NONE = 8;
 	
-	private final int WIDTH = 16;
-	private final int HEIGHT = 16;
+	enum Direction { NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST, NONE };
+	
+	private final int spriteWIDTH = 16;
+	private final int spriteHEIGHT = 16;
 	
 	private Vector3 position;
 	private Vector3 velocity;
 	private Circle bounds;
-	private int direction = NONE;
+	private Direction direction = Direction.NONE;
 	private float speed = 200f;
+	private int height = 177; // 1m 77
 	private Texture texture;
 	private TextureRegion frames[][];
 	private int currentFrameAnimationRow = 0;
@@ -57,24 +60,27 @@ public class Player implements InputProcessor {
 		position = new Vector3(x, y, 0);
 		velocity = new Vector3(0, 0, 0);
 		texture = new Texture("entities/style1a.png");
-		frames = TextureRegion.split(texture, WIDTH, HEIGHT);
-		bounds = new Circle(position.x, position.y, WIDTH/2);
+		frames = TextureRegion.split(texture, spriteWIDTH, spriteHEIGHT);
+		bounds = new Circle(position.x, position.y, spriteWIDTH/2);
 	}
 	
-	public void update(float deltaTime) {	
-		// update animation
-		if (direction != NONE) {
+	public void update(float deltaTime) {			
+		if (direction != Direction.NONE) {			
+			// update animation
 			currentFrameTime += deltaTime;
 			currentFrame = (int) (currentFrameTime / maxFrameTime) % frameCount;
-
-			currentFrameAnimationRow = ((runningFrameAnimation[currentFrame] + 8 * direction) / 20);
-			currentFrameAnimationColumn = ((runningFrameAnimation[currentFrame] + 8 * direction) % 20);
+			currentFrameAnimationRow = ((runningFrameAnimation[currentFrame] + 8 * direction.ordinal()) / 20);
+			currentFrameAnimationColumn = ((runningFrameAnimation[currentFrame] + 8 * direction.ordinal()) % 20);
 		}
-			
-		// update position
-		velocity.scl(deltaTime);
-		position.add(velocity.x * directionCoefficients[direction].x, velocity.y * directionCoefficients[direction].y, 0);
-		velocity.scl(1/deltaTime);
+		
+		// update position			
+		position.x += velocity.x * directionCoefficients[direction.ordinal()].x * deltaTime;
+        position.y += velocity.y * directionCoefficients[direction.ordinal()].y * deltaTime;
+		//velocity.scl(deltaTime);
+		//position.add(velocity.x * directionCoefficients[direction].x, velocity.y * directionCoefficients[direction].y, 0);
+		//velocity.scl(1/deltaTime);			
+		
+		// update bounds
 		bounds.setPosition(position.x,  position.y);
 
 		//adjustVelocity();
@@ -116,32 +122,6 @@ public class Player implements InputProcessor {
 //		}
 //	}
 	
-	private void updateDirection() {
-		if (velocity.y > 0) {
-			if (velocity.x < 0) {
-				direction = NORTH_WEST;
-			} else if (velocity.x > 0) {
-				direction = NORTH_EAST;
-			} else {
-				direction = NORTH;
-			}
-		} else if (velocity.y < 0) {
-			if (velocity.x < 0) {
-				direction = SOUTH_WEST;
-			} else if (velocity.x > 0) {
-				direction = SOUTH_EAST;
-			} else {
-				direction = SOUTH;
-			}
-		} else if (velocity.x < 0) {
-			direction = WEST;
-		} else if (velocity.x > 0) {
-			direction = EAST;
-		} else {
-			direction = NONE;
-		}
-	}
-	
 	public Vector3 getPosition() {
 		return position;
 	}
@@ -154,14 +134,6 @@ public class Player implements InputProcessor {
 	    
 		// draw the frame
 		batch.draw(frames[currentFrameAnimationRow][currentFrameAnimationColumn], position.x, position.y);
-	}
-	
-	public int getWidth() {
-		return WIDTH;
-	}
-	
-	public int getHeight() {
-		return HEIGHT;
 	}
 	
 	@Override
@@ -182,7 +154,7 @@ public class Player implements InputProcessor {
             }
             
     		updateDirection();
-            
+		
             return true;
     }
 
@@ -191,11 +163,11 @@ public class Player implements InputProcessor {
             switch(keycode) {
             case Keys.LEFT:
             case Keys.RIGHT:
-            	velocity.x = 0;
+            	velocity.x = 0.0f;
             	break;
             case Keys.UP:
             case Keys.DOWN:
-            	velocity.y = 0;
+            	velocity.y = 0.0f;
                 break;    
             }
             
@@ -203,6 +175,32 @@ public class Player implements InputProcessor {
             
             return true;
     }
+    
+	private void updateDirection() {
+		if (velocity.y > 0) {
+			if (velocity.x < 0) {
+				direction = Direction.NORTH_WEST;
+			} else if (velocity.x > 0) {
+				direction = Direction.NORTH_EAST;
+			} else {
+				direction = Direction.NORTH;
+			}
+		} else if (velocity.y < 0) {
+			if (velocity.x < 0) {
+				direction = Direction.SOUTH_WEST;
+			} else if (velocity.x > 0) {
+				direction = Direction.SOUTH_EAST;
+			} else {
+				direction = Direction.SOUTH;
+			}
+		} else if (velocity.x < 0) {
+			direction = Direction.WEST;
+		} else if (velocity.x > 0) {
+			direction = Direction.EAST;
+		} else {
+			direction = Direction.NONE;
+		}
+	}
 
     @Override
     public boolean keyTyped(char character) {
@@ -235,10 +233,18 @@ public class Player implements InputProcessor {
     }
     
     public int getDirection() {
-		return direction;
+		return direction.ordinal();
 	}
 
 	public Texture getTexture() {
     	return texture;
     }
+
+	public int height() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
 }

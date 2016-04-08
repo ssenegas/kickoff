@@ -1,0 +1,823 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tactic version="1.0" name="4-4-2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <player shirt="2">
+        <region name="area1">
+            <x>450</x>
+            <y>33</y>
+        </region>
+        <region name="area2">
+            <x>402</x>
+            <y>291</y>
+        </region>
+        <region name="area3">
+            <x>414</x>
+            <y>663</y>
+        </region>
+        <region name="area4">
+            <x>528</x>
+            <y>999</y>
+        </region>
+        <region name="area5">
+            <x>480</x>
+            <y>48</y>
+        </region>
+        <region name="area6">
+            <x>684</x>
+            <y>390</y>
+        </region>
+        <region name="area7">
+            <x>684</x>
+            <y>597</y>
+        </region>
+        <region name="area8">
+            <x>576</x>
+            <y>930</y>
+        </region>
+        <region name="area9">
+            <x>498</x>
+            <y>30</y>
+        </region>
+        <region name="area10">
+            <x>624</x>
+            <y>252</y>
+        </region>
+        <region name="area11">
+            <x>654</x>
+            <y>612</y>
+        </region>
+        <region name="area12">
+            <x>702</x>
+            <y>888</y>
+        </region>
+        <region name="corner1">
+            <x>708</x>
+            <y>294</y>
+        </region>
+        <region name="corner2">
+            <x>708</x>
+            <y>294</y>
+        </region>
+        <region name="corner3">
+            <x>654</x>
+            <y>267</y>
+        </region>
+        <region name="corner4">
+            <x>720</x>
+            <y>477</y>
+        </region>
+        <region name="kickoff_own">
+            <x>342</x>
+            <y>114</y>
+        </region>
+        <region name="kickoff_def">
+            <x>144</x>
+            <y>1380</y>
+        </region>
+        <region name="goalkick_own">
+            <x>744</x>
+            <y>24</y>
+        </region>
+        <region name="goalkick_def">
+            <x>840</x>
+            <y>1350</y>
+        </region>
+    </player>
+    <player shirt="3">
+        <region name="area1">
+            <x>396</x>
+            <y>27</y>
+        </region>
+        <region name="area2">
+            <x>288</x>
+            <y>246</y>
+        </region>
+        <region name="area3">
+            <x>246</x>
+            <y>594</y>
+        </region>
+        <region name="area4">
+            <x>204</x>
+            <y>873</y>
+        </region>
+        <region name="area5">
+            <x>432</x>
+            <y>48</y>
+        </region>
+        <region name="area6">
+            <x>258</x>
+            <y>393</y>
+        </region>
+        <region name="area7">
+            <x>228</x>
+            <y>606</y>
+        </region>
+        <region name="area8">
+            <x>396</x>
+            <y>969</y>
+        </region>
+        <region name="area9">
+            <x>468</x>
+            <y>36</y>
+        </region>
+        <region name="area10">
+            <x>510</x>
+            <y>297</y>
+        </region>
+        <region name="area11">
+            <x>492</x>
+            <y>657</y>
+        </region>
+        <region name="area12">
+            <x>378</x>
+            <y>1011</y>
+        </region>
+        <region name="corner1">
+            <x>216</x>
+            <y>300</y>
+        </region>
+        <region name="corner2">
+            <x>216</x>
+            <y>300</y>
+        </region>
+        <region name="corner3">
+            <x>270</x>
+            <y>246</y>
+        </region>
+        <region name="corner4">
+            <x>210</x>
+            <y>447</y>
+        </region>
+        <region name="kickoff_own">
+            <x>168</x>
+            <y>24</y>
+        </region>
+        <region name="kickoff_def">
+            <x>72</x>
+            <y>1350</y>
+        </region>
+        <region name="goalkick_own">
+            <x>570</x>
+            <y>114</y>
+        </region>
+        <region name="goalkick_def">
+            <x>768</x>
+            <y>1380</y>
+        </region>
+    </player>
+    <player shirt="4">
+        <region name="area1">
+            <x>258</x>
+            <y>258</y>
+        </region>
+        <region name="area2">
+            <x>348</x>
+            <y>549</y>
+        </region>
+        <region name="area3">
+            <x>366</x>
+            <y>861</y>
+        </region>
+        <region name="area4">
+            <x>432</x>
+            <y>1149</y>
+        </region>
+        <region name="area5">
+            <x>450</x>
+            <y>240</y>
+        </region>
+        <region name="area6">
+            <x>504</x>
+            <y>519</y>
+        </region>
+        <region name="area7">
+            <x>492</x>
+            <y>876</y>
+        </region>
+        <region name="area8">
+            <x>528</x>
+            <y>1299</y>
+        </region>
+        <region name="area9">
+            <x>762</x>
+            <y>174</y>
+        </region>
+        <region name="area10">
+            <x>702</x>
+            <y>522</y>
+        </region>
+        <region name="area11">
+            <x>726</x>
+            <y>837</y>
+        </region>
+        <region name="area12">
+            <x>666</x>
+            <y>1203</y>
+        </region>
+        <region name="corner1">
+            <x>540</x>
+            <y>468</y>
+        </region>
+        <region name="corner2">
+            <x>498</x>
+            <y>501</y>
+        </region>
+        <region name="corner3">
+            <x>450</x>
+            <y>552</y>
+        </region>
+        <region name="corner4">
+            <x>444</x>
+            <y>678</y>
+        </region>
+        <region name="kickoff_own">
+            <x>492</x>
+            <y>6</y>
+        </region>
+        <region name="kickoff_def">
+            <x>444</x>
+            <y>1110</y>
+        </region>
+        <region name="goalkick_own">
+            <x>420</x>
+            <y>6</y>
+        </region>
+        <region name="goalkick_def">
+            <x>468</x>
+            <y>1110</y>
+        </region>
+    </player>
+    <player shirt="5">
+        <region name="area1">
+            <x>474</x>
+            <y>9</y>
+        </region>
+        <region name="area2">
+            <x>462</x>
+            <y>255</y>
+        </region>
+        <region name="area3">
+            <x>444</x>
+            <y>531</y>
+        </region>
+        <region name="area4">
+            <x>564</x>
+            <y>738</y>
+        </region>
+        <region name="area5">
+            <x>474</x>
+            <y>18</y>
+        </region>
+        <region name="area6">
+            <x>588</x>
+            <y>297</y>
+        </region>
+        <region name="area7">
+            <x>552</x>
+            <y>456</y>
+        </region>
+        <region name="area8">
+            <x>516</x>
+            <y>786</y>
+        </region>
+        <region name="area9">
+            <x>492</x>
+            <y>12</y>
+        </region>
+        <region name="area10">
+            <x>540</x>
+            <y>201</y>
+        </region>
+        <region name="area11">
+            <x>714</x>
+            <y>441</y>
+        </region>
+        <region name="area12">
+            <x>462</x>
+            <y>657</y>
+        </region>
+        <region name="corner1">
+            <x>546</x>
+            <y>237</y>
+        </region>
+        <region name="corner2">
+            <x>546</x>
+            <y>237</y>
+        </region>
+        <region name="corner3">
+            <x>516</x>
+            <y>330</y>
+        </region>
+        <region name="corner4">
+            <x>552</x>
+            <y>390</y>
+        </region>
+        <region name="kickoff_own">
+            <x>462</x>
+            <y>6</y>
+        </region>
+        <region name="kickoff_def">
+            <x>456</x>
+            <y>657</y>
+        </region>
+        <region name="goalkick_own">
+            <x>450</x>
+            <y>6</y>
+        </region>
+        <region name="goalkick_def">
+            <x>456</x>
+            <y>657</y>
+        </region>
+    </player>
+    <player shirt="6">
+        <region name="area1">
+            <x>420</x>
+            <y>15</y>
+        </region>
+        <region name="area2">
+            <x>378</x>
+            <y>201</y>
+        </region>
+        <region name="area3">
+            <x>192</x>
+            <y>432</y>
+        </region>
+        <region name="area4">
+            <x>456</x>
+            <y>657</y>
+        </region>
+        <region name="area5">
+            <x>438</x>
+            <y>18</y>
+        </region>
+        <region name="area6">
+            <x>378</x>
+            <y>303</y>
+        </region>
+        <region name="area7">
+            <x>402</x>
+            <y>474</y>
+        </region>
+        <region name="area8">
+            <x>474</x>
+            <y>618</y>
+        </region>
+        <region name="area9">
+            <x>444</x>
+            <y>12</y>
+        </region>
+        <region name="area10">
+            <x>444</x>
+            <y>261</y>
+        </region>
+        <region name="area11">
+            <x>474</x>
+            <y>534</y>
+        </region>
+        <region name="area12">
+            <x>360</x>
+            <y>741</y>
+        </region>
+        <region name="corner1">
+            <x>366</x>
+            <y>240</y>
+        </region>
+        <region name="corner2">
+            <x>366</x>
+            <y>240</y>
+        </region>
+        <region name="corner3">
+            <x>378</x>
+            <y>336</y>
+        </region>
+        <region name="corner4">
+            <x>384</x>
+            <y>384</y>
+        </region>
+        <region name="kickoff_own">
+            <x>426</x>
+            <y>6</y>
+        </region>
+        <region name="kickoff_def">
+            <x>450</x>
+            <y>888</y>
+        </region>
+        <region name="goalkick_own">
+            <x>486</x>
+            <y>6</y>
+        </region>
+        <region name="goalkick_def">
+            <x>462</x>
+            <y>888</y>
+        </region>
+    </player>
+    <player shirt="7">
+        <region name="area1">
+            <x>498</x>
+            <y>312</y>
+        </region>
+        <region name="area2">
+            <x>468</x>
+            <y>663</y>
+        </region>
+        <region name="area3">
+            <x>570</x>
+            <y>951</y>
+        </region>
+        <region name="area4">
+            <x>546</x>
+            <y>1272</y>
+        </region>
+        <region name="area5">
+            <x>660</x>
+            <y>234</y>
+        </region>
+        <region name="area6">
+            <x>744</x>
+            <y>612</y>
+        </region>
+        <region name="area7">
+            <x>768</x>
+            <y>882</y>
+        </region>
+        <region name="area8">
+            <x>684</x>
+            <y>1209</y>
+        </region>
+        <region name="area9">
+            <x>828</x>
+            <y>249</y>
+        </region>
+        <region name="area10">
+            <x>816</x>
+            <y>579</y>
+        </region>
+        <region name="area11">
+            <x>816</x>
+            <y>921</y>
+        </region>
+        <region name="area12">
+            <x>822</x>
+            <y>1278</y>
+        </region>
+        <region name="corner1">
+            <x>768</x>
+            <y>492</y>
+        </region>
+        <region name="corner2">
+            <x>792</x>
+            <y>480</y>
+        </region>
+        <region name="corner3">
+            <x>654</x>
+            <y>510</y>
+        </region>
+        <region name="corner4">
+            <x>660</x>
+            <y>627</y>
+        </region>
+        <region name="kickoff_own">
+            <x>504</x>
+            <y>174</y>
+        </region>
+        <region name="kickoff_def">
+            <x>468</x>
+            <y>1350</y>
+        </region>
+        <region name="goalkick_own">
+            <x>744</x>
+            <y>54</y>
+        </region>
+        <region name="goalkick_def">
+            <x>888</x>
+            <y>1374</y>
+        </region>
+    </player>
+    <player shirt="8">
+        <region name="area1">
+            <x>162</x>
+            <y>153</y>
+        </region>
+        <region name="area2">
+            <x>186</x>
+            <y>501</y>
+        </region>
+        <region name="area3">
+            <x>168</x>
+            <y>819</y>
+        </region>
+        <region name="area4">
+            <x>252</x>
+            <y>1203</y>
+        </region>
+        <region name="area5">
+            <x>450</x>
+            <y>138</y>
+        </region>
+        <region name="area6">
+            <x>408</x>
+            <y>519</y>
+        </region>
+        <region name="area7">
+            <x>426</x>
+            <y>879</y>
+        </region>
+        <region name="area8">
+            <x>462</x>
+            <y>1239</y>
+        </region>
+        <region name="area9">
+            <x>654</x>
+            <y>249</y>
+        </region>
+        <region name="area10">
+            <x>552</x>
+            <y>564</y>
+        </region>
+        <region name="area11">
+            <x>534</x>
+            <y>867</y>
+        </region>
+        <region name="area12">
+            <x>474</x>
+            <y>1149</y>
+        </region>
+        <region name="corner1">
+            <x>360</x>
+            <y>471</y>
+        </region>
+        <region name="corner2">
+            <x>408</x>
+            <y>495</y>
+        </region>
+        <region name="corner3">
+            <x>468</x>
+            <y>696</y>
+        </region>
+        <region name="corner4">
+            <x>426</x>
+            <y>624</y>
+        </region>
+        <region name="kickoff_own">
+            <x>414</x>
+            <y>234</y>
+        </region>
+        <region name="kickoff_def">
+            <x>336</x>
+            <y>1236</y>
+        </region>
+        <region name="goalkick_own">
+            <x>498</x>
+            <y>234</y>
+        </region>
+        <region name="goalkick_def">
+            <x>576</x>
+            <y>1236</y>
+        </region>
+    </player>
+    <player shirt="9">
+        <region name="area1">
+            <x>204</x>
+            <y>555</y>
+        </region>
+        <region name="area2">
+            <x>204</x>
+            <y>804</y>
+        </region>
+        <region name="area3">
+            <x>300</x>
+            <y>1089</y>
+        </region>
+        <region name="area4">
+            <x>456</x>
+            <y>1308</y>
+        </region>
+        <region name="area5">
+            <x>438</x>
+            <y>432</y>
+        </region>
+        <region name="area6">
+            <x>474</x>
+            <y>831</y>
+        </region>
+        <region name="area7">
+            <x>510</x>
+            <y>1113</y>
+        </region>
+        <region name="area8">
+            <x>384</x>
+            <y>1296</y>
+        </region>
+        <region name="area9">
+            <x>708</x>
+            <y>555</y>
+        </region>
+        <region name="area10">
+            <x>708</x>
+            <y>804</y>
+        </region>
+        <region name="area11">
+            <x>612</x>
+            <y>1089</y>
+        </region>
+        <region name="area12">
+            <x>462</x>
+            <y>1305</y>
+        </region>
+        <region name="corner1">
+            <x>498</x>
+            <y>678</y>
+        </region>
+        <region name="corner2">
+            <x>366</x>
+            <y>600</y>
+        </region>
+        <region name="corner3">
+            <x>558</x>
+            <y>888</y>
+        </region>
+        <region name="corner4">
+            <x>498</x>
+            <y>840</y>
+        </region>
+        <region name="kickoff_own">
+            <x>180</x>
+            <y>240</y>
+        </region>
+        <region name="kickoff_def">
+            <x>420</x>
+            <y>1392</y>
+        </region>
+        <region name="goalkick_own">
+            <x>732</x>
+            <y>240</y>
+        </region>
+        <region name="goalkick_def">
+            <x>492</x>
+            <y>1392</y>
+        </region>
+    </player>
+    <player shirt="10">
+        <region name="area1">
+            <x>432</x>
+            <y>720</y>
+        </region>
+        <region name="area2">
+            <x>438</x>
+            <y>942</y>
+        </region>
+        <region name="area3">
+            <x>456</x>
+            <y>1257</y>
+        </region>
+        <region name="area4">
+            <x>468</x>
+            <y>1338</y>
+        </region>
+        <region name="area5">
+            <x>426</x>
+            <y>618</y>
+        </region>
+        <region name="area6">
+            <x>474</x>
+            <y>1041</y>
+        </region>
+        <region name="area7">
+            <x>438</x>
+            <y>1248</y>
+        </region>
+        <region name="area8">
+            <x>468</x>
+            <y>1341</y>
+        </region>
+        <region name="area9">
+            <x>480</x>
+            <y>720</y>
+        </region>
+        <region name="area10">
+            <x>474</x>
+            <y>942</y>
+        </region>
+        <region name="area11">
+            <x>456</x>
+            <y>1257</y>
+        </region>
+        <region name="area12">
+            <x>450</x>
+            <y>1341</y>
+        </region>
+        <region name="corner1">
+            <x>426</x>
+            <y>672</y>
+        </region>
+        <region name="corner2">
+            <x>552</x>
+            <y>606</y>
+        </region>
+        <region name="corner3">
+            <x>336</x>
+            <y>888</y>
+        </region>
+        <region name="corner4">
+            <x>456</x>
+            <y>996</y>
+        </region>
+        <region name="kickoff_own">
+            <x>456</x>
+            <y>606</y>
+        </region>
+        <region name="kickoff_def">
+            <x>450</x>
+            <y>1380</y>
+        </region>
+        <region name="goalkick_own">
+            <x>456</x>
+            <y>606</y>
+        </region>
+        <region name="goalkick_def">
+            <x>462</x>
+            <y>1380</y>
+        </region>
+    </player>
+    <player shirt="11">
+        <region name="area1">
+            <x>84</x>
+            <y>246</y>
+        </region>
+        <region name="area2">
+            <x>84</x>
+            <y>558</y>
+        </region>
+        <region name="area3">
+            <x>96</x>
+            <y>924</y>
+        </region>
+        <region name="area4">
+            <x>90</x>
+            <y>1272</y>
+        </region>
+        <region name="area5">
+            <x>246</x>
+            <y>240</y>
+        </region>
+        <region name="area6">
+            <x>150</x>
+            <y>591</y>
+        </region>
+        <region name="area7">
+            <x>204</x>
+            <y>882</y>
+        </region>
+        <region name="area8">
+            <x>270</x>
+            <y>1218</y>
+        </region>
+        <region name="area9">
+            <x>414</x>
+            <y>312</y>
+        </region>
+        <region name="area10">
+            <x>450</x>
+            <y>663</y>
+        </region>
+        <region name="area11">
+            <x>324</x>
+            <y>978</y>
+        </region>
+        <region name="area12">
+            <x>366</x>
+            <y>1251</y>
+        </region>
+        <region name="corner1">
+            <x>144</x>
+            <y>501</y>
+        </region>
+        <region name="corner2">
+            <x>102</x>
+            <y>498</y>
+        </region>
+        <region name="corner3">
+            <x>228</x>
+            <y>516</y>
+        </region>
+        <region name="corner4">
+            <x>216</x>
+            <y>648</y>
+        </region>
+        <region name="kickoff_own">
+            <x>168</x>
+            <y>54</y>
+        </region>
+        <region name="kickoff_def">
+            <x>24</x>
+            <y>1374</y>
+        </region>
+        <region name="goalkick_own">
+            <x>408</x>
+            <y>174</y>
+        </region>
+        <region name="goalkick_def">
+            <x>444</x>
+            <y>1350</y>
+        </region>
+    </player>
+</tactic>
