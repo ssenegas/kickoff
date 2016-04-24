@@ -1,5 +1,7 @@
 package com.senegas.kickoff.screens;
 
+import tactics.Tactic;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -29,11 +31,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
-import com.senegas.kickoff.entities.Scanner;
 import com.senegas.kickoff.pitches.ClassicPitch;
 import com.senegas.kickoff.pitches.FootballDimensions;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.pitches.PlayerManagerPitch;
+import com.senegas.kickoff.pitches.Scanner;
 import com.senegas.kickoff.pitches.SoggyPitch;
 import com.senegas.kickoff.pitches.SyntheticPitch;
 import com.senegas.kickoff.pitches.WetPitch;
@@ -50,6 +52,9 @@ public class Match implements Screen {
 	public Ball ball;
 	public Player player;
 	private Scanner scanner;
+	private Tactic tactic;
+	
+	private static final boolean DEBUG = true;
 	
 	@Override
 	public void render(float deltaTime) {
@@ -68,6 +73,9 @@ public class Match implements Screen {
         renderer.setView(camera);
 		renderer.render();
 		
+		if (DEBUG)
+			tactic.showRegionAndExpectedPlayerLocation(this);
+		
         renderer.getBatch().begin();
         player.draw(renderer.getBatch());
         ball.draw(renderer.getBatch());
@@ -79,6 +87,7 @@ public class Match implements Screen {
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
 		font.draw(batch, "Player: " + (int)player.getPosition().x + ", " + (int)player.getPosition().y, 10, 40);
 		font.draw(batch, "Ball: " + (int)ball.getPosition().x + ", " + (int)ball.getPosition().y + ", " + (int)ball.getPosition().z, 10, 60);
+		font.draw(batch, tactic.getName(), 10, 80);
 		batch.end(); 
 
 		handleInput();
@@ -88,7 +97,7 @@ public class Match implements Screen {
 		if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
 			if (ball.getPosition().z < player.height()/FootballDimensions.CM_PER_PIXEL) { //!Reimp move constant elsewhere
 				//System.out.format("collide%n");
-				ball.move(200 * 1.125 + 30, player.getDirection()); // dribble
+				ball.dribble(player.speed(), player.getDirection()); // dribble
 			}
 		}
 	}
@@ -110,10 +119,10 @@ public class Match implements Screen {
         
         player = new Player(Pitch.WIDTH/3, Pitch.HEIGHT/2);
         ball = new Ball((int) (Pitch.PITCH_WIDTH_IN_PX/2 + Pitch.OUTER_TOP_EDGE_X - 8),
-        		        (int) (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8), 400);
-        
+        		        (int) (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8), 80);        
         scanner = new Scanner(this);
-        
+        tactic = new Tactic("tactics/4-3-3.xml");
+           
         //cameraController = new OrthoCamController(camera);
 		Gdx.input.setInputProcessor(player);
 		
@@ -141,6 +150,7 @@ public class Match implements Screen {
 		player.getTexture().dispose();
 		ball.getTexture().dispose();
 		shapeRenderer.dispose();
+		tactic.dispose();
 	}
 	
 	private void handleInput() {
@@ -150,17 +160,17 @@ public class Match implements Screen {
         if(Gdx.input.isKeyPressed(Input.Keys.I)) {
         	camera.zoom -= 0.02;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-        	ball.move(400, 6);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+        	ball.dribble(400, 6);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-        	ball.move(400, 2);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+        	ball.dribble(400, 2);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.E)) {
-        	ball.move(400, 0);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+        	ball.dribble(400, 0);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.X)) {
-        	ball.move(400, 4);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.X)) {
+        	ball.dribble(400, 4);
         }    
         // handle scanner zoom
         if(Gdx.input.isKeyJustPressed(Input.Keys.A)) {

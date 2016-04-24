@@ -69,7 +69,7 @@ public class Ball {
 			//low ball, sprite contained in shadow
 			scry += position.z / 2;
 			if (currentFrame >= 0 && currentFrame < 8) {
-				batch.draw(frames[0][currentFrame], position.x, scry);
+				batch.draw(frames[0][currentFrame], scrx, scry);
 			}
 		}
 		else {
@@ -106,7 +106,7 @@ public class Ball {
 		velocity.scl(1/deltaTime);		
 	}
 	
-	public void move(double speed, int angleDir) {
+	public void dribble(float speed, int angleDir) {
 		float angle[] = { 0, 45, 90, 135, 180, 225, 270, 315 }; //!Reimp
 		
 		if (angleDir >= 8)
@@ -122,8 +122,10 @@ public class Ball {
 		// to overcome differences we add 90 degrees
 		double radians = MathUtils.degRad * (90.0f - angle[angleDir]);
 		
-		velocity.x = (float)(speed * Math.cos(radians));
-		velocity.y = (float)(speed * Math.sin(radians));
+		float ballSpeed = speed * 1.125f + 30.0f;
+		
+		velocity.x = (float)(ballSpeed * Math.cos(radians));
+		velocity.y = (float)(ballSpeed * Math.sin(radians));
 		velocity.z = 80;
 	}
 	

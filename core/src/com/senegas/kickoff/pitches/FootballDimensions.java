@@ -10,6 +10,8 @@ public interface FootballDimensions {
 
 	public final static int OUTER_TOP_EDGE_X = 176;
 	public final static int OUTER_TOP_EDGE_Y = 64;
+	public final static int OUTER_BOTTOM_EDGE_X = 176;
+	public final static int OUTER_BOTTOM_EDGE_Y = 80;
 	public final static int LEFT_POST_OUTEREDDGE_X = 0x194;
 	public final static int RIGHT_POST_OUTEREDGE_X = 0x1FC;
 	public final static int CROSSBAR_TOPEDGE = 0x24;

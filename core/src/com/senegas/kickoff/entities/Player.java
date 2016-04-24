@@ -247,4 +247,12 @@ public class Player implements InputProcessor {
 	public void setHeight(int height) {
 		this.height = height;
 	}
+	
+	public float speed() {
+		return speed;
+	}
+
+	public void setSpeed(float speed) {
+		this.speed = speed;
+	}
 }
