@@ -1,4 +1,4 @@
-package tactics;
+package com.senegas.kickoff.tactics;
 
 import java.io.IOException;
 

@@ -1,7 +1,5 @@
 package com.senegas.kickoff.screens;
 
-import tactics.Tactic;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -39,6 +37,7 @@ import com.senegas.kickoff.pitches.Scanner;
 import com.senegas.kickoff.pitches.SoggyPitch;
 import com.senegas.kickoff.pitches.SyntheticPitch;
 import com.senegas.kickoff.pitches.WetPitch;
+import com.senegas.kickoff.tactics.Tactic;
 import com.senegas.kickoff.utils.Joystick;
 import com.senegas.kickoff.utils.OrthoCamController;
 
