@@ -1,6 +1,7 @@
 package com.senegas.kickoff;
 
 import com.badlogic.gdx.Game;
+import com.senegas.kickoff.screens.MainMenu;
 import com.senegas.kickoff.screens.Match;
 
 public class KickOff extends Game {
@@ -10,7 +11,7 @@ public class KickOff extends Game {
 	
 	@Override
 	public void create () {
-		setScreen(new Match());
+		setScreen(new MainMenu());
 	}
 
 	@Override

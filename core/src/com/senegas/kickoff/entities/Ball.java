@@ -1,15 +1,10 @@
 package com.senegas.kickoff.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 
 public class Ball {
 
@@ -54,6 +49,7 @@ public class Ball {
 		frames = TextureRegion.split(texture, spriteWIDTH, spriteHEIGHT);
 	}
 
+	
 	public void draw(Batch batch) {
 
 		//System.out.format("currentFrame: %d%n", currentFrame);
@@ -107,7 +103,7 @@ public class Ball {
 	}
 	
 	public void dribble(float speed, int angleDir) {
-		float angle[] = { 0, 45, 90, 135, 180, 225, 270, 315 }; //!Reimp
+		float angle[] = {0, 45, 90, 135, 180, 225, 270, 315 }; //!Reimp
 		
 		if (angleDir >= 8)
 		{
@@ -122,7 +118,7 @@ public class Ball {
 		// to overcome differences we add 90 degrees
 		double radians = MathUtils.degRad * (90.0f - angle[angleDir]);
 		
-		float ballSpeed = speed * 1.125f + 30.0f;
+		float ballSpeed = speed;
 		
 		velocity.x = (float)(ballSpeed * Math.cos(radians));
 		velocity.y = (float)(ballSpeed * Math.sin(radians));
@@ -131,6 +127,18 @@ public class Ball {
 	
 	public Vector3 getPosition() {
 		return position;
+	}
+	
+	public void setPosition(Vector3 position) {
+		this.position = position;
+	}
+	
+	public Vector3 getVelocity() {
+		return velocity;
+	}
+	
+	public void setVelocity(Vector3 velocity) {
+		this.velocity = velocity;
 	}
 	
     public Texture getTexture() {

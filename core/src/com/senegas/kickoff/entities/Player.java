@@ -1,17 +1,13 @@
 package com.senegas.kickoff.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
-import com.senegas.kickoff.pitches.Pitch;
 
 public class Player implements InputProcessor {
 
@@ -103,9 +99,77 @@ public class Player implements InputProcessor {
 //		}
 	}
 	
+	public void draw(Batch batch) {
+//		System.out.format("runningFrame: %d%n", currentFrame);
+//		System.out.format("currentFrameAnimationRow: %d currentFrameAnimationColumn: %d%n", currentFrameAnimationRow, currentFrameAnimationColumn);
+//		System.out.format("directionCoefficients[direction].x %f%n", directionCoefficients[direction].x);
+//		System.out.format("directionCoefficients[direction].y %f%n", directionCoefficients[direction].y);
+	    
+		// draw the frame
+		batch.draw(frames[currentFrameAnimationRow][currentFrameAnimationColumn], position.x, position.y);
+	}
+	
 	public Circle getBounds() {
 		return bounds;
 	}
+	
+	public void moveTo(Vector2 destination)
+	{
+		Vector2 start = new Vector2(position.x, position.y);
+		float distance = start.dst(destination);
+		
+		boolean moving = true;
+	    if (distance <= 2)
+	    {
+	    	moving = false;
+			velocity.x = 0;
+			velocity.y = 0;
+	    }
+		
+		if (moving == true)
+		{
+			velocity.set(destination.x - position.x, destination.y - position.y, 0);
+			velocity.nor(); // Normalizes the value to be used
+			
+			float fThreshold = (float) Math.cos(Math.PI / 8);
+			 
+			if (velocity.x > fThreshold) {
+				velocity.x = speed;
+				velocity.y = 0;
+			}
+			else if (velocity.x < -fThreshold) {
+				velocity.x = -speed;
+				velocity.y = 0;
+			}
+			else if (velocity.y > fThreshold) {
+				velocity.x = 0;
+				velocity.y = speed;
+			}
+			else if (velocity.y < -fThreshold) {
+				velocity.x = 0;
+				velocity.y = -speed;
+			}
+			else if (velocity.x > 0 && velocity.y > 0) {
+				velocity.x = speed;
+				velocity.y = speed;
+			}
+			else if (velocity.x > 0 && velocity.y < 0) {
+				velocity.x = speed;
+				velocity.y = -speed;
+			}
+			else if (velocity.x < 0 && velocity.y > 0) {
+				velocity.x = -speed;
+				velocity.y = speed;
+			}
+			else if (velocity.x < 0 && velocity.y < 0)
+			{
+				velocity.x = -speed;
+				velocity.y = -speed;
+			}
+		}
+		
+		updateDirection();
+	}	
 	
 //	private void adjustVelocity() {
 //		// adjust diagonal velocity
@@ -124,16 +188,6 @@ public class Player implements InputProcessor {
 	
 	public Vector3 getPosition() {
 		return position;
-	}
-
-	public void draw(Batch batch) {
-//		System.out.format("runningFrame: %d%n", currentFrame);
-//		System.out.format("currentFrameAnimationRow: %d currentFrameAnimationColumn: %d%n", currentFrameAnimationRow, currentFrameAnimationColumn);
-//		System.out.format("directionCoefficients[direction].x %f%n", directionCoefficients[direction].x);
-//		System.out.format("directionCoefficients[direction].y %f%n", directionCoefficients[direction].y);
-	    
-		// draw the frame
-		batch.draw(frames[currentFrameAnimationRow][currentFrameAnimationColumn], position.x, position.y);
 	}
 	
 	@Override

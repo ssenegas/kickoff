@@ -5,19 +5,23 @@ import java.io.IOException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
+import com.senegas.kickoff.entities.Ball;
+import com.senegas.kickoff.entities.Team;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.screens.Match;
+import com.senegas.kickoff.utils.PitchUtils;
 
 public class Tactic {
-	enum LocationId {
+	enum Location {
 		area1,
 		area2,
 		area3,
@@ -44,102 +48,130 @@ public class Tactic {
 	private final static int REGION_COLUMNS = 3;
 	private final static float REGION_WIDTH_IN_PX = (float) (Pitch.PITCH_WIDTH_IN_PX / REGION_COLUMNS);
 	private final static float REGION_HEIGHT_IN_PX = (float) (Pitch.PITCH_HEIGHT_IN_PX / REGION_ROWS);
-	private String name;
-	private static ShapeRenderer shapeRenderer;
 	
-	public String getName() {
-		return name;
+	private String _name;
+	private Team _team;
+	private Array<ObjectMap<Location, Vector2>> _playersLocations;
+	private Array<Rectangle> _regions;
+	private static ShapeRenderer _shapeRenderer;
+	
+	public Tactic(Team team, String fileName) {
+		_team = team;
+		_playersLocations = new Array<ObjectMap<Location, Vector2>>();
+		_regions = new Array<Rectangle>();
+		_shapeRenderer = new ShapeRenderer();
+		
+		createRegions();
+		loadLocations(fileName);
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	private void createRegions() {
+		// create pitch regions
+		for (int column = 0; column < REGION_COLUMNS; column++) {
+			for (int row = 0; row < REGION_ROWS; row++) {
+				_regions.add(new Rectangle(column * REGION_WIDTH_IN_PX,
+						                   row * REGION_HEIGHT_IN_PX,
+						                   REGION_WIDTH_IN_PX,
+						                   REGION_HEIGHT_IN_PX));
+			}
+		}
 	}
-
-	private Array<ArrayMap<LocationId, Vector2>> playersLocations;
-	private Array<Rectangle> regions;
 	
-	public Tactic(String fileName) {
-		shapeRenderer = new ShapeRenderer();
-		// load players locations
-		playersLocations = new Array<ArrayMap<LocationId, Vector2>>();
-		 
+	private void loadLocations(String fileName) {
 		try {
 			Element root = new XmlReader().parse(Gdx.files.internal(fileName));
 			
-			name = root.get("name");
-			Gdx.app.log("Tactic", "Reading " + name + "...");
+			_name = root.get("name");
+			Gdx.app.log("Tactic", "Loading " + _name + "...");
 			
 			Array<Element> players = root.getChildrenByName("player");
 			for (Element player : players) {
-				int shirt = player.getInt("shirt");
+				//int shirt = player.getInt("shirt"); // shirt number
+				//Gdx.app.log("Tactic", "Location for player number " + shirt);
 				
-				Gdx.app.log("Tactic", "Location for player number " + shirt);
-				
+				// regions
 				Array<Element> regions = player.getChildrenByName("region");
-				ArrayMap<LocationId, Vector2> locationsMap = new ArrayMap<LocationId, Vector2>();
+				ObjectMap<Location, Vector2> locationsMap = new ObjectMap<Location, Vector2>();
 				for (Element region : regions) {
-					String locationStringId = region.get("name");
+					String locationId = region.get("name"); // region name
 					
-					locationsMap.put(LocationId.valueOf(locationStringId),
+					// add region to map
+					locationsMap.put(Location.valueOf(locationId), // returns the enum constant of the specified enum type with the specified name.
 						    new Vector2(region.getFloat("x"), region.getFloat("y")));
 
-					Gdx.app.log("Tactic", locationStringId + " read");
+					//Gdx.app.log("Tactic", locationId + " read");
 				}
-				
-				playersLocations.add(locationsMap);
+				// add locations
+				_playersLocations.add(locationsMap);
 			}	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public String getName() {
+		return _name;
+	}
+	
+	public void update(Ball ball)
+	{
+		Vector2 ballLocation = PitchUtils.globalToPitch(ball.getPosition().x, ball.getPosition().y);
 		
-		// create tactic regions
-		regions = new Array<Rectangle>();
-		
-		for (int column = 0; column < REGION_COLUMNS; column++) {
-			for (int row = 0; row < REGION_ROWS; row++) {
-				regions.add( new Rectangle(column*REGION_WIDTH_IN_PX, row*REGION_HEIGHT_IN_PX, REGION_WIDTH_IN_PX, REGION_HEIGHT_IN_PX));
-
-				Gdx.app.log("Tactic", "<Region " + (((row + column) + 1) + (column*REGION_COLUMNS)) + ">" +
-	                   	              (column*REGION_WIDTH_IN_PX) +", " + (row*REGION_HEIGHT_IN_PX) + ", " +
-			                          (column+1)*REGION_WIDTH_IN_PX + ", " + (row+1)*REGION_HEIGHT_IN_PX + "</Region>");
-			}
+		for (Location index : Location.values()) { // loop on each location
+			if (index.ordinal() > Location.area12.ordinal())
+				break;
+			
+			Rectangle region = _regions.get(index.ordinal()); // get the region for location index
+			
+			if (region.contains(ballLocation.x, ballLocation.y)) {
+				for (int i = 0; i < 10; i++) {
+					Vector2 playerLocation = PitchUtils.pitchToGlobal(_playersLocations.get(i).get(index).x,
+                                                                      _playersLocations.get(i).get(index).y);
+					_team.members().get(i).moveTo(playerLocation);
+				}
+				break; // not needed to check other regions
+			}	
 		}
 	}
 	
-	public void showRegionAndExpectedPlayerLocation(Match m) {
+	public void showRegionAndExpectedPlayerLocation(OrthographicCamera camera, Ball ball) {
 		// enable transparency
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		
-		shapeRenderer.setProjectionMatrix(m.camera.combined);
+		_shapeRenderer.setProjectionMatrix(camera.combined);
 		
-		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.setColor(new Color(0.8f, 0, 0, 0.2f));
+		_shapeRenderer.begin(ShapeType.Filled);
+		_shapeRenderer.setColor(new Color(0.8f, 0, 0, 0.2f));
 
-		for (LocationId index : LocationId.values()) {
-			if (index.ordinal() > LocationId.area12.ordinal())
+		for (Location index : Location.values()) {
+			if (index.ordinal() > Location.area12.ordinal())
 				break;
 			
-			Rectangle region = regions.get(index.ordinal());
+			Rectangle region = _regions.get(index.ordinal());
 			
-			if (region.contains(m.ball.getPosition().x - Pitch.OUTER_BOTTOM_EDGE_X, m.ball.getPosition().y - Pitch.OUTER_BOTTOM_EDGE_Y)) {
-				shapeRenderer.rect(region.x + Pitch.OUTER_BOTTOM_EDGE_X, region.y + Pitch.OUTER_BOTTOM_EDGE_Y, region.width, region.height);
-
+			Vector2 ballLocation = PitchUtils.globalToPitch(ball.getPosition().x, ball.getPosition().y);
+			if (region.contains(ballLocation.x, ballLocation.y)) {
+				Vector2 regionLocation = PitchUtils.pitchToGlobal(region.x, region.y);
+				_shapeRenderer.rect(regionLocation.x, regionLocation.y, region.width, region.height);
+				
 				// draw player location for the location id
-				for (ArrayMap<LocationId, Vector2> playerLocations : playersLocations) {
-					shapeRenderer.setColor(new Color(1.0f, 0.8f, 0, 0.4f));
-					shapeRenderer.circle(playerLocations.get(index).x + Pitch.OUTER_BOTTOM_EDGE_X, playerLocations.get(index).y + Pitch.OUTER_BOTTOM_EDGE_Y, 8);						
+				for (ObjectMap<Location, Vector2> playerLocations : _playersLocations) {
+					_shapeRenderer.setColor(new Color(1.0f, 0.5f, 0, 0.4f));
+					Vector2 playerLocation = PitchUtils.pitchToGlobal(playerLocations.get(index).x, playerLocations.get(index).y);
+					_shapeRenderer.circle(playerLocation.x, playerLocation.y, 8);
+					_shapeRenderer.line(playerLocation.x - 8, playerLocation.y, 0, playerLocation.x + 8, playerLocation.y, 0);
+					_shapeRenderer.line(playerLocation.x, playerLocation.y - 8, 0, playerLocation.x, playerLocation.y + 8, 0);
 				}
 			}	
 		}
 		
-		shapeRenderer.end();
+		_shapeRenderer.end();
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 	
 	public void dispose() {
-		shapeRenderer.dispose();
+		_shapeRenderer.dispose();
 	}
-	
 }

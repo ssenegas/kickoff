@@ -2,44 +2,25 @@ package com.senegas.kickoff.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.math.Vector3;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
+import com.senegas.kickoff.entities.Team;
 import com.senegas.kickoff.pitches.ClassicPitch;
 import com.senegas.kickoff.pitches.FootballDimensions;
 import com.senegas.kickoff.pitches.Pitch;
-import com.senegas.kickoff.pitches.PlayerManagerPitch;
 import com.senegas.kickoff.pitches.Scanner;
-import com.senegas.kickoff.pitches.SoggyPitch;
-import com.senegas.kickoff.pitches.SyntheticPitch;
-import com.senegas.kickoff.pitches.WetPitch;
 import com.senegas.kickoff.tactics.Tactic;
-import com.senegas.kickoff.utils.Joystick;
-import com.senegas.kickoff.utils.OrthoCamController;
+import com.senegas.kickoff.utils.PitchUtils;
 
 public class Match implements Screen {
 	private OrthogonalTiledMapRenderer renderer;
@@ -48,65 +29,19 @@ public class Match implements Screen {
     private BitmapFont font;
 	private SpriteBatch batch;
 	private Pitch pitch;
-	public Ball ball;
-	public Player player;
+	private Ball ball;
+	//public Player player;
 	private Scanner scanner;
-	private Tactic tactic;
+	//private Tactic tactic;
+	private Team teamA;
 	
 	private static final boolean DEBUG = true;
 	
-	@Override
-	public void render(float deltaTime) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);   
-        
-        player.update(deltaTime);
-        ball.update(deltaTime);
-        
-        checkCollisions();
-        
-        camera.position.x = MathUtils.clamp(ball.getPosition().x, camera.viewportWidth/2 * camera.zoom, Pitch.WIDTH - camera.viewportWidth/2 * camera.zoom);
-        camera.position.y = MathUtils.clamp(ball.getPosition().y, camera.viewportHeight/2 * camera.zoom, Pitch.HEIGHT - camera.viewportHeight/2 * camera.zoom);
-        camera.update();
-        
-        renderer.setView(camera);
-		renderer.render();
-		
-		if (DEBUG)
-			tactic.showRegionAndExpectedPlayerLocation(this);
-		
-        renderer.getBatch().begin();
-        player.draw(renderer.getBatch());
-        ball.draw(renderer.getBatch());
-        renderer.getBatch().end();
-		
-        scanner.draw(shapeRenderer);
-        
-		batch.begin();		
-		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
-		font.draw(batch, "Player: " + (int)player.getPosition().x + ", " + (int)player.getPosition().y, 10, 40);
-		font.draw(batch, "Ball: " + (int)ball.getPosition().x + ", " + (int)ball.getPosition().y + ", " + (int)ball.getPosition().z, 10, 60);
-		font.draw(batch, tactic.getName(), 10, 80);
-		batch.end(); 
-
-		handleInput();
-	}
+	private static float angx = 0;
+	private static float angy = 0;
+	private static float incx = 0.001f;
+	private static float incy = 0.0013f;
 	
-	private void checkCollisions() {
-		if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
-			if (ball.getPosition().z < player.height()/FootballDimensions.CM_PER_PIXEL) { //!Reimp move constant elsewhere
-				//System.out.format("collide%n");
-				ball.dribble(player.speed(), player.getDirection()); // dribble
-			}
-		}
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		camera.viewportHeight = height;
-		camera.viewportWidth = width;
-	}
-
 	@Override
 	public void show() {
 		pitch = new ClassicPitch();
@@ -116,17 +51,110 @@ public class Match implements Screen {
         //camera.setToOrtho(true);
         camera.zoom = .45f;
         
-        player = new Player(Pitch.WIDTH/3, Pitch.HEIGHT/2);
+        //player = new Player(Pitch.WIDTH/3, Pitch.HEIGHT/2);
+        teamA = new Team(this);
         ball = new Ball((int) (Pitch.PITCH_WIDTH_IN_PX/2 + Pitch.OUTER_TOP_EDGE_X - 8),
-        		        (int) (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8), 80);        
+        		        (int) (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8), 160);        
         scanner = new Scanner(this);
-        tactic = new Tactic("tactics/4-3-3.xml");
+        //tactic = new Tactic("tactics/4-3-3.xml");
            
         //cameraController = new OrthoCamController(camera);
-		Gdx.input.setInputProcessor(player);
+		//Gdx.input.setInputProcessor(player);
 		
 		font = new BitmapFont();
 		batch = new SpriteBatch();
+	}
+	
+	@Override
+	public void render(float deltaTime) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);   
+        
+        //tactic.update(this);
+        teamA.update(deltaTime);
+        ball.update(deltaTime);
+        
+        checkCollisions();
+        
+//        boolean gameIsRunning = true;
+//
+//    	if(!gameIsRunning) {
+//    		double cx = (Pitch.PITCH_WIDTH_IN_PX/2 + Pitch.OUTER_TOP_EDGE_X - 8);
+//    		double cy = (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8) - (camera.viewportHeight/2);
+//    		
+//    		camera.position.x = (float) MathUtils.clamp( cx + ((Pitch.PITCH_WIDTH_IN_PX/2) * Math.sin(angx)), camera.viewportWidth/2 * camera.zoom, Pitch.WIDTH - camera.viewportWidth/2 * camera.zoom);
+//    		camera.position.y = (float) MathUtils.clamp( cy + ((Pitch.PITCH_HEIGHT_IN_PX/2) * Math.cos(angy)), camera.viewportHeight/2 * camera.zoom, Pitch.HEIGHT - camera.viewportHeight/2 * camera.zoom);
+//
+//    		angx += incx;
+//    		angy += incy;
+//    	}
+//    	else
+//    	{
+    		camera.position.x = MathUtils.clamp(ball.getPosition().x, camera.viewportWidth/2 * camera.zoom, Pitch.WIDTH - camera.viewportWidth/2 * camera.zoom);
+    		camera.position.y = MathUtils.clamp(ball.getPosition().y, camera.viewportHeight/2 * camera.zoom, Pitch.HEIGHT - camera.viewportHeight/2 * camera.zoom);
+//    	}
+        camera.update();
+        renderer.setView(camera);
+		renderer.render();
+		
+        renderer.getBatch().begin();
+        //player.draw(renderer.getBatch());
+        teamA.draw(renderer.getBatch());
+        ball.draw(renderer.getBatch());
+        renderer.getBatch().end();
+		
+        scanner.draw(shapeRenderer);
+        
+        if (DEBUG)
+        {
+			teamA.tactic().showRegionAndExpectedPlayerLocation(camera, ball);
+
+			// debug information
+			Player player = teamA.members().get(0);
+			batch.begin();
+			font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
+			font.draw(batch, "Player: " +
+					          (int) player.getPosition().x + ", " +
+					          (int) player.getPosition().y, 10, 40);
+			font.draw(batch, "Ball: " +
+					         (int) ball.getPosition().x + ", " +
+					         (int) ball.getPosition().y + ", " +
+					         (int) ball.getPosition().z, 10, 60);
+			//font.draw(batch, tactic.getName(), 10, 80);
+			batch.end();
+		}
+
+		handleInput();
+	}
+	
+	private void checkCollisions() {
+		Player player = teamA.members().get(0);
+		
+		if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
+			if (ball.getPosition().z < player.height()/FootballDimensions.CM_PER_PIXEL) { //!Reimp move constant elsewhere
+				//System.out.format("collide%n");
+				ball.dribble(player.speed() * 1.125f + 30.0f, player.getDirection()); // dribble
+			}
+		}
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		camera.viewportHeight = height;
+		camera.viewportWidth = width;
+	}
+	
+	public Team teamA() {
+		return teamA;
+	}
+	
+	public Ball ball()
+	{
+		return ball;
+	}
+	
+	public Pitch pitch() {
+		return pitch;
 	}
 
 	@Override
@@ -144,12 +172,12 @@ public class Match implements Screen {
 
 	@Override
 	public void dispose() {
-		pitch.dispose();
 		renderer.dispose();
-		player.getTexture().dispose();
+		pitch.dispose();
+		teamA.dispose();
 		ball.getTexture().dispose();
 		shapeRenderer.dispose();
-		tactic.dispose();
+		//tactic.dispose();
 	}
 	
 	private void handleInput() {
@@ -191,6 +219,11 @@ public class Match implements Screen {
 //                if (camera.position.y < Pitch.HEIGHT - camera.viewportHeight)
 //                	camera.translate(0, 3, 0);
 //        }
-}	
+}
+
+//	public Player getPlayer() {
+//		// TODO Auto-generated method stub
+//		return player;
+//	}	
 
 }

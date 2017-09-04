@@ -1,5 +1,6 @@
 package com.senegas.kickoff.pitches;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Disposable;
@@ -12,7 +13,8 @@ public abstract class Pitch implements Disposable, FootballDimensions {
 	
 	public final static int mapWidthInTiles = 80;
 	public final static int mapHeightInTiles = 96;	
-	public static final int tileWidthInPixel = 16, tileHeightInPixel = 16;
+	public static final int tileWidthInPixel = 16;
+    public static final int  tileHeightInPixel = 16;
 	public static final int HEIGHT = mapHeightInTiles * tileHeightInPixel;
 	public static final int WIDTH = mapWidthInTiles * tileWidthInPixel;
 	
@@ -20,6 +22,7 @@ public abstract class Pitch implements Disposable, FootballDimensions {
 	private float friction;
 	
 	public Pitch(String fileName, float friction) {
+		Gdx.app.log("Pitch", "Load tile map " + fileName);
 		tiledMap = new TmxMapLoader().load(fileName);
 		this.friction = friction;
 	}

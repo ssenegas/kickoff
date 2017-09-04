@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
+import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.screens.Match;
 
 public class Scanner implements FootballDimensions {
@@ -30,6 +31,7 @@ public class Scanner implements FootballDimensions {
 		//batch.end();
 		
 		float ratio = (float) (ZOOM[zoomFactor] / PITCH_WIDTH_IN_PX);
+		//Gdx.app.log("Scanner", "graphics.getHeight " + Gdx.graphics.getHeight());
 		origin.y = Gdx.graphics.getHeight() - 26 - (float)PITCH_HEIGHT_IN_PX * ratio;
 		
 		Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -119,8 +121,8 @@ public class Scanner implements FootballDimensions {
 		shapeRenderer.begin(ShapeType.Filled);	
 		// Ball position
 		shapeRenderer.setColor(new Color(1.0f, 1.0f, 1.0f, 0.6f));
-		shapeRenderer.circle((float)(origin.x + (match.ball.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
-				             (float)(origin.y + (match.ball.getPosition().y - OUTER_TOP_EDGE_Y ) * ratio), 3);
+		shapeRenderer.circle((float)(origin.x + (match.ball().getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
+				             (float)(origin.y + (match.ball().getPosition().y - OUTER_TOP_EDGE_Y ) * ratio), 3);
 /*		shapeRenderer.line( (float)(origin.x + (match.ball.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
 				(float)(origin.y + (match.ball.getPosition().y - OUTER_TOP_EDGE_Y ) * ratio),
 				(float)(origin.x + 1 + (match.ball.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),  // + 1 for width
@@ -128,8 +130,9 @@ public class Scanner implements FootballDimensions {
 		
 		// Player position
 		shapeRenderer.setColor(new Color(1.0f, 0, 0, 0.6f));
-		shapeRenderer.circle((float)(origin.x + (match.player.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
-				             (float)(origin.y + (match.player.getPosition().y - OUTER_TOP_EDGE_Y ) * ratio), 5);
+		for (Player player : match.teamA().members())
+			shapeRenderer.circle((float)(origin.x + (player.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
+				             (float)(origin.y + (player.getPosition().y - OUTER_TOP_EDGE_Y ) * ratio), 5);
 /*		shapeRenderer.line( (float)(origin.x + (match.player.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
 				(float)(origin.y + (match.player.getPosition().y - OUTER_TOP_EDGE_Y ) * ratio),
 				(float)(origin.x + 1 + (match.player.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),  // + 1 for width
@@ -142,22 +145,22 @@ public class Scanner implements FootballDimensions {
 	
 	public void switchVisible()
 	{
-		isVisible=!isVisible;
+		isVisible =! isVisible;
 	}
 
 	public void switchViewport()
 	{
-		isViewportVisible=!isViewportVisible;
+		isViewportVisible =! isViewportVisible;
 	}
 
 	public void switchMode()
 	{
-		defaultMode=!defaultMode;
+		defaultMode =! defaultMode;
 	}
 
 	public void toggleZoom()
 	{
 		zoomFactor++;
-		zoomFactor=zoomFactor%(ZOOM.length);
+		zoomFactor = zoomFactor % (ZOOM.length);
 	}
 }
