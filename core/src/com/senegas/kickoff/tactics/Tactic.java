@@ -144,21 +144,21 @@ public class Tactic {
 		_shapeRenderer.begin(ShapeType.Filled);
 		_shapeRenderer.setColor(new Color(0.8f, 0, 0, 0.2f));
 
-		for (Location index : Location.values()) {
-			if (index.ordinal() > Location.area12.ordinal())
+		for (Location location : Location.values()) {
+			if (location.ordinal() > Location.area12.ordinal())
 				break;
 			
-			Rectangle region = _regions.get(index.ordinal());
+			Rectangle region = _regions.get(location.ordinal());
 			
 			Vector2 ballLocation = PitchUtils.globalToPitch(ball.getPosition().x, ball.getPosition().y);
 			if (region.contains(ballLocation.x, ballLocation.y)) {
 				Vector2 regionLocation = PitchUtils.pitchToGlobal(region.x, region.y);
 				_shapeRenderer.rect(regionLocation.x, regionLocation.y, region.width, region.height);
 				
-				// draw player location for the location id
+				// draw player location
 				for (ObjectMap<Location, Vector2> playerLocations : _playersLocations) {
 					_shapeRenderer.setColor(new Color(1.0f, 0.5f, 0, 0.4f));
-					Vector2 playerLocation = PitchUtils.pitchToGlobal(playerLocations.get(index).x, playerLocations.get(index).y);
+					Vector2 playerLocation = PitchUtils.pitchToGlobal(playerLocations.get(location).x, playerLocations.get(location).y);
 					_shapeRenderer.circle(playerLocation.x, playerLocation.y, 8);
 				}
 			}	

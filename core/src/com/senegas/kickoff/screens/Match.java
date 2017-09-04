@@ -16,11 +16,12 @@ import com.senegas.kickoff.entities.Team;
 import com.senegas.kickoff.pitches.ClassicPitch;
 import com.senegas.kickoff.pitches.FootballDimensions;
 import com.senegas.kickoff.pitches.Pitch;
+import com.senegas.kickoff.pitches.PlayerManagerPitch;
 import com.senegas.kickoff.pitches.Scanner;
 
 public class Match implements Screen {
 	private OrthogonalTiledMapRenderer renderer;
-    public OrthographicCamera camera;
+    private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
     private BitmapFont font;
 	private SpriteBatch batch;
@@ -38,7 +39,7 @@ public class Match implements Screen {
 	
 	@Override
 	public void show() {
-		pitch = new ClassicPitch();
+		pitch = new PlayerManagerPitch();
 		renderer = new OrthogonalTiledMapRenderer(pitch.getTiledMap());
         camera = new OrthographicCamera();
         shapeRenderer = new ShapeRenderer();
@@ -118,13 +119,14 @@ public class Match implements Screen {
 	}
 	
 	private void checkCollisions() {
-		Player player = teamA.members().get(0);
-		
-		if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
-			if (ball.getPosition().z < player.height()/FootballDimensions.CM_PER_PIXEL) { //!Reimp move constant elsewhere
-				//System.out.format("collide%n");
-				ball.dribble(player.speed() * 1.125f + 30.0f, player.getDirection());
-			}
+		for (Player player : teamA.members())
+		{	
+			if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
+				if (ball.getPosition().z < player.height()/FootballDimensions.CM_PER_PIXEL) { //!Reimp move constant elsewhere
+					//System.out.format("collide%n");
+					ball.dribble(player.speed() * 1.125f + 30.0f, player.getDirection());
+				}
+			}	
 		}
 	}
 
