@@ -17,7 +17,6 @@ import com.badlogic.gdx.utils.XmlReader.Element;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Team;
 import com.senegas.kickoff.pitches.Pitch;
-import com.senegas.kickoff.screens.Match;
 import com.senegas.kickoff.utils.PitchUtils;
 
 public class Tactic {
@@ -118,17 +117,17 @@ public class Tactic {
 	{
 		Vector2 ballLocation = PitchUtils.globalToPitch(ball.getPosition().x, ball.getPosition().y);
 		
-		for (Location index : Location.values()) { // loop on each location
-			if (index.ordinal() > Location.area12.ordinal())
+		for (Location location : Location.values()) { // loop on each location
+			if (location.ordinal() > Location.area12.ordinal())
 				break;
 			
-			Rectangle region = _regions.get(index.ordinal()); // get the region for location index
+			Rectangle region = _regions.get(location.ordinal()); // get the region for location index
 			
 			if (region.contains(ballLocation.x, ballLocation.y)) {
-				for (int i = 0; i < 10; i++) {
-					Vector2 playerLocation = PitchUtils.pitchToGlobal(_playersLocations.get(i).get(index).x,
-                                                                      _playersLocations.get(i).get(index).y);
-					_team.members().get(i).moveTo(playerLocation);
+				for (int playerIndex = 0; playerIndex < 10; playerIndex++) {
+					Vector2 playerLocation = PitchUtils.pitchToGlobal(_playersLocations.get(playerIndex).get(location).x,
+                                                                      _playersLocations.get(playerIndex).get(location).y);
+					_team.members().get(playerIndex).moveTo(playerLocation);
 				}
 				break; // not needed to check other regions
 			}	
@@ -161,8 +160,6 @@ public class Tactic {
 					_shapeRenderer.setColor(new Color(1.0f, 0.5f, 0, 0.4f));
 					Vector2 playerLocation = PitchUtils.pitchToGlobal(playerLocations.get(index).x, playerLocations.get(index).y);
 					_shapeRenderer.circle(playerLocation.x, playerLocation.y, 8);
-					_shapeRenderer.line(playerLocation.x - 8, playerLocation.y, 0, playerLocation.x + 8, playerLocation.y, 0);
-					_shapeRenderer.line(playerLocation.x, playerLocation.y - 8, 0, playerLocation.x, playerLocation.y + 8, 0);
 				}
 			}	
 		}

@@ -1,10 +1,8 @@
 package com.senegas.kickoff.entities;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.XmlReader.Element;
 import com.senegas.kickoff.entities.Player.Direction;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.screens.Match;

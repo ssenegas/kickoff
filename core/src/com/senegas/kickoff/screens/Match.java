@@ -10,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.entities.Team;
@@ -19,8 +17,6 @@ import com.senegas.kickoff.pitches.ClassicPitch;
 import com.senegas.kickoff.pitches.FootballDimensions;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.pitches.Scanner;
-import com.senegas.kickoff.tactics.Tactic;
-import com.senegas.kickoff.utils.PitchUtils;
 
 public class Match implements Screen {
 	private OrthogonalTiledMapRenderer renderer;
@@ -30,17 +26,15 @@ public class Match implements Screen {
 	private SpriteBatch batch;
 	private Pitch pitch;
 	private Ball ball;
-	//public Player player;
 	private Scanner scanner;
-	//private Tactic tactic;
 	private Team teamA;
 	
 	private static final boolean DEBUG = true;
 	
-	private static float angx = 0;
-	private static float angy = 0;
-	private static float incx = 0.001f;
-	private static float incy = 0.0013f;
+//	private static float angx = 0;
+//	private static float angy = 0;
+//	private static float incx = 0.001f;
+//	private static float incy = 0.0013f;
 	
 	@Override
 	public void show() {
@@ -51,12 +45,10 @@ public class Match implements Screen {
         //camera.setToOrtho(true);
         camera.zoom = .45f;
         
-        //player = new Player(Pitch.WIDTH/3, Pitch.HEIGHT/2);
         teamA = new Team(this);
         ball = new Ball((int) (Pitch.PITCH_WIDTH_IN_PX/2 + Pitch.OUTER_TOP_EDGE_X - 8),
         		        (int) (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8), 160);        
         scanner = new Scanner(this);
-        //tactic = new Tactic("tactics/4-3-3.xml");
            
         //cameraController = new OrthoCamController(camera);
 		//Gdx.input.setInputProcessor(player);
@@ -70,7 +62,6 @@ public class Match implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);   
         
-        //tactic.update(this);
         teamA.update(deltaTime);
         ball.update(deltaTime);
         
@@ -98,7 +89,6 @@ public class Match implements Screen {
 		renderer.render();
 		
         renderer.getBatch().begin();
-        //player.draw(renderer.getBatch());
         teamA.draw(renderer.getBatch());
         ball.draw(renderer.getBatch());
         renderer.getBatch().end();
@@ -133,7 +123,7 @@ public class Match implements Screen {
 		if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
 			if (ball.getPosition().z < player.height()/FootballDimensions.CM_PER_PIXEL) { //!Reimp move constant elsewhere
 				//System.out.format("collide%n");
-				ball.dribble(player.speed() * 1.125f + 30.0f, player.getDirection()); // dribble
+				ball.dribble(player.speed() * 1.125f + 30.0f, player.getDirection());
 			}
 		}
 	}
@@ -177,7 +167,6 @@ public class Match implements Screen {
 		teamA.dispose();
 		ball.getTexture().dispose();
 		shapeRenderer.dispose();
-		//tactic.dispose();
 	}
 	
 	private void handleInput() {
@@ -220,10 +209,4 @@ public class Match implements Screen {
 //                	camera.translate(0, 3, 0);
 //        }
 }
-
-//	public Player getPlayer() {
-//		// TODO Auto-generated method stub
-//		return player;
-//	}	
-
 }
