@@ -1,8 +1,5 @@
-# Open Kick Off
-An implementation of Kick Off in Java using lidGDX.
+# Open Kick-Off
 
-![OpenKickOff](http://i.imgur.com/nbDQ3HG.gif)
+Open Kick-Off is a fun rewriting attempt of the cult football game 'Kick Off' designed by Dino Dini and released by Anco for the Amiga and the Atari ST in 1989. It is written in Java with the help of libGDX.
 
-# Authors
-- Sébastien Sénégas - [@Sebas7i3n](https://twitter.com/Sebas7i3n)
-- Thomas Goguet - [@ThomasGoguet](https://twitter.com/ThomasGoguet)
+Goals of this project are simply to have fun while learning new things about all the software technologies involved.
