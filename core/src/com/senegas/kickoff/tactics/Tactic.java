@@ -48,40 +48,50 @@ public class Tactic {
 	private final static float REGION_WIDTH_IN_PX = (float) (Pitch.PITCH_WIDTH_IN_PX / REGION_COLUMNS);
 	private final static float REGION_HEIGHT_IN_PX = (float) (Pitch.PITCH_HEIGHT_IN_PX / REGION_ROWS);
 	
-	private String _name;
-	private Team _team;
-	private Array<ObjectMap<Location, Vector2>> _playersLocations;
-	private Array<Rectangle> _regions;
-	private static ShapeRenderer _shapeRenderer;
+	private static ShapeRenderer shapeRenderer = new ShapeRenderer(); // mainly used for debug purpose
 	
+	private String name;
+	private Team team;
+	private Array<ObjectMap<Location, Vector2>> playersLocations;
+	private Array<Rectangle> regions;
+	
+	/**
+	 * Constructor
+	 * @param team
+	 * @param fileName
+	 */
 	public Tactic(Team team, String fileName) {
-		_team = team;
-		_playersLocations = new Array<ObjectMap<Location, Vector2>>();
-		_regions = new Array<Rectangle>();
-		_shapeRenderer = new ShapeRenderer();
+		this.team = team;
+		this.playersLocations = new Array<ObjectMap<Location, Vector2>>();
+		this.regions = new Array<Rectangle>();
 		
 		createRegions();
 		loadLocations(fileName);
 	}
 
+	/**
+	 * Create the pitch regions
+	 */
 	private void createRegions() {
 		// create pitch regions
 		for (int column = 0; column < REGION_COLUMNS; column++) {
 			for (int row = 0; row < REGION_ROWS; row++) {
-				_regions.add(new Rectangle(column * REGION_WIDTH_IN_PX,
-						                   row * REGION_HEIGHT_IN_PX,
-						                   REGION_WIDTH_IN_PX,
-						                   REGION_HEIGHT_IN_PX));
+				this.regions.add(new Rectangle(column * REGION_WIDTH_IN_PX, row * REGION_HEIGHT_IN_PX,
+						                       REGION_WIDTH_IN_PX, REGION_HEIGHT_IN_PX));
 			}
 		}
 	}
 	
+	/**
+	 * Load player locations from tatic xml file
+	 * @param fileName
+	 */
 	private void loadLocations(String fileName) {
 		try {
 			Element root = new XmlReader().parse(Gdx.files.internal(fileName));
 			
-			_name = root.get("name");
-			Gdx.app.log("Tactic", "Loading " + _name + "...");
+			this.name = root.get("name");
+			Gdx.app.log("Tactic", "Loading " + name + "...");
 			
 			Array<Element> players = root.getChildrenByName("player");
 			for (Element player : players) {
@@ -101,16 +111,19 @@ public class Tactic {
 					//Gdx.app.log("Tactic", locationId + " read");
 				}
 				// add locations
-				_playersLocations.add(locationsMap);
+				this.playersLocations.add(locationsMap);
 			}	
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Get the tactic name
+	 * @return the tactic name
+	 */
 	public String getName() {
-		return _name;
+		return this.name;
 	}
 	
 	public void update(Ball ball)
@@ -121,54 +134,59 @@ public class Tactic {
 			if (location.ordinal() > Location.area12.ordinal())
 				break;
 			
-			Rectangle region = _regions.get(location.ordinal()); // get the region for location index
+			Rectangle region = this.regions.get(location.ordinal()); // get the region for location index
 			
 			if (region.contains(ballLocation.x, ballLocation.y)) {
 				for (int playerIndex = 0; playerIndex < 10; playerIndex++) {
-					Vector2 playerLocation = PitchUtils.pitchToGlobal(_playersLocations.get(playerIndex).get(location).x,
-                                                                      _playersLocations.get(playerIndex).get(location).y);
-					_team.members().get(playerIndex).moveTo(playerLocation);
+					Vector2 playerLocation = PitchUtils.pitchToGlobal(this.playersLocations.get(playerIndex).get(location).x,
+                                                                      this.playersLocations.get(playerIndex).get(location).y);
+					this.team.getPlayers().get(playerIndex).moveTo(playerLocation);
 				}
 				break; // not needed to check other regions
 			}	
 		}
 	}
 	
+	/**
+	 * Debug only method that displays selected region and tatic's player home location
+	 * @param camera
+	 * @param ball
+	 */
 	public void showRegionAndExpectedPlayerLocation(OrthographicCamera camera, Ball ball) {
 		// enable transparency
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		
-		_shapeRenderer.setProjectionMatrix(camera.combined);
+		shapeRenderer.setProjectionMatrix(camera.combined);
 		
-		_shapeRenderer.begin(ShapeType.Filled);
-		_shapeRenderer.setColor(new Color(0.8f, 0, 0, 0.2f));
+		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.setColor(new Color(0.8f, 0, 0, 0.2f));
 
 		for (Location location : Location.values()) {
 			if (location.ordinal() > Location.area12.ordinal())
 				break;
 			
-			Rectangle region = _regions.get(location.ordinal());
+			Rectangle region = this.regions.get(location.ordinal());
 			
 			Vector2 ballLocation = PitchUtils.globalToPitch(ball.getPosition().x, ball.getPosition().y);
 			if (region.contains(ballLocation.x, ballLocation.y)) {
 				Vector2 regionLocation = PitchUtils.pitchToGlobal(region.x, region.y);
-				_shapeRenderer.rect(regionLocation.x, regionLocation.y, region.width, region.height);
+				shapeRenderer.rect(regionLocation.x, regionLocation.y, region.width, region.height);
 				
 				// draw player location
-				for (ObjectMap<Location, Vector2> playerLocations : _playersLocations) {
-					_shapeRenderer.setColor(new Color(1.0f, 0.5f, 0, 0.4f));
+				for (ObjectMap<Location, Vector2> playerLocations : this.playersLocations) {
+					shapeRenderer.setColor(new Color(1.0f, 0.5f, 0, 0.4f));
 					Vector2 playerLocation = PitchUtils.pitchToGlobal(playerLocations.get(location).x, playerLocations.get(location).y);
-					_shapeRenderer.circle(playerLocation.x, playerLocation.y, 8);
+					shapeRenderer.circle(playerLocation.x, playerLocation.y, 8);
 				}
 			}	
 		}
 		
-		_shapeRenderer.end();
+		shapeRenderer.end();
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 	
 	public void dispose() {
-		_shapeRenderer.dispose();
+		shapeRenderer.dispose();
 	}
 }

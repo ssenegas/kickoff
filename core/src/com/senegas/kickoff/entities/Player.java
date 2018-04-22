@@ -22,10 +22,10 @@ public class Player implements InputProcessor {
 //	public static final int NORTH_WEST = 7;
 //	public static final int NONE = 8;
 	
-	enum Direction { NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST, NONE };
+	public enum Direction { NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST, NONE }; // create an enum outside
 	
-	private final int spriteWIDTH = 16;
-	private final int spriteHEIGHT = 16;
+	private final static int SPRITE_WIDTH = 16;
+	private final static int SPRITE_HEIGHT = 16;
 	
 	private Vector3 position;
 	private Vector3 velocity;
@@ -52,14 +52,23 @@ public class Player implements InputProcessor {
 			                                    new Vector2(0.707f, 0.707f),
 			                                    new Vector2(0, 0) };
 	
+	/**
+	 * Constructor
+	 * @param x x-axis position
+	 * @param y y-axis position
+	 */
 	public Player(int x, int y) {
 		position = new Vector3(x, y, 0);
 		velocity = new Vector3(0, 0, 0);
 		texture = new Texture("entities/style1a.png");
-		frames = TextureRegion.split(texture, spriteWIDTH, spriteHEIGHT);
-		bounds = new Circle(position.x, position.y, spriteWIDTH/2);
+		frames = TextureRegion.split(texture, SPRITE_WIDTH, SPRITE_HEIGHT);
+		bounds = new Circle(position.x, position.y, SPRITE_WIDTH/2);
 	}
 	
+	/**
+	 * Update the position and animation frame
+	 * @param deltaTime The time in seconds since the last render.
+	 */
 	public void update(float deltaTime) {			
 		if (direction != Direction.NONE) {			
 			// update animation
@@ -99,6 +108,10 @@ public class Player implements InputProcessor {
 //		}
 	}
 	
+	/**
+	 * Draw the player frame into the batch at his current position
+	 * @param batch the batch
+	 */
 	public void draw(Batch batch) {
 //		System.out.format("runningFrame: %d%n", currentFrame);
 //		System.out.format("currentFrameAnimationRow: %d currentFrameAnimationColumn: %d%n", currentFrameAnimationRow, currentFrameAnimationColumn);
@@ -109,10 +122,18 @@ public class Player implements InputProcessor {
 		batch.draw(frames[currentFrameAnimationRow][currentFrameAnimationColumn], position.x, position.y);
 	}
 	
+	/**
+	 * The player boundaries used to check collision
+	 * @return Circle
+	 */
 	public Circle getBounds() {
 		return bounds;
 	}
 	
+	/**
+	 * Move the player to destination position
+	 * @param destination
+	 */
 	public void moveTo(Vector2 destination)
 	{
 		Vector2 start = new Vector2(position.x, position.y);
@@ -186,6 +207,10 @@ public class Player implements InputProcessor {
 //		}
 //	}
 	
+	/**
+	 * Get the player position
+	 * @return the Vector3 player position
+	 */
 	public Vector3 getPosition() {
 		return position;
 	}
@@ -230,6 +255,9 @@ public class Player implements InputProcessor {
             return true;
     }
     
+    /**
+     * Update the player direction according to its velocity
+     */
 	private void updateDirection() {
 		if (velocity.y > 0) {
 			if (velocity.x < 0) {

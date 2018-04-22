@@ -13,14 +13,14 @@ public class Ball {
 	/** ball mass (kg)<br>
 	 * <a href="http://www.fifa.com/">FIFA.com</a> says: <em>not more than 450 g in weight and not less than 410 g</em>
 	 */
-	public static final float massInGramms = 0.430f;
+	public static final float MASS_IN_GRAMMS = 0.430f;
 	/** air resistance term */
-	public static final float drag = 0.350f;
+	public static final float DRAG = 0.350f;
 	/** bounce angle factor (must be less that 1) */
 	public static final float BOUNCE_SPEED_FACTOR = 0.6f;
 	
-	private final int spriteWIDTH = 16;
-	private final int spriteHEIGHT = 16;
+	private final static int SPRITE_WIDTH = 16;
+	private final static int SPRITE_HEIGHT = 16;
 	
 	private Vector3 position;
 	private Vector3 velocity;
@@ -32,24 +32,31 @@ public class Ball {
 	private int runningFrameAnimation[] = { 0, 1, 1, 0 };
 	private int frameCount = 4;	
 	private int currentFrame = 0;
-	private float z;
 	private float speed = 0;
+	private Player owner = null;
 	
 	/** In order to save calculation time, M/K is precalculated */
 	//private static final double	M_K = M/K;
 	/** In order to save calculation time, K/M is precalculated */
-	private static final float	K_M = drag/massInGramms;
+	private static final float	K_M = DRAG / MASS_IN_GRAMMS;
 	/** In order to save calculation time, MG/K is precalculated */
-	private static final float	MG_K = massInGramms*GRAVITY/drag;		
+	private static final float	MG_K = MASS_IN_GRAMMS * GRAVITY / DRAG;		
 	
-	public Ball(int x, int y, int z) {
-		position = new Vector3(x, y, z);
+	/**
+	 * Constructor
+	 * @param pos position of the ball
+	 */
+	public Ball(Vector3 pos) {
+		position = pos;
 		velocity = new Vector3(0, 0, 0);
 		texture = new Texture("entities/ball.png");
-		frames = TextureRegion.split(texture, spriteWIDTH, spriteHEIGHT);
+		frames = TextureRegion.split(texture, SPRITE_WIDTH, SPRITE_HEIGHT);
 	}
-
 	
+	/**
+	 * Draw the ball and shadow animations
+	 * @param batch
+	 */
 	public void draw(Batch batch) {
 
 		//System.out.format("currentFrame: %d%n", currentFrame);
@@ -80,6 +87,10 @@ public class Ball {
 		}
 	}
 	
+	/**
+	 * Update the ball's position and velocity
+	 * @param deltaTime
+	 */
 	public void update(float deltaTime) {
 		velocity.x -= (K_M * velocity.x) * deltaTime;
 		velocity.y -= (K_M * velocity.y) * deltaTime;	
@@ -102,7 +113,12 @@ public class Ball {
 		velocity.scl(1/deltaTime);		
 	}
 	
-	public void dribble(float speed, int angleDir) {
+	/**
+	 * Apply a force to the ball
+	 * @param speed
+	 * @param angleDir
+	 */
+	public void applyForce(float speed, int angleDir) {
 		float angle[] = {0, 45, 90, 135, 180, 225, 270, 315 }; //!Reimp
 		
 		if (angleDir >= 8)
@@ -115,7 +131,7 @@ public class Ball {
 		
 		// convert degrees to radians
 		// libdgx rotation happens in a clockwise direction, but in mathematics it goes counterclockwise
-		// to overcome differences we add 90 degrees
+		// to overcome differences add 90 degrees
 		double radians = MathUtils.degRad * (90.0f - angle[angleDir]);
 		
 		float ballSpeed = speed;
@@ -125,20 +141,41 @@ public class Ball {
 		velocity.z = 80;
 	}
 	
+	/**
+	 * Get the ball's position
+	 * @return the ball's position
+	 */
 	public Vector3 getPosition() {
 		return position;
 	}
 	
+	/**
+	 * Set the ball's position
+	 * @param position
+	 */
 	public void setPosition(Vector3 position) {
 		this.position = position;
 	}
 	
+	/**
+	 * Get the ball's velocity
+	 * @return the ball's velocity
+	 */
 	public Vector3 getVelocity() {
 		return velocity;
 	}
 	
+	/**
+	 * Set the ball's velocity
+	 * @param velocity
+	 */
 	public void setVelocity(Vector3 velocity) {
 		this.velocity = velocity;
+	}
+	
+	public void trap(Player player) { //!Reimp move to player class
+		velocity = Vector3.Zero;
+		owner = player;
 	}
 	
     public Texture getTexture() {

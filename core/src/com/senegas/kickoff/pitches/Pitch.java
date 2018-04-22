@@ -11,27 +11,40 @@ public abstract class Pitch implements Disposable, FootballDimensions {
 		CLASSIC, WET, SOGGY, ARTIFICIAL, PLAYERMANAGER
 	}
 	
-	public final static int mapWidthInTiles = 80;
-	public final static int mapHeightInTiles = 96;	
-	public static final int tileWidthInPixel = 16;
-    public static final int  tileHeightInPixel = 16;
-	public static final int HEIGHT = mapHeightInTiles * tileHeightInPixel;
-	public static final int WIDTH = mapWidthInTiles * tileWidthInPixel;
+	public final static int MAP_WIDTH_IN_TILE = 80;
+	public final static int MAP_HEIGHT_IN_TILE = 96;	
+	public static final int TILE_WIDTH_IN_PIXEL = 16;
+    public static final int  TILE_HEIGHT_IN_PIXEL = 16;
+	public static final int HEIGHT = MAP_HEIGHT_IN_TILE * TILE_HEIGHT_IN_PIXEL;
+	public static final int WIDTH = MAP_WIDTH_IN_TILE * TILE_WIDTH_IN_PIXEL;
 	
 	private TiledMap tiledMap;
 	private float friction;
 	
+	/**
+	 * Constructor
+	 * @param fileName the tile map file name
+	 * @param friction the friction coefficient
+	 */
 	public Pitch(String fileName, float friction) {
 		Gdx.app.log("Pitch", "Load tile map " + fileName);
 		tiledMap = new TmxMapLoader().load(fileName);
 		this.friction = friction;
 	}
 	
+	/**
+	 * Get the tiled map
+	 * @return TiledMap
+	 */
 	public TiledMap getTiledMap() {
 		return tiledMap;
 	}
 	
-	public float friction()
+	/**
+	 * Get the friction coefficient
+	 * @return float
+	 */
+	public float getFriction()
 	{
 		return friction;
 	}

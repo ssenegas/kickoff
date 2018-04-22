@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.entities.Team;
@@ -39,16 +40,17 @@ public class Match implements Screen {
 	
 	@Override
 	public void show() {
-		pitch = new PlayerManagerPitch();
+		pitch = new ClassicPitch();
 		renderer = new OrthogonalTiledMapRenderer(pitch.getTiledMap());
         camera = new OrthographicCamera();
         shapeRenderer = new ShapeRenderer();
         //camera.setToOrtho(true);
         camera.zoom = .45f;
         
-        teamA = new Team(this);
-        ball = new Ball((int) (Pitch.PITCH_WIDTH_IN_PX/2 + Pitch.OUTER_TOP_EDGE_X - 8),
-        		        (int) (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8), 160);        
+        teamA = new Team(this, "TeamA");
+        ball = new Ball(new Vector3((int) (Pitch.PITCH_WIDTH_IN_PX/2 + Pitch.OUTER_TOP_EDGE_X - 8),
+        		                    (int) (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8),
+        		                    160));        
         scanner = new Scanner(this);
            
         //cameraController = new OrthoCamController(camera);
@@ -98,10 +100,10 @@ public class Match implements Screen {
         
         if (DEBUG)
         {
-			teamA.tactic().showRegionAndExpectedPlayerLocation(camera, ball);
+			teamA.getTactic().showRegionAndExpectedPlayerLocation(camera, ball);
 
 			// debug information
-			Player player = teamA.members().get(0);
+			Player player = teamA.getPlayers().get(0);
 			batch.begin();
 			font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
 			font.draw(batch, "Player: " +
@@ -118,13 +120,14 @@ public class Match implements Screen {
 		handleInput();
 	}
 	
+	/**
+	 * Check collisions between players and the ball
+	 */
 	private void checkCollisions() {
-		for (Player player : teamA.members())
-		{	
+		for (Player player : teamA.getPlayers()) {	
 			if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
 				if (ball.getPosition().z < player.height()/FootballDimensions.CM_PER_PIXEL) { //!Reimp move constant elsewhere
-					//System.out.format("collide%n");
-					ball.dribble(player.speed() * 1.125f + 30.0f, player.getDirection());
+					ball.applyForce(player.speed() * 1.125f + 30.0f, player.getDirection());
 				}
 			}	
 		}
@@ -179,16 +182,16 @@ public class Match implements Screen {
         	camera.zoom -= 0.02;
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-        	ball.dribble(400, 6);
+        	ball.applyForce(400, 6);
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-        	ball.dribble(400, 2);
+        	ball.applyForce(400, 2);
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-        	ball.dribble(400, 0);
+        	ball.applyForce(400, 0);
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.X)) {
-        	ball.dribble(400, 4);
+        	ball.applyForce(400, 4);
         }    
         // handle scanner zoom
         if(Gdx.input.isKeyJustPressed(Input.Keys.A)) {
