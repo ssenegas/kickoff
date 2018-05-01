@@ -96,7 +96,11 @@ public class Tactic {
 		this.regions = new Array<Rectangle>();
 		
 		createRegions();
-		loadFromXml(fileName);
+		try {
+			loadFromXml(fileName);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -113,36 +117,33 @@ public class Tactic {
 	}
 	
 	/**
-	 * Load player locations from tatic xml file
+	 * Load player locations from tactic xml file
 	 * @param fileName
+	 * @throws IOException 
 	 */
-	private void loadFromXml(String fileName) {
-		try {
-			Element root = new XmlReader().parse(Gdx.files.internal(fileName));
-			
-			this.name = root.get("name");
-			Gdx.app.log("Tactic", "Loading " + name + "...");
-			
-			Array<Element> players = root.getChildrenByName("player");
-			int playerIndex = 0;
-			for (Element player : players) {
-				//int shirt = player.getInt("shirt"); // shirt number
-				//Gdx.app.log("Tactic", "Location for player number " + shirt);
-				
-				// regions
-				Array<Element> regions = player.getChildrenByName("region");
-				for (Element region : regions) {
-					String regionName = region.get("name"); // region name
-					
-					this.locations[playerIndex][Location.valueOf(regionName).ordinal()] = new Vector2(region.getFloat("x"), region.getFloat("y"));
+	private void loadFromXml(String fileName) throws IOException {
+		Element root = new XmlReader().parse(Gdx.files.internal(fileName));
 
-					//Gdx.app.log("Tactic", locationId + " read");
-				}
-				playerIndex++;
-			}	
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.name = root.get("name");
+		Gdx.app.log("Tactic", "Loading " + name + "...");
+
+		Array<Element> players = root.getChildrenByName("player");
+		int playerIndex = 0;
+		for (Element player : players) {
+			//int shirt = player.getInt("shirt"); // shirt number
+			//Gdx.app.log("Tactic", "Location for player number " + shirt);
+
+			// regions
+			Array<Element> regions = player.getChildrenByName("region");
+			for (Element region : regions) {
+				String regionName = region.get("name"); // region name
+
+				this.locations[playerIndex][Location.valueOf(regionName).ordinal()] = new Vector2(region.getFloat("x"), region.getFloat("y"));
+
+				//Gdx.app.log("Tactic", locationId + " read");
+			}
+			playerIndex++;
+		}	
 	}
 	
 	/**
@@ -156,7 +157,7 @@ public class Tactic {
 	public void update(Ball ball)
 	{
 		int regionIndex = getRegionIndex(ball, this.team);
-		Gdx.app.log("Tactic", "region index: " + regionIndex);
+		//Gdx.app.log("Tactic", "region index: " + regionIndex);
 		for (int playerIndex = 0; playerIndex < 10; playerIndex++) {
 			Vector2 playerLocation = PitchUtils.pitchToGlobal(
 					team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].x : (float)Pitch.PITCH_WIDTH_IN_PX - locations[playerIndex][regionIndex].x,
