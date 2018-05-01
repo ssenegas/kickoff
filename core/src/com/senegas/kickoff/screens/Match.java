@@ -10,16 +10,25 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.entities.Team;
+import com.senegas.kickoff.entities.Player.Direction;
 import com.senegas.kickoff.pitches.ClassicPitch;
 import com.senegas.kickoff.pitches.FootballDimensions;
 import com.senegas.kickoff.pitches.Pitch;
+import com.senegas.kickoff.pitches.PitchFactory;
 import com.senegas.kickoff.pitches.PlayerManagerPitch;
 import com.senegas.kickoff.pitches.Scanner;
+import com.senegas.kickoff.utils.PitchUtils;
 
+/**
+ * Match
+ * @author Sébastien Sénégas
+ *
+ */
 public class Match implements Screen {
 	private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
@@ -30,6 +39,7 @@ public class Match implements Screen {
 	private Ball ball;
 	private Scanner scanner;
 	private Team teamA;
+	private Team teamB;
 	
 	private static final boolean DEBUG = true;
 	
@@ -40,16 +50,18 @@ public class Match implements Screen {
 	
 	@Override
 	public void show() {
-		pitch = new ClassicPitch();
+		new PitchFactory();
+		pitch = PitchFactory.make(Pitch.Type.PLAYERMANAGER);
 		renderer = new OrthogonalTiledMapRenderer(pitch.getTiledMap());
         camera = new OrthographicCamera();
         shapeRenderer = new ShapeRenderer();
         //camera.setToOrtho(true);
         camera.zoom = .45f;
         
-        teamA = new Team(this, "TeamA");
-        ball = new Ball(new Vector3((int) (Pitch.PITCH_WIDTH_IN_PX/2 + Pitch.OUTER_TOP_EDGE_X - 8),
-        		                    (int) (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8),
+        teamA = new Team(this, "TeamA", Direction.NORTH);
+        teamB = new Team(this, "TeamB", Direction.SOUTH);
+        ball = new Ball(new Vector3((int) (Pitch.PITCH_WIDTH_IN_PX/2 + Pitch.OUTER_TOP_EDGE_X),
+        		                    (int) (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 16),
         		                    160));        
         scanner = new Scanner(this);
            
@@ -66,6 +78,7 @@ public class Match implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);   
         
         teamA.update(deltaTime);
+        teamB.update(deltaTime);
         ball.update(deltaTime);
         
         checkCollisions();
@@ -93,6 +106,7 @@ public class Match implements Screen {
 		
         renderer.getBatch().begin();
         teamA.draw(renderer.getBatch());
+        teamB.draw(renderer.getBatch());
         ball.draw(renderer.getBatch());
         renderer.getBatch().end();
 		
@@ -101,7 +115,10 @@ public class Match implements Screen {
         if (DEBUG)
         {
 			teamA.getTactic().showRegionAndExpectedPlayerLocation(camera, ball);
-
+			for (Player player : teamA.getPlayers())
+				player.showBounds(camera);
+			ball.showPosition(camera);
+			
 			// debug information
 			Player player = teamA.getPlayers().get(0);
 			batch.begin();
@@ -109,9 +126,12 @@ public class Match implements Screen {
 			font.draw(batch, "Player: " +
 					          (int) player.getPosition().x + ", " +
 					          (int) player.getPosition().y, 10, 40);
+			
+			Vector2 ballLocation = PitchUtils.globalToPitch(ball.getPosition().x, ball.getPosition().y);
+			
 			font.draw(batch, "Ball: " +
-					         (int) ball.getPosition().x + ", " +
-					         (int) ball.getPosition().y + ", " +
+					         (int) ballLocation.x + ", " +
+					         (int) ballLocation.y + ", " +
 					         (int) ball.getPosition().z, 10, 60);
 			//font.draw(batch, tactic.getName(), 10, 80);
 			batch.end();
@@ -143,6 +163,10 @@ public class Match implements Screen {
 		return teamA;
 	}
 	
+	public Team teamB() {
+		return teamB;
+	}
+	
 	public Ball ball()
 	{
 		return ball;
@@ -170,6 +194,8 @@ public class Match implements Screen {
 		renderer.dispose();
 		pitch.dispose();
 		teamA.dispose();
+		teamB.dispose();
+		ball.dispose();
 		ball.getTexture().dispose();
 		shapeRenderer.dispose();
 	}

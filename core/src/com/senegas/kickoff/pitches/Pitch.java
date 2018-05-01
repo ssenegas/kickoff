@@ -5,9 +5,14 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Disposable;
 
+/**
+ * base class for Pitch
+ * @author Sébastien Sénégas
+ *
+ */
 public abstract class Pitch implements Disposable, FootballDimensions {
 	
-	public enum PitchType {
+	public enum Type {
 		CLASSIC, WET, SOGGY, ARTIFICIAL, PLAYERMANAGER
 	}
 	

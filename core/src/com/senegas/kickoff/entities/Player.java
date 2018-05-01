@@ -1,14 +1,25 @@
 package com.senegas.kickoff.entities;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+/**
+ * Player entity class
+ * @author Sébastien Sénégas
+ *
+ */
 public class Player implements InputProcessor {
 
 	/** Player constant direction */
@@ -52,15 +63,17 @@ public class Player implements InputProcessor {
 			                                    new Vector2(0.707f, 0.707f),
 			                                    new Vector2(0, 0) };
 	
+	private ShapeRenderer shapeRenderer = new ShapeRenderer(); // mainly used for debug purpose
+	
 	/**
 	 * Constructor
 	 * @param x x-axis position
 	 * @param y y-axis position
 	 */
-	public Player(int x, int y) {
+	public Player(int x, int y, Texture texture) {
 		position = new Vector3(x, y, 0);
 		velocity = new Vector3(0, 0, 0);
-		texture = new Texture("entities/style1a.png");
+		this.texture = texture;
 		frames = TextureRegion.split(texture, SPRITE_WIDTH, SPRITE_HEIGHT);
 		bounds = new Circle(position.x, position.y, SPRITE_WIDTH/2);
 	}
@@ -119,7 +132,22 @@ public class Player implements InputProcessor {
 //		System.out.format("directionCoefficients[direction].y %f%n", directionCoefficients[direction].y);
 	    
 		// draw the frame
-		batch.draw(frames[currentFrameAnimationRow][currentFrameAnimationColumn], position.x, position.y);
+		batch.draw(frames[currentFrameAnimationRow][currentFrameAnimationColumn], position.x - SPRITE_WIDTH/2, position.y - SPRITE_HEIGHT/2);
+	}
+	
+	public void showBounds(OrthographicCamera camera) {
+		// enable transparency
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		
+		shapeRenderer.setProjectionMatrix(camera.combined);
+		
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(new Color(0, 0, 0, 0.5f));
+		shapeRenderer.circle(bounds.x, bounds.y, bounds.radius);
+		shapeRenderer.end();
+		
+		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 	
 	/**
@@ -336,5 +364,9 @@ public class Player implements InputProcessor {
 
 	public void setSpeed(float speed) {
 		this.speed = speed;
+	}
+	
+	public void dispose() {
+		shapeRenderer.dispose();
 	}
 }

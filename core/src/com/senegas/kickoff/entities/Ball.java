@@ -1,11 +1,22 @@
 package com.senegas.kickoff.entities;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 
+/**
+ * Ball entity class
+ * @author Sébastien Sénégas
+ *
+ */
 public class Ball {
 
 	/** acceleration constant (m/s^2) */
@@ -42,6 +53,8 @@ public class Ball {
 	/** In order to save calculation time, MG/K is precalculated */
 	private static final float	MG_K = MASS_IN_GRAMMS * GRAVITY / DRAG;		
 	
+	private static ShapeRenderer shapeRenderer = new ShapeRenderer(); // mainly used for debug purpose
+	
 	/**
 	 * Constructor
 	 * @param pos position of the ball
@@ -72,19 +85,35 @@ public class Ball {
 			//low ball, sprite contained in shadow
 			scry += position.z / 2;
 			if (currentFrame >= 0 && currentFrame < 8) {
-				batch.draw(frames[0][currentFrame], scrx, scry);
+				batch.draw(frames[0][currentFrame], scrx - SPRITE_WIDTH/2, scry - SPRITE_HEIGHT/2);
 			}
 		}
 		else {
 			//draw shadow
 			int shadowFrame = 8;
-			batch.draw(frames[0][shadowFrame], shadx, shady);
+			batch.draw(frames[0][shadowFrame], shadx - SPRITE_WIDTH/2, shady - SPRITE_HEIGHT/2);
 			//draw ball
 			scry += (position.z / 2);
 			currentFrame = (int) Math.min(3, position.z/32);
 			int ballFrame = currentFrame + 4;
-			batch.draw(frames[0][ballFrame], scrx, scry);
+			batch.draw(frames[0][ballFrame], scrx - SPRITE_WIDTH/2, scry - SPRITE_HEIGHT/2);
 		}
+	}
+	
+	public void showPosition(OrthographicCamera camera) {
+		// enable transparency
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		
+		shapeRenderer.setProjectionMatrix(camera.combined);
+		
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(new Color(0, 0, 0, 0.5f));
+		shapeRenderer.line(position.x - SPRITE_WIDTH/2, position.y, position.x + SPRITE_WIDTH/2, position.y);
+		shapeRenderer.line(position.x, position.y - SPRITE_HEIGHT/2, position.x, position.y + SPRITE_HEIGHT/2);
+		shapeRenderer.end();
+		
+		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 	
 	/**
@@ -180,6 +209,10 @@ public class Ball {
 	
     public Texture getTexture() {
     	return texture;
-    }	
+    }
+    
+    public void dispose() {
+		shapeRenderer.dispose();
+	}
 }
 

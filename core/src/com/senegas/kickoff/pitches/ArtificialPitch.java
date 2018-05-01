@@ -1,8 +1,8 @@
 package com.senegas.kickoff.pitches;
 
-public class SyntheticPitch extends Pitch {
+public class ArtificialPitch extends Pitch {
 
-	public SyntheticPitch() {
+	public ArtificialPitch() {
 		super("pitches/synthetic.tmx", 0.975f );
 	}
 

@@ -5,8 +5,8 @@ public interface FootballDimensions {
 	/* 1 foot -> 12 inches -> 30.48 cm */
 	/** Meter to pixel ratio 1px = 3 inches = 7,62 cm = 0.0762 m (Magic number that
 	 * fits with original Kick Off graphics) */
-	public static final double  METER_PER_PIXEL = 0.0762;
-	public static final double  CM_PER_PIXEL = 7.62;
+	public static final double METER_PER_PIXEL = 0.0762;
+	public static final double CM_PER_PIXEL = 7.62;
 
 	public final static int OUTER_TOP_EDGE_X = 176;
 	public final static int OUTER_TOP_EDGE_Y = 64;
