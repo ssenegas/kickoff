@@ -7,7 +7,7 @@ import com.senegas.kickoff.screens.Match;
 public class KickOff extends Game {
 	
 	public static final String TITLE = "OpenKickOff";
-	public static final String VERSION = "0.2";
+	public static final String VERSION = "0.3";
 	
 	@Override
 	public void create () {
