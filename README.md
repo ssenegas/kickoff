@@ -4,4 +4,4 @@ Open Kick-Off is a fun rewriting attempt of the cult football game 'Kick Off' de
 
 Goals of this project are simply to have fun while learning new things about all the software technologies involved.
 
-![snapshot](https://user-images.githubusercontent.com/9662172/38833583-3a1841e8-41c6-11e8-9c12-465b9fa93e65.PNG)
+![snapshot2](https://user-images.githubusercontent.com/9662172/39470980-0051a248-4d41-11e8-9a60-182320e25b57.PNG)
