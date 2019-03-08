@@ -4,4 +4,7 @@ Open Kick-Off is a fun rewriting attempt of the cult football game 'Kick Off' de
 
 Goals of this project are simply to have fun while learning new things about all the software technologies involved.
 
+Pre-release | [openkickoff-0.3.jar](https://github.com/ssenegas/kickoff/releases/download/v0.3/openkickoff-0.3.jar) | 12.6 MB
+------------|-------------------------------------------------------------------------------------------------------|--------
+
 ![snapshot2](https://user-images.githubusercontent.com/9662172/39470980-0051a248-4d41-11e8-9a60-182320e25b57.PNG)
