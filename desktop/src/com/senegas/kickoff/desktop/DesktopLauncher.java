@@ -9,7 +9,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = KickOff.TITLE + " v" + KickOff.VERSION;
 		config.vSyncEnabled = true;
-		//config.useGL30 = true;
+		config.useGL30 = true;
 		config.width = 1280;
 		config.height = 720;
 		new LwjglApplication(new KickOff(), config);
