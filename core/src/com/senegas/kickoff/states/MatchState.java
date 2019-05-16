@@ -1,10 +1,7 @@
 package com.senegas.kickoff.states;
 
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
@@ -88,8 +85,8 @@ public enum MatchState implements State<Match> {
         public boolean onMessage (Match match, Telegram telegram){
             return false;
         }
-    }
-    ,
+    },
+
     INPLAY() {
         @Override
         public void enter (Match match){

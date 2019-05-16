@@ -1,7 +1,5 @@
 package com.senegas.kickoff.tactics;
 
-import java.io.IOException;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,6 +18,8 @@ import com.senegas.kickoff.entities.Player.Direction;
 import com.senegas.kickoff.entities.Team;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.utils.PitchUtils;
+
+import java.io.IOException;
 
  /**
  * Any tactic must be a subclass of Tactic

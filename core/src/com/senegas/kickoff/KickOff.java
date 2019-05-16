@@ -1,9 +1,7 @@
 package com.senegas.kickoff;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Version;
 import com.senegas.kickoff.screens.MainMenu;
-import com.senegas.kickoff.screens.Match;
 
 public class KickOff extends Game {
 	
