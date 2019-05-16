@@ -57,10 +57,12 @@ public class Ball {
 	
 	/**
 	 * Constructor
-	 * @param pos position of the ball
+	 * @param x position of the ball
+	 * @param y position of the ball
+	 * @param z position of the ball
 	 */
-	public Ball(Vector3 pos) {
-		position = pos;
+	public Ball(float x, float y, float z) {
+		position = new Vector3(x, y, z);
 		velocity = new Vector3(0, 0, 0);
 		texture = new Texture("entities/ball.png");
 		frames = TextureRegion.split(texture, SPRITE_WIDTH, SPRITE_HEIGHT);

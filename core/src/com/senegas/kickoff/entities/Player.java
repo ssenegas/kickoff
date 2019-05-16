@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.senegas.kickoff.pitches.Pitch;
 
 /**
  * Player entity class
@@ -22,7 +23,8 @@ import com.badlogic.gdx.math.Vector3;
  */
 public class Player implements InputProcessor {
 
-	/** Player constant direction */
+
+    /** Player constant direction */
 //	public static final int NORTH = 0;
 //	public static final int NORTH_EAST = 1;
 //	public static final int EAST = 2;
@@ -32,16 +34,19 @@ public class Player implements InputProcessor {
 //	public static final int WEST = 6;
 //	public static final int NORTH_WEST = 7;
 //	public static final int NONE = 8;
-	
+
 	public enum Direction { NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST, NONE }; // create an enum outside
-	
+
 	private final static int SPRITE_WIDTH = 16;
 	private final static int SPRITE_HEIGHT = 16;
-	
+
 	private Vector3 position;
 	private Vector3 velocity;
 	private Circle bounds;
 	private Direction direction = Direction.NONE;
+    private Vector3 desiredPosition = new Vector3((int) (Pitch.PITCH_WIDTH_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_X),
+                                                (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16),
+                                                0);
 	private float speed = 200f;
 	private int height = 177; // 1m 77
 	private Texture texture;
@@ -71,18 +76,20 @@ public class Player implements InputProcessor {
 	 * @param y y-axis position
 	 */
 	public Player(int x, int y, Texture texture) {
-		position = new Vector3(x, y, 0);
-		velocity = new Vector3(0, 0, 0);
+		this.position = new Vector3(x, y, 0);
+		this.velocity = new Vector3(0, 0, 0);
 		this.texture = texture;
-		frames = TextureRegion.split(texture, SPRITE_WIDTH, SPRITE_HEIGHT);
-		bounds = new Circle(position.x, position.y, SPRITE_WIDTH/2);
+		this.frames = TextureRegion.split(texture, SPRITE_WIDTH, SPRITE_HEIGHT);
+		this.bounds = new Circle(position.x, position.y, SPRITE_WIDTH/2);
 	}
 	
 	/**
 	 * Update the position and animation frame
 	 * @param deltaTime The time in seconds since the last render.
 	 */
-	public void update(float deltaTime) {			
+	public void update(float deltaTime) {
+		moveToDesiredPosition();
+
 		if (direction != Direction.NONE) {			
 			// update animation
 			currentFrameTime += deltaTime;
@@ -157,15 +164,27 @@ public class Player implements InputProcessor {
 	public Circle getBounds() {
 		return bounds;
 	}
+
+    public void setDestination(Vector3 destination) {
+	    this.desiredPosition = new Vector3(destination.x, destination.y, 0);
+    }
+
+    public boolean inPosition()
+    {
+        Vector3 currentDistance = new Vector3(this.position.x, this.position.y, 0);
+        currentDistance.sub(this.desiredPosition);
+
+        if (currentDistance.len() < 2.25) return true;
+        return false;
+    }
 	
 	/**
 	 * Move the player to destination position
-	 * @param destination
 	 */
-	public void moveTo(Vector2 destination)
+	public void moveToDesiredPosition()
 	{
-		Vector2 start = new Vector2(position.x, position.y);
-		float distance = start.dst(destination);
+		Vector3 start = new Vector3(position.x, position.y, 0);
+		float distance = start.dst(desiredPosition);
 		
 		boolean moving = true;
 	    if (distance <= 2)
@@ -177,7 +196,7 @@ public class Player implements InputProcessor {
 		
 		if (moving == true)
 		{
-			velocity.set(destination.x - position.x, destination.y - position.y, 0);
+			velocity.set(desiredPosition.x - position.x, desiredPosition.y - position.y, 0);
 			velocity.nor(); // Normalizes the value to be used
 			
 			float fThreshold = (float) Math.cos(Math.PI / 8);

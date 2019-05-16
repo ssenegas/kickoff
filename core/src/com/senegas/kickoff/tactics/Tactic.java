@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.XmlReader;
@@ -154,17 +155,24 @@ public class Tactic {
 		return this.name;
 	}
 	
-	public void update(Ball ball)
-	{
+	public void update(Ball ball) {
 		int regionIndex = getRegionIndex(ball, this.team);
 		//Gdx.app.log("Tactic", "region index: " + regionIndex);
 		for (int playerIndex = 0; playerIndex < 10; playerIndex++) {
-			Vector2 playerLocation = PitchUtils.pitchToGlobal(
-					team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].x : (float)Pitch.PITCH_WIDTH_IN_PX - locations[playerIndex][regionIndex].x,
-					team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].y : (float)Pitch.PITCH_HEIGHT_IN_PX - locations[playerIndex][regionIndex].y);
-			this.team.getPlayers().get(playerIndex).moveTo(playerLocation);
+			Vector3 playerLocation = PitchUtils.pitchToGlobal(team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].x : (float)Pitch.PITCH_WIDTH_IN_PX - locations[playerIndex][regionIndex].x,
+                                                              team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].y : (float)Pitch.PITCH_HEIGHT_IN_PX - locations[playerIndex][regionIndex].y);
+			this.team.getPlayers().get(playerIndex).setDestination(playerLocation);
 		}
 	}
+
+	public void setupKickoff(boolean attack) {
+	    int regionIndex = attack ? Location.kickoff_own.ordinal() : Location.kickoff_def.ordinal();
+        for (int playerIndex = 0; playerIndex < 10; playerIndex++) {
+            Vector3 playerLocation = PitchUtils.pitchToGlobal(team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].x : (float)Pitch.PITCH_WIDTH_IN_PX - locations[playerIndex][regionIndex].x,
+                    team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].y : (float)Pitch.PITCH_HEIGHT_IN_PX - locations[playerIndex][regionIndex].y);
+            this.team.getPlayers().get(playerIndex).setDestination(playerLocation);
+        }
+    }
 	
 	/**
 	* Returns a region id depending on the team orientation
@@ -228,13 +236,13 @@ public class Tactic {
 		shapeRenderer.setColor(new Color(0.8f, 0, 0, 0.2f));
 		int regionIndex = getRegionIndex(ball, this.team);
 		Rectangle region = this.regions.get(regionIndex);
-		Vector2 regionLocation = PitchUtils.pitchToGlobal(region.x, region.y);
+		Vector3 regionLocation = PitchUtils.pitchToGlobal(region.x, region.y);
 		shapeRenderer.rect(regionLocation.x, regionLocation.y, region.width, region.height);
 
 		// draw player location
 		for (int playerIndex = 0; playerIndex < 10; playerIndex++) {
 			shapeRenderer.setColor(new Color(1.0f, 0.5f, 0, 0.4f));
-			Vector2 playerLocation = PitchUtils.pitchToGlobal(locations[playerIndex][regionIndex].x, locations[playerIndex][regionIndex].y);
+			Vector3 playerLocation = PitchUtils.pitchToGlobal(locations[playerIndex][regionIndex].x, locations[playerIndex][regionIndex].y);
 			shapeRenderer.circle(playerLocation.x, playerLocation.y, 8);
 		}
 

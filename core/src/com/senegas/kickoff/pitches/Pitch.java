@@ -3,6 +3,8 @@ package com.senegas.kickoff.pitches;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 
 /**
@@ -57,5 +59,11 @@ public abstract class Pitch implements Disposable, FootballDimensions {
 	@Override
 	public void dispose() {
 		tiledMap.dispose();		
+	}
+
+	static public Vector2 getCenterSpot()
+	{
+		return new Vector2((int) (Pitch.PITCH_WIDTH_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_X),
+                           (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16));
 	}
 }

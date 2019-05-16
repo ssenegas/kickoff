@@ -6,13 +6,15 @@ buildscript {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         jcenter()
         google()
     }
     dependencies {
-        classpath 'org.wisepersist:gwt-gradle-plugin:1.0.6'
-        classpath 'com.android.tools.build:gradle:3.3.2'
-        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.6'
+        classpath "org.wisepersist:gwt-gradle-plugin:1.0.6"
+        classpath "com.android.tools.build:gradle:3.3.2"
+        classpath "com.mobidevelop.robovm:robovm-gradle-plugin:2.3.6"
+        classpath "com.badlogicgames.gdx:gdx-ai:1.8.1"
         
 
     }
@@ -29,7 +31,7 @@ allprojects {
         roboVMVersion = '2.3.6'
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
-        aiVersion = '1.8.0'
+        aiVersion = '1.8.1'
     }
 
     repositories {
@@ -74,7 +76,8 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
-        
+        compile "com.badlogicgames.gdx:gdx-ai:1.8.1"
+
     }
 }
 
@@ -106,6 +109,7 @@ project(":html") {
         compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
         compile "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
+        compile "com.badlogicgames.gdx:gdx-ai:1.8.1:sources"
         
     }
 }
@@ -117,7 +121,7 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        
+        compile "com.badlogicgames.gdx:gdx-ai:1.8.1"
     }
 }
 

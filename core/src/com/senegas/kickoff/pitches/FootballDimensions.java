@@ -1,5 +1,7 @@
 package com.senegas.kickoff.pitches;
 
+import com.badlogic.gdx.math.Vector3;
+
 public interface FootballDimensions {
 	/* 1 inch = 2,54 cm */
 	/* 1 foot -> 12 inches -> 30.48 cm */
@@ -102,6 +104,5 @@ public interface FootballDimensions {
 	public static final double	GOAL_AREA_WIDTH_IN_PX = 2*HALF_GOAL_AREA_WIDTH_IN_PX;
 
 	/** /**  The goal area height in pixels */
-	public static final double	GOAL_AREA_HEIGHT_IN_PX = 73;	
-
+	public static final double	GOAL_AREA_HEIGHT_IN_PX = 73;
 }

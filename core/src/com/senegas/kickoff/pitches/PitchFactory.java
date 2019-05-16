@@ -3,12 +3,21 @@ package com.senegas.kickoff.pitches;
 import com.senegas.kickoff.pitches.Pitch.Type;
 
 public class PitchFactory {
+
+    private PitchFactory() {}
+
+    private static PitchFactory INSTANCE = new PitchFactory();
+
+    public static PitchFactory getInstance() {
+        return INSTANCE;
+    }
+
 	/**
 	 * Make a pitch
 	 * @param pitchType
 	 * @return a pitch
 	 */
-	public static Pitch make(Type pitchType)
+	public Pitch make(Type pitchType)
 	{ 
 		switch( pitchType )
 		{

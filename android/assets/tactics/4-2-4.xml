@@ -61,7 +61,7 @@
 			<x>252</x>
 			<y>390</y>
 		</region>
-		<region name="goalkick_own">
+		<region name="goalkick_def">
 			<x>252</x>
 			<y>390</y>
 		</region>
@@ -143,7 +143,7 @@
 			<x>618</x>
 			<y>384</y>
 		</region>
-		<region name="goalkick_own">
+		<region name="goalkick_def">
 			<x>618</x>
 			<y>384</y>
 		</region>
@@ -225,7 +225,7 @@
 			<x>576</x>
 			<y>609</y>
 		</region>
-		<region name="goalkick_own">
+		<region name="goalkick_def">
 			<x>576</x>
 			<y>609</y>
 		</region>
@@ -307,7 +307,7 @@
 			<x>438</x>
 			<y>288</y>
 		</region>
-		<region name="goalkick_own">
+		<region name="goalkick_def">
 			<x>438</x>
 			<y>288</y>
 		</region>
@@ -389,7 +389,7 @@
 			<x>444</x>
 			<y>492</y>
 		</region>
-		<region name="goalkick_own">
+		<region name="goalkick_def">
 			<x>444</x>
 			<y>492</y>
 		</region>
@@ -471,7 +471,7 @@
 			<x>804</x>
 			<y>783</y>
 		</region>
-		<region name="goalkick_own">
+		<region name="goalkick_def">
 			<x>804</x>
 			<y>783</y>
 		</region>
@@ -553,7 +553,7 @@
 			<x>306</x>
 			<y>615</y>
 		</region>
-		<region name="goalkick_own">
+		<region name="goalkick_def">
 			<x>306</x>
 			<y>615</y>
 		</region>
@@ -635,7 +635,7 @@
 			<x>456</x>
 			<y>732</y>
 		</region>
-		<region name="goalkick_own">
+		<region name="goalkick_def">
 			<x>456</x>
 			<y>732</y>
 		</region>
@@ -717,7 +717,7 @@
 			<x>456</x>
 			<y>912</y>
 		</region>
-		<region name="goalkick_own">
+		<region name="goalkick_def">
 			<x>456</x>
 			<y>912</y>
 		</region>
@@ -799,7 +799,7 @@
 			<x>102</x>
 			<y>798</y>
 		</region>
-		<region name="goalkick_own">
+		<region name="goalkick_def">
 			<x>102</x>
 			<y>798</y>
 		</region>

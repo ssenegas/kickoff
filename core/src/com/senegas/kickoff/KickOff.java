@@ -1,14 +1,15 @@
 package com.senegas.kickoff;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Version;
 import com.senegas.kickoff.screens.MainMenu;
 import com.senegas.kickoff.screens.Match;
 
 public class KickOff extends Game {
 	
-	public static final String TITLE = "OpenKickOff";
-	public static final String VERSION = "0.3";
-	
+	public static final String TITLE = "Open Kick Off";
+    public static final String VERSION = "0.3.5";
+
 	@Override
 	public void create () {
 		setScreen(new MainMenu());

@@ -4,6 +4,7 @@
 	<inherits name='com.badlogic.gdx.backends.gdx_backends_gwt' />
 
     <inherits name='com.senegas.kickoff.GdxDefinition' />
+	<inherits name='com.badlogic.gdx.ai' />
     
     <collapse-all-properties />
     

@@ -4,6 +4,7 @@
 	<inherits name='com.badlogic.gdx.backends.gdx_backends_gwt' />
 
 	<inherits name='KickOff' />
+	<inherits name='com.badlogic.gdx.ai' />
 	<entry-point class='com.senegas.kickoff.client.HtmlLauncher' />
 	
 	<set-configuration-property name="gdx.assetpath" value="../android/assets" />
