@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.entities.Player.Direction;
@@ -66,7 +67,7 @@ public class Match implements Screen {
         cameraHelper.setZoom(.45f);
 
         Vector2 centerSpot = Pitch.getCenterSpot();
-        ball = new Ball(centerSpot.x, centerSpot.y, 160);
+        ball = new Ball(new Vector3(centerSpot.x, centerSpot.y, 160));
         home = new Team(this, "TeamA", Direction.NORTH);
         away = new Team(this, "TeamB", Direction.SOUTH);
 

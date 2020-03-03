@@ -17,57 +17,50 @@ import com.badlogic.gdx.math.Vector3;
  * @author Sébastien Sénégas
  *
  */
-public class Ball {
+public class Ball extends Entity {
+
+    private static final int SPRITE_WIDTH = 16;
+    private static final int SPRITE_HEIGHT = 16;
+    private static final int FRAME_COUNT = 4;
 
 	/** acceleration constant (m/s^2) */
 	public static final float GRAVITY = 9.81f;
 	/** ball mass (kg)<br>
 	 * <a href="http://www.fifa.com/">FIFA.com</a> says: <em>not more than 450 g in weight and not less than 410 g</em>
 	 */
-	public static final float MASS_IN_GRAMMS = 0.430f;
+	public static final float MASS_IN_GRAMS = 0.430f;
 	/** air resistance term */
 	public static final float DRAG = 0.350f;
 	/** bounce angle factor (must be less that 1) */
 	public static final float BOUNCE_SPEED_FACTOR = 0.6f;
 	
-	private final static int SPRITE_WIDTH = 16;
-	private final static int SPRITE_HEIGHT = 16;
-	
-	private Vector3 position;
-	private Vector3 velocity;
-	private Texture texture;
-	private TextureRegion frames[][];
-	private int currentFrameAnimationColumn = 0;
-	private float currentFrameTime = 0.0f;
-	private float maxFrameTime = .1f; // max time between each frame
-	private int runningFrameAnimation[] = { 0, 1, 1, 0 };
-	private int frameCount = 4;	
-	private int currentFrame = 0;
-	private float speed = 0;
-	private Player owner = null;
-	
-	/** In order to save calculation time, M/K is precalculated */
-	//private static final double	M_K = M/K;
-	/** In order to save calculation time, K/M is precalculated */
-	private static final float	K_M = DRAG / MASS_IN_GRAMMS;
-	/** In order to save calculation time, MG/K is precalculated */
-	private static final float	MG_K = MASS_IN_GRAMMS * GRAVITY / DRAG;		
-	
-	private static ShapeRenderer shapeRenderer = new ShapeRenderer(); // mainly used for debug purpose
-	
+    /** In order to save calculation time, M/K is precalculated */
+    //private static final double	M_K = M/K;
+
+    /** In order to save calculation time, K/M is precalculated */
+	private static final float	K_M = DRAG / MASS_IN_GRAMS;
+    /** In order to save calculation time, MG/K is precalculated */
+	private static final float	MG_K = MASS_IN_GRAMS * GRAVITY / DRAG;
+
+    private int currentFrameAnimationColumn = 0;
+    private float currentFrameTime = 0.0f;
+    private float maxFrameTime = .1f; // max time between each frame
+    private int runningFrameAnimation[] = { 0, 1, 1, 0 };
+    private int currentFrame = 0;
+    private float speed = 0;
+    private Player owner = null;
+
+    private static ShapeRenderer shapeRenderer = new ShapeRenderer(); // mainly used for debug purpose
+
 	/**
 	 * Constructor
-	 * @param x position of the ball
-	 * @param y position of the ball
-	 * @param z position of the ball
+	 * @param position position of the ball
 	 */
-	public Ball(float x, float y, float z) {
-		position = new Vector3(x, y, z);
-		velocity = new Vector3(0, 0, 0);
-		texture = new Texture("entities/ball.png");
+	public Ball(Vector3 position) {
+		super(new Texture("entities/ball.png"), position);
 		frames = TextureRegion.split(texture, SPRITE_WIDTH, SPRITE_HEIGHT);
 	}
-	
+
 	/**
 	 * Draw the ball and shadow animations
 	 * @param batch
@@ -84,17 +77,16 @@ public class Ball {
 
 		currentFrame = shadx - scrx;
 		if (currentFrame < 4) {
-			//low ball, sprite contained in shadow
+			//low ball, shadow contained in sprite
 			scry += position.z / 2;
 			if (currentFrame >= 0 && currentFrame < 8) {
 				batch.draw(frames[0][currentFrame], scrx - SPRITE_WIDTH/2, scry - SPRITE_HEIGHT/2);
 			}
-		}
-		else {
-			//draw shadow
+		} else {
+			//draw the shadow
 			int shadowFrame = 8;
 			batch.draw(frames[0][shadowFrame], shadx - SPRITE_WIDTH/2, shady - SPRITE_HEIGHT/2);
-			//draw ball
+			//draw the ball
 			scry += (position.z / 2);
 			currentFrame = (int) Math.min(3, position.z/32);
 			int ballFrame = currentFrame + 4;
@@ -122,7 +114,8 @@ public class Ball {
 	 * Update the ball's position and velocity
 	 * @param deltaTime
 	 */
-	public void update(float deltaTime) {
+	@Override
+    public void update(float deltaTime) {
 		velocity.x -= (K_M * velocity.x) * deltaTime;
 		velocity.y -= (K_M * velocity.y) * deltaTime;	
 		velocity.z -= (K_M * velocity.z + GRAVITY) * deltaTime;

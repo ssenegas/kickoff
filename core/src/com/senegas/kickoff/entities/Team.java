@@ -16,19 +16,21 @@ import com.senegas.kickoff.tactics.Tactic424;
  * @author Sébastien Sénégas
  *
  */
-public class Team  implements Disposable {
-    private Array<Player> players = new Array<Player>();
-    private Tactic tactic = new Tactic424(this);
-    private Match match;
-    private String name;
-    private Direction direction;
-    private Texture texture;
-    /**
+public class Team implements Disposable {
+    private Tactic tactic;
+	private Match match;
+	private String name;
+	private Direction direction;
+	private Texture texture;
+	private Array<Player> players = new Array<Player>();
+	/**
 	 * Constructor
 	 * @param match the match
-	 * @param name the team name
+     * @param name the team name
+     * @param direction the team's direction
 	 */
 	public Team(Match match, String name, Direction direction) {
+		this.tactic = new Tactic424(this);
 		this.match = match;
 		this.name = name;
 		this.direction = direction;
@@ -42,13 +44,26 @@ public class Team  implements Disposable {
 	 * Create the players
 	 */
 	private void createPlayers() {
-        Vector3 playerPosition = new Vector3(0,
-                (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16 + (direction == Direction.NORTH ? -16: 16)),
-                0);
+		float x = 0;
+		float y = (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16 + (direction == Direction.NORTH ? -16: 16));
+
         for (int i = 0; i < 10; i++) {
-			this.players.add(new Player((int)playerPosition.x, (int)playerPosition.y, texture));
-			playerPosition.add(-16, 0, 0);
+			this.players.add(new Player(texture, new Vector3(x, y, 0)));
+			x -= 16;
 		}
+	}
+
+	public void setupIntroduction() {
+		Vector3 playerPosition = new Vector3(0,
+				(int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16),
+				0);
+		playerPosition.add(352, direction == Direction.NORTH ? -16: 16, 0);
+
+		for (Player player : this.players) {
+			player.setDestination(playerPosition);
+			playerPosition.sub(16, 0, 0);
+		}
+		//setControlState(Player::None);
 	}
 	
 	/**
@@ -69,19 +84,6 @@ public class Team  implements Disposable {
 
 		return true;
 	}
-
-    public void setupIntroduction() {
-        Vector3 playerPosition = new Vector3(0,
-                                             (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16),
-                                             0);
-        playerPosition.add(352, direction == Direction.NORTH ? -16: 16, 0);
-
-        for (Player player : this.players) {
-            player.setDestination(playerPosition);
-            playerPosition.sub(16, 0, 0);
-        }
-        //setControlState(Player::None);
-    }
 
 	/**
 	 * Draw the team's players

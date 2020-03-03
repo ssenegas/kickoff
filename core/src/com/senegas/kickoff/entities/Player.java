@@ -21,7 +21,7 @@ import com.senegas.kickoff.pitches.Pitch;
  * @author Sébastien Sénégas
  *
  */
-public class Player implements InputProcessor {
+public class Player extends Entity implements InputProcessor {
 
 
     /** Player constant direction */
@@ -39,9 +39,8 @@ public class Player implements InputProcessor {
 
 	private final static int SPRITE_WIDTH = 16;
 	private final static int SPRITE_HEIGHT = 16;
+	private final static int FRAME_COUNT = 14;
 
-	private Vector3 position;
-	private Vector3 velocity;
 	private Circle bounds;
 	private Direction direction = Direction.NONE;
     private Vector3 desiredPosition = new Vector3((int) (Pitch.PITCH_WIDTH_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_X),
@@ -49,14 +48,11 @@ public class Player implements InputProcessor {
                                                 0);
 	private float speed = 200f;
 	private int height = 177; // 1m 77
-	private Texture texture;
-	private TextureRegion frames[][];
 	private int currentFrameAnimationRow = 0;
 	private int currentFrameAnimationColumn = 0;
 	private float currentFrameTime = 0.0f;
 	private float maxFrameTime = 5 / speed; // max time between each frame
 	private int runningFrameAnimation[] = { 0, 3, 2, 1, 1, 2, 3, 4, 7, 6, 5, 5, 6, 7 };
-	private int frameCount = 14;	
 	private int currentFrame = 0;
 	private Vector2 directionCoefficients[] = { new Vector2(0, 1f),
 			                                    new Vector2(0.707f, 0.707f),
@@ -72,28 +68,27 @@ public class Player implements InputProcessor {
 	
 	/**
 	 * Constructor
-	 * @param x x-axis position
-	 * @param y y-axis position
+	 * @param texture texture of the player
+	 * @param position position of the player
 	 */
-	public Player(int x, int y, Texture texture) {
-		this.position = new Vector3(x, y, 0);
-		this.velocity = new Vector3(0, 0, 0);
-		this.texture = texture;
+	public Player(Texture texture, Vector3 position) {
+		super(texture, position);
 		this.frames = TextureRegion.split(texture, SPRITE_WIDTH, SPRITE_HEIGHT);
-		this.bounds = new Circle(position.x, position.y, SPRITE_WIDTH/2);
+		this.bounds = new Circle(position.x, position.y, SPRITE_WIDTH / 2);
 	}
 	
 	/**
 	 * Update the position and animation frame
 	 * @param deltaTime The time in seconds since the last render.
 	 */
-	public void update(float deltaTime) {
+	@Override
+    public void update(float deltaTime) {
 		moveToDesiredPosition();
 
 		if (direction != Direction.NONE) {			
 			// update animation
 			currentFrameTime += deltaTime;
-			currentFrame = (int) (currentFrameTime / maxFrameTime) % frameCount;
+			currentFrame = (int) (currentFrameTime / maxFrameTime) % FRAME_COUNT;
 			currentFrameAnimationRow = ((runningFrameAnimation[currentFrame] + 8 * direction.ordinal()) / 20);
 			currentFrameAnimationColumn = ((runningFrameAnimation[currentFrame] + 8 * direction.ordinal()) % 20);
 		}
