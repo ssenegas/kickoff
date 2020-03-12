@@ -1,5 +1,6 @@
 package com.senegas.kickoff.entities;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector3;
@@ -21,9 +22,11 @@ public class Team implements Disposable {
 	private Match match;
 	private String name;
 	private Direction direction;
+	private Color mainColor;
 	private Texture texture;
 	private Array<Player> players = new Array<Player>();
-	/**
+
+    /**
 	 * Constructor
 	 * @param match the match
      * @param name the team name
@@ -34,7 +37,8 @@ public class Team implements Disposable {
 		this.match = match;
 		this.name = name;
 		this.direction = direction;
-        this.texture = direction == Direction.NORTH ? new Texture("entities/style1a.png") : new Texture("entities/style1b.png");
+        mainColor = (direction == Direction.NORTH ? new Color(Color.RED) : new Color(Color.BLUE));
+        this.texture = (direction == Direction.NORTH ? new Texture("entities/style1a.png") : new Texture("entities/style1b.png"));
 
 		createPlayers();
 		setupIntroduction();
@@ -57,7 +61,7 @@ public class Team implements Disposable {
 		Vector3 playerPosition = new Vector3(0,
 				(int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16),
 				0);
-		playerPosition.add(352, direction == Direction.NORTH ? -16: 16, 0);
+		playerPosition.add(352, Player.SPRITE_HEIGHT * (direction == Direction.NORTH ? -1: 1), 0);
 
 		for (Player player : this.players) {
 			player.setDestination(playerPosition);
@@ -127,10 +131,22 @@ public class Team implements Disposable {
 	public String getName() {
 		return this.name;
 	}
-	
+
+    /**
+     * Get the direction's team
+     * @return
+     */
 	public Direction getDirection() {
 		return this.direction;
 	}
+
+    /**
+     * Get the team's main color
+     * @return
+     */
+    public Color getMainColor() {
+        return mainColor;
+    }
 	
 	@Override
 	public void dispose() {

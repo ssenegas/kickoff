@@ -35,14 +35,14 @@ public class Player extends Entity implements InputProcessor {
 //	public static final int NORTH_WEST = 7;
 //	public static final int NONE = 8;
 
-	public enum Direction { NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST, NONE }; // create an enum outside
+    public final static int SPRITE_WIDTH = 16;
+    public final static int SPRITE_HEIGHT = 16;
+    public enum Direction { NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST, NONE }; // create an enum outside
 
-	private final static int SPRITE_WIDTH = 16;
-	private final static int SPRITE_HEIGHT = 16;
-	private final static int FRAME_COUNT = 14;
 
-	private Circle bounds;
-	private Direction direction = Direction.NONE;
+    private Circle bounds;
+    private Direction direction = Direction.NONE;
+    private final static int FRAME_COUNT = 14;
     private Vector3 desiredPosition = new Vector3((int) (Pitch.PITCH_WIDTH_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_X),
                                                 (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16),
                                                 0);

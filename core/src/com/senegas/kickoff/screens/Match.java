@@ -34,6 +34,7 @@ import com.senegas.kickoff.utils.PitchUtils;
 public class Match implements Screen {
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
+    private CameraHelper cameraHelper;
     private BitmapFont font;
     private SpriteBatch batch;
 
@@ -43,7 +44,6 @@ public class Match implements Screen {
     private Team home;
     private Team away;
 
-    public CameraHelper cameraHelper;
     public ShapeRenderer shapeRenderer;
 
     private StateMachine<Match, MatchState> matchFsm;
@@ -97,11 +97,8 @@ public class Match implements Screen {
         handleInput();
 
         matchFsm.update();
-
         updateEntities(deltaTime);
-
         cameraHelper.update(deltaTime);
-
         checkCollisions();
 
 //        boolean gameIsRunning = true;
@@ -206,6 +203,10 @@ public class Match implements Screen {
 
     public OrthographicCamera getCamera() {
         return camera;
+    }
+
+    public CameraHelper getCameraHelper() {
+        return cameraHelper;
     }
 
     @Override
