@@ -7,4 +7,4 @@ Goals of this project are simply to have fun while learning new things about all
 ### Try it here 
 * [Desktop (Pre-release | 9.65 MB)](https://github.com/ssenegas/kickoff/releases/download/v0.3.5/openkickoff-0.3.5.jar)
 
-![snapshot2](https://user-images.githubusercontent.com/9662172/39470980-0051a248-4d41-11e8-9a60-182320e25b57.PNG)
+![openkickoff zoomed](https://user-images.githubusercontent.com/9662172/76507451-1cffb180-644d-11ea-9ff0-a75322e8fa09.png)
