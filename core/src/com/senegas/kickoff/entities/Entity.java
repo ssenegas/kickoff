@@ -18,4 +18,39 @@ public abstract class Entity {
 
     public abstract void update(float deltaTime);
 
+    /**
+     * Get the entity's position
+     * @return the entity's position
+     */
+    public Vector3 getPosition() {
+        return position;
+    }
+
+    /**
+     * Set the entity's position
+     * @param position
+     */
+    public void setPosition(Vector3 position) {
+        this.position = position;
+    }
+
+    /**
+     * Get the entity's velocity
+     * @return the entity's velocity
+     */
+    public Vector3 getVelocity() {
+        return velocity;
+    }
+
+    /**
+     * Set the entity's velocity
+     * @param velocity
+     */
+    public void setVelocity(Vector3 velocity) {
+        this.velocity = velocity;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
+import com.senegas.kickoff.entities.Ball;
 
 /**
  * base class for Pitch
@@ -61,9 +62,9 @@ public abstract class Pitch implements Disposable, FootballDimensions {
 		tiledMap.dispose();		
 	}
 
-	static public Vector2 getCenterSpot()
+	public Vector2 getCenterSpot()
 	{
 		return new Vector2((int) (Pitch.PITCH_WIDTH_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_X),
-                           (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16));
+                           (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + Ball.SPRITE_HEIGHT));
 	}
 }

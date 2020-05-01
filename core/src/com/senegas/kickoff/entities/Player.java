@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Disposable;
 import com.senegas.kickoff.pitches.Pitch;
 
 /**
@@ -21,7 +22,7 @@ import com.senegas.kickoff.pitches.Pitch;
  * @author Sébastien Sénégas
  *
  */
-public class Player extends Entity implements InputProcessor {
+public class Player extends Entity implements Disposable, InputProcessor {
 
 
     /** Player constant direction */
@@ -35,8 +36,8 @@ public class Player extends Entity implements InputProcessor {
 //	public static final int NORTH_WEST = 7;
 //	public static final int NONE = 8;
 
-    public final static int SPRITE_WIDTH = 16;
-    public final static int SPRITE_HEIGHT = 16;
+    public static final int SPRITE_WIDTH = 16;
+    public static final int SPRITE_HEIGHT = 16;
     public enum Direction { NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST, NONE }; // create an enum outside
 
 
@@ -164,6 +165,10 @@ public class Player extends Entity implements InputProcessor {
 	    this.desiredPosition = new Vector3(destination.x, destination.y, 0);
     }
 
+	public Vector3 getDestination() {
+		return this.desiredPosition;
+	}
+
     public boolean inPosition()
     {
         Vector3 currentDistance = new Vector3(this.position.x, this.position.y, 0);
@@ -248,14 +253,6 @@ public class Player extends Entity implements InputProcessor {
 //				velocity.y = (float) (0.5f * Math.sqrt(2*speed*speed));
 //		}
 //	}
-	
-	/**
-	 * Get the player position
-	 * @return the Vector3 player position
-	 */
-	public Vector3 getPosition() {
-		return position;
-	}
 	
 	@Override
     public boolean keyDown(int keycode) {
@@ -360,10 +357,6 @@ public class Player extends Entity implements InputProcessor {
 		return direction.ordinal();
 	}
 
-	public Texture getTexture() {
-    	return texture;
-    }
-
 	public int height() {
 		return height;
 	}
@@ -379,7 +372,8 @@ public class Player extends Entity implements InputProcessor {
 	public void setSpeed(float speed) {
 		this.speed = speed;
 	}
-	
+
+	@Override
 	public void dispose() {
 		shapeRenderer.dispose();
 	}

@@ -53,7 +53,7 @@ public class Team implements Disposable {
 
         for (int i = 0; i < 10; i++) {
 			this.players.add(new Player(texture, new Vector3(x, y, 0)));
-			x -= 16;
+			x -= Player.SPRITE_WIDTH;
 		}
 	}
 
@@ -152,8 +152,8 @@ public class Team implements Disposable {
 	public void dispose() {
 		for (Player player : this.players) {
 			player.dispose();
-			player.getTexture().dispose();
 		}
+		this.texture.dispose();
 		this.tactic.dispose();
 	}
 }

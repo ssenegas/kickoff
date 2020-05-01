@@ -234,6 +234,7 @@ public class Tactic {
 		// draw active region
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.setColor(new Color(0.8f, 0, 0, 0.2f));
+
 		int regionIndex = getRegionIndex(ball, this.team);
 		Rectangle region = this.regions.get(regionIndex);
 		Vector3 regionLocation = PitchUtils.pitchToGlobal(region.x, region.y);
@@ -242,7 +243,7 @@ public class Tactic {
 		// draw player location
 		for (int playerIndex = 0; playerIndex < 10; playerIndex++) {
 			shapeRenderer.setColor(new Color(1.0f, 0.5f, 0, 0.4f));
-			Vector3 playerLocation = PitchUtils.pitchToGlobal(locations[playerIndex][regionIndex].x, locations[playerIndex][regionIndex].y);
+			Vector3 playerLocation = this.team.getPlayers().get(playerIndex).getDestination();
 			shapeRenderer.circle(playerLocation.x, playerLocation.y, 8);
 		}
 

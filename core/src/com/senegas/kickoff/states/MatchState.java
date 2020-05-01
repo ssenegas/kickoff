@@ -36,7 +36,7 @@ public enum MatchState implements State<Match> {
                 Timer.schedule(new Timer.Task(){
                     @Override
                     public void run() {
-                        match.getFSM().changeState(PREPAREFORKICKOFF);
+                        match.stateMachine.changeState(PREPAREFORKICKOFF);
                     }
                 }, delay);
             }
@@ -56,7 +56,7 @@ public enum MatchState implements State<Match> {
     PREPAREFORKICKOFF() {
         @Override
         public void enter(final Match match) {
-            match.getCameraHelper().setTarget(Pitch.getCenterSpot());
+            match.getCameraHelper().setTarget(match.getPitch().getCenterSpot());
 
             match.getHomeTeam().getTactic().setupKickoff(true);
             match.getAwayTeam().getTactic().setupKickoff(false);
@@ -67,7 +67,7 @@ public enum MatchState implements State<Match> {
                 public void run() {
                     //long id = match.whistle.play(0.2f);
                     match.getCameraHelper().setTarget(null);
-                    match.getFSM().changeState(INPLAY);
+                    match.stateMachine.changeState(INPLAY);
                 }
             }, delay);
         }

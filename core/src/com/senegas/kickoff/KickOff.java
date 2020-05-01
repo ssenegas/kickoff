@@ -6,7 +6,7 @@ import com.senegas.kickoff.screens.MainMenu;
 public class KickOff extends Game {
 	
 	public static final String TITLE = "Open Kick Off";
-    public static final String VERSION = "0.3.5";
+    public static final String VERSION = "0.3.6";
 
 	@Override
 	public void create () {

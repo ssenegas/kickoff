@@ -19,9 +19,8 @@ import com.badlogic.gdx.math.Vector3;
  */
 public class Ball extends Entity {
 
-    private static final int SPRITE_WIDTH = 16;
-    private static final int SPRITE_HEIGHT = 16;
-    private static final int FRAME_COUNT = 4;
+    public static final int SPRITE_WIDTH = 16;
+    public static final int SPRITE_HEIGHT = 16;
 
 	/** acceleration constant (m/s^2) */
 	public static final float GRAVITY = 9.81f;
@@ -33,7 +32,7 @@ public class Ball extends Entity {
 	public static final float DRAG = 0.350f;
 	/** bounce angle factor (must be less that 1) */
 	public static final float BOUNCE_SPEED_FACTOR = 0.6f;
-	
+
     /** In order to save calculation time, M/K is precalculated */
     //private static final double	M_K = M/K;
 
@@ -42,6 +41,7 @@ public class Ball extends Entity {
     /** In order to save calculation time, MG/K is precalculated */
 	private static final float	MG_K = MASS_IN_GRAMS * GRAVITY / DRAG;
 
+	private static final int FRAME_COUNT = 4;
     private int currentFrameAnimationColumn = 0;
     private float currentFrameTime = 0.0f;
     private float maxFrameTime = .1f; // max time between each frame
@@ -165,49 +165,14 @@ public class Ball extends Entity {
 		velocity.z = 80;
 	}
 	
-	/**
-	 * Get the ball's position
-	 * @return the ball's position
-	 */
-	public Vector3 getPosition() {
-		return position;
-	}
-	
-	/**
-	 * Set the ball's position
-	 * @param position
-	 */
-	public void setPosition(Vector3 position) {
-		this.position = position;
-	}
-	
-	/**
-	 * Get the ball's velocity
-	 * @return the ball's velocity
-	 */
-	public Vector3 getVelocity() {
-		return velocity;
-	}
-	
-	/**
-	 * Set the ball's velocity
-	 * @param velocity
-	 */
-	public void setVelocity(Vector3 velocity) {
-		this.velocity = velocity;
-	}
-	
 	public void trap(Player player) { //!Reimp move to player class
 		velocity = Vector3.Zero;
 		owner = player;
 	}
 	
-    public Texture getTexture() {
-    	return texture;
-    }
-    
     public void dispose() {
-		shapeRenderer.dispose();
+		this.texture.dispose();
+		this.shapeRenderer.dispose();
 	}
 }
 

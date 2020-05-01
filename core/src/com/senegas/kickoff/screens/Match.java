@@ -46,7 +46,7 @@ public class Match implements Screen {
 
     public ShapeRenderer shapeRenderer;
 
-    private StateMachine<Match, MatchState> matchFsm;
+    public StateMachine<Match, MatchState> stateMachine;
     public Sound crowd;
     public Sound whistle;
 
@@ -66,7 +66,7 @@ public class Match implements Screen {
         cameraHelper = new CameraHelper();
         cameraHelper.setZoom(.45f);
 
-        Vector2 centerSpot = Pitch.getCenterSpot();
+        Vector2 centerSpot = pitch.getCenterSpot();
         ball = new Ball(new Vector3(centerSpot.x, centerSpot.y, 160));
         home = new Team(this, "TeamA", Direction.NORTH);
         away = new Team(this, "TeamB", Direction.SOUTH);
@@ -80,13 +80,13 @@ public class Match implements Screen {
 
         font = new BitmapFont();
         batch = new SpriteBatch();
-        matchFsm = new DefaultStateMachine<Match, MatchState>(this);
+        stateMachine = new DefaultStateMachine<Match, MatchState>(this);
         shapeRenderer = new ShapeRenderer();
     }
 
     @Override
     public void show() {
-        matchFsm.changeState(MatchState.INTRODUCTION);
+        stateMachine.changeState(MatchState.INTRODUCTION);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class Match implements Screen {
 
         handleInput();
 
-        matchFsm.update();
+        stateMachine.update();
         updateEntities(deltaTime);
         cameraHelper.update(deltaTime);
         checkCollisions();
@@ -152,7 +152,7 @@ public class Match implements Screen {
                                         (int) ballLocation.y + ", " +
                                         (int) ball.getPosition().z, 10, 60);
         font.draw(batch, this.home.getTactic().getName(), 10, 80);
-        font.draw(batch, this.matchFsm.getCurrentState().toString(), 10, 100);
+        font.draw(batch, this.stateMachine.getCurrentState().toString(), 10, 100);
         batch.end();
     }
 
@@ -160,10 +160,6 @@ public class Match implements Screen {
         home.update(deltaTime);
         away.update(deltaTime);
         ball.update(deltaTime);
-    }
-
-    public StateMachine getFSM() {
-        return this.matchFsm;
     }
 
     /**
@@ -197,7 +193,7 @@ public class Match implements Screen {
         return ball;
     }
 
-    public Pitch pitch() {
+    public Pitch getPitch() {
         return pitch;
     }
 
@@ -229,7 +225,6 @@ public class Match implements Screen {
         home.dispose();
         away.dispose();
         ball.dispose();
-        ball.getTexture().dispose();
         shapeRenderer.dispose();
         crowd.dispose();
         whistle.dispose();
