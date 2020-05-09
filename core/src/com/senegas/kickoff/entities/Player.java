@@ -15,7 +15,8 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
-import com.senegas.kickoff.pitches.Pitch;
+
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
 
 /**
  * Player entity class
@@ -44,8 +45,8 @@ public class Player extends Entity implements Disposable, InputProcessor {
     private Circle bounds;
     private Direction direction = Direction.NONE;
     private final static int FRAME_COUNT = 14;
-    private Vector3 desiredPosition = new Vector3((int) (Pitch.PITCH_WIDTH_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_X),
-                                                (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16),
+    private Vector3 desiredPosition = new Vector3((int) (PITCH_WIDTH_IN_PX / 2 + OUTER_TOP_EDGE_X),
+                                                (int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + 16),
                                                 0);
 	private float speed = 200f;
 	private int height = 177; // 1m 77
@@ -110,16 +111,16 @@ public class Player extends Entity implements Disposable, InputProcessor {
 //		if (x < 0) {
 //			x = 0;
 //			velocity.x = 0.0f;
-//		} else if (x > Pitch.WIDTH - WIDTH) {
-//			x = Pitch.WIDTH - WIDTH;
+//		} else if (x > WIDTH - WIDTH) {
+//			x = WIDTH - WIDTH;
 //			velocity.x = 0.0f;
 //		}
 //		
 //		if (y < 0) {
 //			y = 0;
 //			velocity.y = 0.0f;
-//		} else if (y > Pitch.HEIGHT - HEIGHT) {
-//			y = Pitch.HEIGHT - HEIGHT;
+//		} else if (y > HEIGHT - HEIGHT) {
+//			y = HEIGHT - HEIGHT;
 //			velocity.y = 0.0f;
 //		}
 	}

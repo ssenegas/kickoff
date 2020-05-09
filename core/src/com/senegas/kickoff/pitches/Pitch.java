@@ -4,16 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.senegas.kickoff.entities.Ball;
+
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
 
 /**
  * base class for Pitch
  * @author Sébastien Sénégas
  *
  */
-public abstract class Pitch implements Disposable, FootballDimensions {
+public abstract class Pitch implements Disposable {
 	
 	public enum Type {
 		CLASSIC, WET, SOGGY, ARTIFICIAL, PLAYERMANAGER
@@ -64,7 +65,7 @@ public abstract class Pitch implements Disposable, FootballDimensions {
 
 	public Vector2 getCenterSpot()
 	{
-		return new Vector2((int) (Pitch.PITCH_WIDTH_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_X),
-                           (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + Ball.SPRITE_HEIGHT));
+		return new Vector2((int) (PITCH_WIDTH_IN_PX / 2 + OUTER_TOP_EDGE_X),
+                           (int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + Ball.SPRITE_HEIGHT));
 	}
 }

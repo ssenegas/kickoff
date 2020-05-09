@@ -8,6 +8,8 @@ import com.badlogic.gdx.utils.Timer;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.screens.Match;
 
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
+
 public enum MatchState implements State<Match> {
 
     INTRODUCTION() {
@@ -26,7 +28,7 @@ public enum MatchState implements State<Match> {
                             match.getCamera().viewportHeight / 2 * match.getCamera().zoom,
                             Pitch.HEIGHT - match.getCamera().viewportHeight / 2 * match.getCamera().zoom));
 
-            match.getCameraHelper().setTarget(new Vector2(352, (int)(Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16)));
+            match.getCameraHelper().setTarget(new Vector2(352, (int)(PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + 16)));
         }
 
         @Override

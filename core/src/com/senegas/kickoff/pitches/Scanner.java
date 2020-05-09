@@ -8,12 +8,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.screens.Match;
 
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
+
 /**
  * Scanner
  * @author Sébastien Sénégas
  *
  */
-public class Scanner implements FootballDimensions {
+public class Scanner {
     private static final int BALL_RADIUS = 2;
     private static final int PLAYER_RADIUS = 4;
 
@@ -42,7 +44,7 @@ public class Scanner implements FootballDimensions {
     public void draw() {
         float ratio = (float) (ZOOM[zoomFactor] / PITCH_WIDTH_IN_PX);
         //Gdx.app.log("Scanner", "graphics.getHeight " + Gdx.graphics.getHeight());
-        this.origin.y = Gdx.graphics.getHeight() - 26 - (float)PITCH_HEIGHT_IN_PX * ratio;
+        this.origin.y = Gdx.graphics.getHeight() - 26 - (float) PITCH_HEIGHT_IN_PX * ratio;
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -115,7 +117,8 @@ public class Scanner implements FootballDimensions {
 
     private void drawPitchBoundary(float ratio) {
         // Pitch border
-        match.shapeRenderer.rect(this.origin.x, this.origin.y, (float) PITCH_WIDTH_IN_PX * ratio, (float) PITCH_HEIGHT_IN_PX * ratio);
+        match.shapeRenderer.rect(this.origin.x, this.origin.y,
+                (float) PITCH_WIDTH_IN_PX * ratio, (float) PITCH_HEIGHT_IN_PX * ratio);
         // Half way horizontal line
         match.shapeRenderer.line( (float)(this.origin.x), (float)(this.origin.y + HALF_PITCH_HEIGHT_IN_PX * ratio),
                 (float)(this.origin.x + PITCH_WIDTH_IN_PX * ratio), (float)(this.origin.y + HALF_PITCH_HEIGHT_IN_PX * ratio));

@@ -1,9 +1,8 @@
 package com.senegas.kickoff.tactics;
 
 import com.senegas.kickoff.entities.Team;
-import com.senegas.kickoff.pitches.FootballDimensions;
 
-public class Tactic424 extends Tactic implements FootballDimensions {
+public class Tactic424 extends Tactic {
 
 	/**
 	 * Constructor 4-2-4 tactic

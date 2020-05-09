@@ -7,10 +7,11 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.senegas.kickoff.entities.Player.Direction;
-import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.screens.Match;
 import com.senegas.kickoff.tactics.Tactic;
 import com.senegas.kickoff.tactics.Tactic424;
+
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
 
 /**
  * Team
@@ -49,7 +50,7 @@ public class Team implements Disposable {
 	 */
 	private void createPlayers() {
 		float x = 0;
-		float y = (int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16 + (direction == Direction.NORTH ? -16: 16));
+		float y = (int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + 16 + (direction == Direction.NORTH ? -16: 16));
 
         for (int i = 0; i < 10; i++) {
 			this.players.add(new Player(texture, new Vector3(x, y, 0)));
@@ -59,7 +60,7 @@ public class Team implements Disposable {
 
 	public void setupIntroduction() {
 		Vector3 playerPosition = new Vector3(0,
-				(int) (Pitch.PITCH_HEIGHT_IN_PX / 2 + Pitch.OUTER_TOP_EDGE_Y + 16),
+				(int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + 16),
 				0);
 		playerPosition.add(352, Player.SPRITE_HEIGHT * (direction == Direction.NORTH ? -1: 1), 0);
 

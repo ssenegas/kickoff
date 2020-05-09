@@ -18,13 +18,14 @@ import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.entities.Player.Direction;
 import com.senegas.kickoff.entities.Team;
-import com.senegas.kickoff.pitches.FootballDimensions;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.pitches.PitchFactory;
 import com.senegas.kickoff.pitches.Scanner;
 import com.senegas.kickoff.states.MatchState;
 import com.senegas.kickoff.utils.CameraHelper;
 import com.senegas.kickoff.utils.PitchUtils;
+
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
 
 /**
  * Match
@@ -168,7 +169,7 @@ public class Match implements Screen {
     private void checkCollisions() {
         for (Player player : home.getPlayers()) {
             if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
-                if (ball.getPosition().z < player.height() / FootballDimensions.CM_PER_PIXEL) { //!Reimp move constant elsewhere
+                if (ball.getPosition().z < player.height() / CM_PER_PIXEL) { //!Reimp move constant elsewhere
                     ball.applyForce(player.speed() * 1.125f + 30.0f, player.getDirection());
                 }
             }
