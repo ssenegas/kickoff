@@ -103,9 +103,17 @@ public final class FootballDimensionConstants {
 	/**  The goal area width in pixels */
 	static public final double	GOAL_AREA_WIDTH_IN_PX = 2*HALF_GOAL_AREA_WIDTH_IN_PX;
 
-	/** /**  The goal area height in pixels */
+	/** The goal area height in pixels */
 	static public final double	GOAL_AREA_HEIGHT_IN_PX = 73;
 
-	private FootballDimensionConstants() {
+	static public final float OUTER_LEFT_TOUCHLINE_X = 176;
+
+	static public final float OUTER_RIGHT_TOUCHLINE_X = 1089;
+
+	static public final float OUTER_TOP_GOAL_LINE_Y = 64;
+
+    static public final float OUTER_BOTTOM_GOAL_LINE_Y = 1455;
+
+    private FootballDimensionConstants() {
 	}
 }

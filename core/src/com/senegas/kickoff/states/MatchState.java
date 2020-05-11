@@ -4,6 +4,7 @@ import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Timer;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.screens.Match;
@@ -15,9 +16,7 @@ public enum MatchState implements State<Match> {
     INTRODUCTION() {
         @Override
         public void enter(final Match match) {
-
-            long id = match.crowd.play(0.2f);
-
+            match.crowd.play(0.2f);
             match.getHomeTeam().setupIntroduction();
             match.getAwayTeam().setupIntroduction();
 
@@ -34,19 +33,19 @@ public enum MatchState implements State<Match> {
         @Override
         public void update(final Match match) {
             if (match.getHomeTeam().isReady() && match.getAwayTeam().isReady()) {
-                float delay = 7; // seconds
-                Timer.schedule(new Timer.Task(){
-                    @Override
-                    public void run() {
-                        match.stateMachine.changeState(PREPAREFORKICKOFF);
-                    }
-                }, delay);
+//                float delay = 8; // seconds
+//                Timer.schedule(new Timer.Task(){
+//                    @Override
+//                    public void run() {
+//                        match.stateMachine.changeState(PREPAREFORKICKOFF);
+//                    }
+//                }, delay);
+                match.stateMachine.changeState(PREPAREFORKICKOFF);
             }
         }
 
         @Override
         public void exit(Match match) {
-
         }
 
         @Override
@@ -59,32 +58,20 @@ public enum MatchState implements State<Match> {
         @Override
         public void enter(final Match match) {
             match.getCameraHelper().setTarget(match.getPitch().getCenterSpot());
-
-            match.getHomeTeam().getTactic().setupKickoff(true);
-            match.getAwayTeam().getTactic().setupKickoff(false);
-
-            float delay = 5; // seconds
-            Timer.schedule(new Timer.Task(){
-                @Override
-                public void run() {
-                    //long id = match.whistle.play(0.2f);
-                    match.getCameraHelper().setTarget(null);
-                    match.stateMachine.changeState(INPLAY);
-                }
-            }, delay);
+            match.getHomeTeam().setupKickoff(true);
+            match.getAwayTeam().setupKickoff(false);
         }
 
         @Override
         public void update(Match match) {
-            if (!match.getCameraHelper().hasTarget()) {
-                match.getCameraHelper().setPosition(MathUtils.clamp(match.getBall().getPosition().x, match.getCamera().viewportWidth / 2 * match.getCamera().zoom, Pitch.WIDTH - match.getCamera().viewportWidth / 2 * match.getCamera().zoom),
-                        MathUtils.clamp(match.getBall().getPosition().y, match.getCamera().viewportHeight / 2 * match.getCamera().zoom, Pitch.HEIGHT - match.getCamera().viewportHeight / 2 * match.getCamera().zoom));
+            if (match.getHomeTeam().isReady() && match.getAwayTeam().isReady()) {
+                match.stateMachine.changeState(INPLAY);
             }
         }
 
         @Override
         public void exit(Match match) {
-
+            match.whistle.play(0.2f);
         }
 
         @Override
@@ -96,6 +83,7 @@ public enum MatchState implements State<Match> {
     INPLAY() {
         @Override
         public void enter(Match match) {
+            match.getCameraHelper().setTarget(null);
         }
 
         @Override
@@ -115,5 +103,43 @@ public enum MatchState implements State<Match> {
         public boolean onMessage(Match match, Telegram telegram) {
             return false;
         }
+    },
+
+    THROW_IN() {
+        @Override
+        public void enter(Match match) {
+            match.getHomeTeam().setupThrowIn(new Vector3(match.getPitch().getLastIntersection(), 0), match.getLastTeamTouch() == match.getHomeTeam());
+            match.getAwayTeam().setupThrowIn(new Vector3(match.getPitch().getLastIntersection(), 0), match.getLastTeamTouch() == match.getAwayTeam());
+            match.getCameraHelper().setTarget(match.getPitch().getLastIntersection());
+            long id = match.whistle.play(0.2f);
+        }
+
+        @Override
+        public void update(Match match) {
+        }
+
+        @Override
+        public void exit(Match match) {
+
+        }
+
+        @Override
+        public boolean onMessage(Match match, Telegram telegram) {
+            return false;
+        }
+    };
+
+    @Override
+    public void enter(Match match) {
+    }
+
+    @Override
+    public void exit(Match match) {
+    }
+
+    @Override
+    public boolean onMessage(Match match, Telegram telegram) {
+        // We don't use messaging in this example
+        return false;
     }
 }

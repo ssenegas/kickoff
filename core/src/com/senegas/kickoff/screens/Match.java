@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Logger;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.entities.Player.Direction;
@@ -25,7 +26,11 @@ import com.senegas.kickoff.states.MatchState;
 import com.senegas.kickoff.utils.CameraHelper;
 import com.senegas.kickoff.utils.PitchUtils;
 
+import static com.badlogic.gdx.math.Intersector.intersectLines;
 import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
+//import static com.senegas.kickoff.states.MatchState.INPLAY;
+import static com.senegas.kickoff.states.MatchState.INPLAY;
+import static com.senegas.kickoff.states.MatchState.THROW_IN;
 
 /**
  * Match
@@ -44,6 +49,7 @@ public class Match implements Screen {
     private Ball ball;
     private Team home;
     private Team away;
+    private Player lastTouch;
 
     public ShapeRenderer shapeRenderer;
 
@@ -95,13 +101,16 @@ public class Match implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        stateMachine.update();
+        home.update(deltaTime);
+        away.update(deltaTime);
+        ball.update(deltaTime);
+
         handleInput();
 
-        stateMachine.update();
-        updateEntities(deltaTime);
         cameraHelper.update(deltaTime);
-        checkCollisions();
 
+        checkCollisions();
 //        boolean gameIsRunning = true;
 //
 //    	if(!gameIsRunning) {
@@ -120,16 +129,13 @@ public class Match implements Screen {
 //    	}
         cameraHelper.applyTo(camera);
 
-        camera.update();
         renderer.setView(camera);
         renderer.render();
-
         renderer.getBatch().begin();
         home.draw(renderer.getBatch());
         away.draw(renderer.getBatch());
         ball.draw(renderer.getBatch());
         renderer.getBatch().end();
-
         scanner.draw();
 
         if (DEBUG) {
@@ -143,6 +149,7 @@ public class Match implements Screen {
 
         Player player = this.home.getPlayers().get(0);
         Vector2 ballLocation = PitchUtils.globalToPitch(ball.getPosition().x, ball.getPosition().y);
+        ballLocation = new Vector2(ball.getPosition().x, ball.getPosition().y);
 
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
@@ -152,26 +159,44 @@ public class Match implements Screen {
         font.draw(batch, "Ball: " + (int) ballLocation.x + ", " +
                                         (int) ballLocation.y + ", " +
                                         (int) ball.getPosition().z, 10, 60);
-        font.draw(batch, this.home.getTactic().getName(), 10, 80);
-        font.draw(batch, this.stateMachine.getCurrentState().toString(), 10, 100);
+
+        font.draw(batch, "Ball Last Pos.: " + (int) ball.getLastPosition().x + ", " +
+                (int) ball.getLastPosition().y + ", " +
+                (int) ball.getLastPosition().z, 10, 80);
+
+        font.draw(batch, this.home.getTactic().getName(), 10, 100);
+        font.draw(batch, this.stateMachine.getCurrentState().toString(), 10, 120);
         batch.end();
     }
 
-    private void updateEntities(float deltaTime) {
-        home.update(deltaTime);
-        away.update(deltaTime);
-        ball.update(deltaTime);
+    public void setLastPlayerTouch(Player player) {
+        lastTouch = player;
+    }
+
+    public Player getLastPlayerTouch() {
+        return lastTouch;
+    }
+
+    public Team getLastTeamTouch() {
+        if (lastTouch == null) return null;
+        return lastTouch.getTeam();
     }
 
     /**
-     * Check collisions between players and the ball
+     * Check collisions
      */
     private void checkCollisions() {
-        for (Player player : home.getPlayers()) {
-            if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
-                if (ball.getPosition().z < player.height() / CM_PER_PIXEL) { //!Reimp move constant elsewhere
-                    ball.applyForce(player.speed() * 1.125f + 30.0f, player.getDirection());
+        if (stateMachine.getCurrentState() == INPLAY) {
+            for (Player player : home.getPlayers()) {
+                if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
+                    this.setLastPlayerTouch(player);
+                    if (ball.getPosition().z < player.height() / CM_PER_PIXEL) { //!Reimp move constant elsewhere
+                        ball.applyForce(player.speed() * 1.125f + 30.0f, player.getDirection());
+                    }
                 }
+            }
+            if (pitch.crossesSideLine(ball.getLastPosition(), ball.getPosition())) {
+                stateMachine.changeState(THROW_IN);
             }
         }
     }

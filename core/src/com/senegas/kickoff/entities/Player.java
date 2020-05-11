@@ -65,6 +65,7 @@ public class Player extends Entity implements Disposable, InputProcessor {
 			                                    new Vector2(1f, 0),
 			                                    new Vector2(0.707f, 0.707f),
 			                                    new Vector2(0, 0) };
+	private Team team;
 	
 	private ShapeRenderer shapeRenderer = new ShapeRenderer(); // mainly used for debug purpose
 	
@@ -73,10 +74,11 @@ public class Player extends Entity implements Disposable, InputProcessor {
 	 * @param texture texture of the player
 	 * @param position position of the player
 	 */
-	public Player(Texture texture, Vector3 position) {
+	public Player(Texture texture, Team team, Vector3 position) {
 		super(texture, position);
 		this.frames = TextureRegion.split(texture, SPRITE_WIDTH, SPRITE_HEIGHT);
 		this.bounds = new Circle(position.x, position.y, SPRITE_WIDTH / 2);
+		this.team = team;
 	}
 	
 	/**
@@ -377,5 +379,13 @@ public class Player extends Entity implements Disposable, InputProcessor {
 	@Override
 	public void dispose() {
 		shapeRenderer.dispose();
+	}
+
+	public Team getTeam() {
+		return this.team;
+	}
+
+	public void setTeam(Team team) {
+		this.team = team;
 	}
 }

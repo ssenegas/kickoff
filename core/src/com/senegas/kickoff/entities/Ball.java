@@ -49,6 +49,7 @@ public class Ball extends Entity {
     private int currentFrame = 0;
     private float speed = 0;
     private Player owner = null;
+	private Vector3 lastPosition;
 
     private static ShapeRenderer shapeRenderer = new ShapeRenderer(); // mainly used for debug purpose
 
@@ -59,6 +60,7 @@ public class Ball extends Entity {
 	public Ball(Vector3 position) {
 		super(new Texture("entities/ball.png"), position);
 		frames = TextureRegion.split(texture, SPRITE_WIDTH, SPRITE_HEIGHT);
+		lastPosition = new Vector3(getPosition());
 	}
 
 	/**
@@ -109,6 +111,10 @@ public class Ball extends Entity {
 		
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
+
+	public Vector3 getLastPosition() {
+		return lastPosition;
+	}
 	
 	/**
 	 * Update the ball's position and velocity
@@ -116,6 +122,9 @@ public class Ball extends Entity {
 	 */
 	@Override
     public void update(float deltaTime) {
+
+		lastPosition = getPosition().cpy();
+
 		velocity.x -= (K_M * velocity.x) * deltaTime;
 		velocity.y -= (K_M * velocity.y) * deltaTime;	
 		velocity.z -= (K_M * velocity.z + GRAVITY) * deltaTime;

@@ -26,6 +26,7 @@ public class Team implements Disposable {
 	private Color mainColor;
 	private Texture texture;
 	private Array<Player> players = new Array<Player>();
+	private Player closest;
 
     /**
 	 * Constructor
@@ -53,7 +54,7 @@ public class Team implements Disposable {
 		float y = (int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + 16 + (direction == Direction.NORTH ? -16: 16));
 
         for (int i = 0; i < 10; i++) {
-			this.players.add(new Player(texture, new Vector3(x, y, 0)));
+			this.players.add(new Player(texture, this, new Vector3(x, y, 0)));
 			x -= Player.SPRITE_WIDTH;
 		}
 	}
@@ -84,7 +85,7 @@ public class Team implements Disposable {
 
 	public boolean isReady() {
 		for (Player player : this.players) {
-			if (player.inPosition()) return false;
+			if (!player.inPosition()) return false;
 		}
 
 		return true;
@@ -115,6 +116,30 @@ public class Team implements Disposable {
 	 */
 	public Array<Player> getPlayers() {
 		return this.players;
+	}
+
+	public Player calculateClosestPlayer(Vector3 position) {
+		float shortestDistance = 0f;
+		closest = null;
+		for (Player player : this.players) {
+			float distance = player.getPosition().dst2(position);
+			if (closest == null || distance < shortestDistance) {
+				closest = player;
+				shortestDistance = distance;
+			}
+		}
+		return closest;
+	}
+
+	public void setupThrowIn(Vector3 position, boolean attack) {
+		calculateClosestPlayer(position);
+		if (attack) {
+			closest.setDestination(position);
+		}
+	}
+
+	public void setupKickoff(boolean attack) {
+		tactic.setupKickoff(attack);
 	}
 	
 	/**
