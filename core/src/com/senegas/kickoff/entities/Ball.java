@@ -122,8 +122,7 @@ public class Ball extends Entity {
 	 */
 	@Override
     public void update(float deltaTime) {
-
-		lastPosition = getPosition().cpy();
+		lastPosition.set(position.x, position.y, position.z);
 
 		velocity.x -= (K_M * velocity.x) * deltaTime;
 		velocity.y -= (K_M * velocity.y) * deltaTime;	

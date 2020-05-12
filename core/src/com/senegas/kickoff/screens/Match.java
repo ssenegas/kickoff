@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Logger;
+import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.entities.Player.Direction;
@@ -37,7 +38,7 @@ import static com.senegas.kickoff.states.MatchState.THROW_IN;
  *
  * @author Sébastien Sénégas
  */
-public class Match implements Screen {
+public class Match extends AbstractScreen {
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
     private CameraHelper cameraHelper;
@@ -64,24 +65,26 @@ public class Match implements Screen {
 //	private static float incx = 0.001f;
 //	private static float incy = 0.0013f;
 
-    public Match() {
-        pitch = PitchFactory.getInstance().make(Pitch.Type.PLAYERMANAGER);
-        renderer = new OrthogonalTiledMapRenderer(pitch.getTiledMap());
+    public Match(final KickOff app) {
+        super(app);
 
-        camera = new OrthographicCamera();
+        this.camera = new OrthographicCamera();
         //camera.setToOrtho(true);
-        cameraHelper = new CameraHelper();
-        cameraHelper.setZoom(.45f);
+        this.cameraHelper = new CameraHelper();
+        this.cameraHelper.setZoom(.35f);
+
+        this.pitch = PitchFactory.getInstance().make(Pitch.Type.CLASSIC);
+        this.renderer = new OrthogonalTiledMapRenderer(pitch.getTiledMap());
 
         Vector2 centerSpot = pitch.getCenterSpot();
-        ball = new Ball(new Vector3(centerSpot.x, centerSpot.y, 160));
-        home = new Team(this, "TeamA", Direction.NORTH);
-        away = new Team(this, "TeamB", Direction.SOUTH);
+        this.ball = new Ball(new Vector3(centerSpot.x, centerSpot.y, 320));
+        this.home = new Team(this, "TeamA", Direction.NORTH);
+        this.away = new Team(this, "TeamB", Direction.SOUTH);
 
-        scanner = new Scanner(this);
+        this.scanner = new Scanner(this);
 
-        crowd =  Gdx.audio.newSound(Gdx.files.internal("sounds/crowd.ogg"));
-        whistle = Gdx.audio.newSound(Gdx.files.internal("sounds/whistle.ogg"));
+        this.crowd =  Gdx.audio.newSound(Gdx.files.internal("sounds/crowd.ogg"));
+        this.whistle = Gdx.audio.newSound(Gdx.files.internal("sounds/whistle.ogg"));
         //cameraController = new OrthoCamController(camera);
         //Gdx.input.setInputProcessor(player);
 
@@ -97,20 +100,24 @@ public class Match implements Screen {
     }
 
     @Override
-    public void render(float deltaTime) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+    public void update(float deltaTime) {
         stateMachine.update();
         home.update(deltaTime);
         away.update(deltaTime);
         ball.update(deltaTime);
-
         handleInput();
-
         cameraHelper.update(deltaTime);
-
         checkCollisions();
+        cameraHelper.applyTo(camera);
+    }
+
+    @Override
+    public void render(float deltaTime) {
+        super.render(deltaTime);
+//        Gdx.gl.glClearColor(0, 0, 0, 1);
+//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+
 //        boolean gameIsRunning = true;
 //
 //    	if(!gameIsRunning) {
@@ -127,7 +134,6 @@ public class Match implements Screen {
 //    	{
 
 //    	}
-        cameraHelper.applyTo(camera);
 
         renderer.setView(camera);
         renderer.render();

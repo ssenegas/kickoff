@@ -1,40 +1,35 @@
 package com.senegas.kickoff;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.senegas.kickoff.managers.GameScreenManager;
 import com.senegas.kickoff.screens.MainMenu;
 
 public class KickOff extends Game {
 	
-	public static final String TITLE = "Open Kick Off";
-    public static final String VERSION = "0.3.6";
+	public static String TITLE = "Open Kick Off";
+    public static String VERSION = "0.3.7";
+
+	public GameScreenManager gsm;
 
 	@Override
 	public void create () {
-		setScreen(new MainMenu());
+		gsm = new GameScreenManager(this);
+	}
+
+	@Override
+	public void render() {
+		super.render();
+
+		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+			Gdx.app.exit();
+		}
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-	}
-
-	@Override
-	public void render() {	
-		super.render();
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		super.resize(width, height);
-	}
-
-	@Override
-	public void pause() {
-		super.pause();
-	}
-
-	@Override
-	public void resume() {
-		super.resume();
+		gsm.dispose();
 	}
 }

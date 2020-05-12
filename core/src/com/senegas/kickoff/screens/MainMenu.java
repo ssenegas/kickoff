@@ -13,8 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.senegas.kickoff.KickOff;
+import com.senegas.kickoff.managers.GameScreenManager;
 
-public class MainMenu implements Screen {
+public class MainMenu extends AbstractScreen {
 	
 	private Stage stage;
 	private TextureAtlas atlas;
@@ -22,6 +24,15 @@ public class MainMenu implements Screen {
 	private Table table;
 	private TextButton buttonPlay;
 	private BitmapFont white;
+
+	public MainMenu(final KickOff app) {
+		super(app);
+	}
+
+	@Override
+	public void update(float deltaTime) {
+
+	}
 
 	@Override
 	public void show() {
@@ -48,7 +59,7 @@ public class MainMenu implements Screen {
 		buttonPlay.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				((Game) Gdx.app.getApplicationListener()).setScreen(new Match());
+				app.gsm.setScreen(GameScreenManager.STATE.PLAY);
 			}
 		});
 		buttonPlay.pad(15);
@@ -60,8 +71,7 @@ public class MainMenu implements Screen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		super.render(delta);
         
 		stage.act(delta);
 		stage.draw();

@@ -20,10 +20,10 @@ public enum MatchState implements State<Match> {
             match.getHomeTeam().setupIntroduction();
             match.getAwayTeam().setupIntroduction();
 
-            match.getCameraHelper().setPosition(MathUtils.clamp(match.getBall().getPosition().x,
+            match.getCameraHelper().setPosition(MathUtils.clamp(0,
                     match.getCamera().viewportWidth / 2 * match.getCamera().zoom,
                     Pitch.WIDTH - match.getCamera().viewportWidth / 2 * match.getCamera().zoom),
-                    MathUtils.clamp(match.getBall().getPosition().y,
+                    MathUtils.clamp(Pitch.HEIGHT,
                             match.getCamera().viewportHeight / 2 * match.getCamera().zoom,
                             Pitch.HEIGHT - match.getCamera().viewportHeight / 2 * match.getCamera().zoom));
 
