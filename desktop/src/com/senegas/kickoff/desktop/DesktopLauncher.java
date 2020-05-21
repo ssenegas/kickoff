@@ -12,6 +12,7 @@ public class DesktopLauncher {
 		config.useGL30 = true;
 		config.width = KickOff.APP_DESKTOP_WIDTH;
 		config.height = KickOff.APP_DESKTOP_HEIGHT;
+		config.forceExit = false;
 		new LwjglApplication(new KickOff(), config);
 	}
 }
