@@ -106,6 +106,11 @@ public class Ball extends Entity {
         }
     }
 
+    /**
+     * Helper method to draw on the pitch a translucent cross at the ball's position
+     *
+     * @param shapeBatch
+     */
     public void showPosition(ShapeRenderer shapeBatch) {
         // enable transparency
         Gdx.gl.glEnable(GL20.GL_BLEND);

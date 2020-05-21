@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
@@ -30,8 +29,6 @@ import static com.senegas.kickoff.pitches.FootballDimensionConstants.CM_PER_PIXE
 import static com.senegas.kickoff.states.MatchState.INPLAY;
 import static com.senegas.kickoff.states.MatchState.THROW_IN;
 
-//import static com.senegas.kickoff.states.MatchState.INPLAY;
-
 /**
  * Match
  *
@@ -42,7 +39,6 @@ public class Match extends AbstractScreen {
 
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
-    private ScreenViewport viewport;
     private CameraHelper cameraHelper;
     private BitmapFont font;
     private SpriteBatch batch;
@@ -69,7 +65,7 @@ public class Match extends AbstractScreen {
 //	private static float incx = 0.001f;
 //	private static float incy = 0.0013f;
 
-    public Match(final KickOff app) {
+    public Match(KickOff app) {
         super(app);
 
         this.scoreHome = 0;
@@ -79,8 +75,6 @@ public class Match extends AbstractScreen {
         this.camera.setToOrtho(false, KickOff.V_WIDTH, KickOff.V_HEIGHT);
         app.batch.setProjectionMatrix(this.camera.combined);
         //app.shapeBatch.setProjectionMatrix(camera.combined);
-
-        this.viewport = new ScreenViewport();
 
         this.cameraHelper = new CameraHelper();
         this.cameraHelper.setZoom(.35f);
@@ -105,7 +99,7 @@ public class Match extends AbstractScreen {
 
         this.font = new BitmapFont();
         this.batch = new SpriteBatch();
-        this.stateMachine = new DefaultStateMachine<Match, MatchState>(this);
+        this.stateMachine = new DefaultStateMachine<>(this);
 
         Gdx.app.log(TAG, "constructor");
     }
@@ -140,7 +134,7 @@ public class Match extends AbstractScreen {
         this.renderer.render();
 
         // renders overlays for tactic and ball position
-        this.app.shapeBatch.setProjectionMatrix(camera.combined);
+        this.app.shapeBatch.setProjectionMatrix(this.camera.combined);
         this.home.showDebug(this.app.shapeBatch, this.ball.getPosition());
         this.ball.showPosition(this.app.shapeBatch);
 
@@ -152,7 +146,7 @@ public class Match extends AbstractScreen {
         this.ball.draw(this.app.batch);
 
         // renders stopwatch
-        this.app.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        this.app.batch.setProjectionMatrix(this.hud.stage.getCamera().combined);
         this.stopwatch.draw(this.app.batch);
 
         if (DEBUG) {
@@ -171,7 +165,7 @@ public class Match extends AbstractScreen {
     }
 
     private void displayDebugInfo() {
-        this.app.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        this.app.batch.setProjectionMatrix(this.hud.stage.getCamera().combined);
 
         Player player = this.home.getPlayers().get(0);
         Vector2 ballLocation = PitchUtils.globalToPitch(this.ball.getPosition().x, this.ball.getPosition().y);
@@ -202,7 +196,9 @@ public class Match extends AbstractScreen {
     }
 
     public Team getLastTeamTouch() {
-        if (this.lastTouch == null) return null;
+        if (this.lastTouch == null) {
+            return null;
+        }
         return this.lastTouch.getTeam();
     }
 
@@ -213,9 +209,9 @@ public class Match extends AbstractScreen {
         if (this.stateMachine.getCurrentState() == INPLAY) {
             for (Player player : this.home.getPlayers()) {
                 if (player.getBounds().contains(this.ball.getPosition().x, this.ball.getPosition().y)) {
-                    this.setLastPlayerTouch(player);
+                    setLastPlayerTouch(player);
                     if (this.ball.getPosition().z < player.height() / CM_PER_PIXEL) { //!Reimp move constant elsewhere
-                        this.ball.applyForce(player.speed() * 1.125f + 30.0f, player.getDirection());
+                        this.ball.applyForce(player.speed() * 1.125f + 30.0f, player.getDirection()); // 1.125f + 30.0f is the magic number
                     }
                 }
             }
