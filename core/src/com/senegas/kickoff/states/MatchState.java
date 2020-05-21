@@ -1,5 +1,6 @@
 package com.senegas.kickoff.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.math.MathUtils;
@@ -14,6 +15,8 @@ import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_HEIGH
 public enum MatchState implements State<Match> {
 
     INTRODUCTION() {
+        private float elapsedTimeInSeconds;
+
         @Override
         public void enter(Match match) {
             match.crowd.play(0.2f);
@@ -32,14 +35,11 @@ public enum MatchState implements State<Match> {
 
         @Override
         public void update(Match match) {
-            if (match.getHomeTeam().isReady() && match.getAwayTeam().isReady()) {
-//                float delay = 8; // seconds
-//                Timer.schedule(new Timer.Task(){
-//                    @Override
-//                    public void run() {
-//                        match.stateMachine.changeState(PREPAREFORKICKOFF);
-//                    }
-//                }, delay);
+            this.elapsedTimeInSeconds += Gdx.graphics.getDeltaTime();
+            //System.out.println("startTime: " + this.elapsedTimeInSeconds);
+            boolean timeOut = (this.elapsedTimeInSeconds > 7);
+
+            if (match.getHomeTeam().isReady() && match.getAwayTeam().isReady() && timeOut) {
                 match.stateMachine.changeState(PREPAREFORKICKOFF);
             }
         }
@@ -55,6 +55,8 @@ public enum MatchState implements State<Match> {
     },
 
     PREPAREFORKICKOFF() {
+        private float elapsedTimeInSeconds;
+
         @Override
         public void enter(Match match) {
             match.getCameraHelper().setTarget(match.getPitch().getCenterSpot());
@@ -64,7 +66,10 @@ public enum MatchState implements State<Match> {
 
         @Override
         public void update(Match match) {
-            if (match.getHomeTeam().isReady() && match.getAwayTeam().isReady()) {
+            this.elapsedTimeInSeconds += Gdx.graphics.getDeltaTime();
+            boolean timeOut = (this.elapsedTimeInSeconds > 3);
+
+            if (match.getHomeTeam().isReady() && match.getAwayTeam().isReady() && timeOut) {
                 match.stateMachine.changeState(INPLAY);
             }
         }

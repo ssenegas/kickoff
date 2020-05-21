@@ -40,6 +40,7 @@ public class Scanner {
     private boolean withBackground;
     private Vector2 origin;
     private Match match;
+
     /**
      * Constructor
      * @param match the match

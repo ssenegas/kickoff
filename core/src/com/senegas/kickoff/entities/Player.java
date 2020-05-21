@@ -48,7 +48,7 @@ public class Player extends Entity implements Disposable, InputProcessor {
     private Circle bounds;
     private Direction direction = Direction.NONE;
     private final static int FRAME_COUNT = 14;
-    private Vector3 desiredPosition = new Vector3((int) (PITCH_WIDTH_IN_PX / 2 + OUTER_TOP_EDGE_X),
+	private Vector3 destination = new Vector3((int) (PITCH_WIDTH_IN_PX / 2 + OUTER_TOP_EDGE_X),
                                                 (int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + 16),
                                                 0);
 	private float speed = 200f;
@@ -88,7 +88,7 @@ public class Player extends Entity implements Disposable, InputProcessor {
 	 */
 	@Override
     public void update(float deltaTime) {
-		moveToDesiredPosition();
+		moveToDestination();
 
 		if (this.direction != Direction.NONE) {
 			// update animation
@@ -108,7 +108,7 @@ public class Player extends Entity implements Disposable, InputProcessor {
 		// update bounds
 		this.bounds.setPosition(this.position.x, this.position.y);
 
-		//adjustVelocity();
+//		adjustVelocity();
 		
 		// stop at border of map
 //		if (x < 0) {
@@ -166,17 +166,16 @@ public class Player extends Entity implements Disposable, InputProcessor {
 	}
 
     public void setDestination(Vector3 destination) {
-	    this.desiredPosition = new Vector3(destination.x, destination.y, 0);
+		this.destination = new Vector3(destination.x, destination.y, 0);
     }
 
 	public Vector3 getDestination() {
-		return this.desiredPosition;
+		return this.destination;
 	}
 
-    public boolean inPosition()
-    {
+	public boolean inPosition() {
         Vector3 currentDistance = new Vector3(this.position.x, this.position.y, 0);
-        currentDistance.sub(this.desiredPosition);
+		currentDistance.sub(this.destination);
 
 		if (currentDistance.len() < 2.25) {
 			return true;
@@ -187,36 +186,33 @@ public class Player extends Entity implements Disposable, InputProcessor {
 	/**
 	 * Move the player to destination position
 	 */
-	public void moveToDesiredPosition()
-	{
+	public void moveToDestination() {
 		Vector3 start = new Vector3(this.position.x, this.position.y, 0);
-		float distance = start.dst(this.desiredPosition);
+		float distance = start.dst(this.destination);
 		
 		boolean moving = true;
-	    if (distance <= 2)
-	    {
+		if (distance <= 2) {
 	    	moving = false;
 			this.velocity.x = 0;
 			this.velocity.y = 0;
 	    }
-		
-		if (moving == true)
-		{
-			this.velocity.set(this.desiredPosition.x - this.position.x, this.desiredPosition.y - this.position.y, 0);
-			this.velocity.nor(); // Normalizes the value to be used
-			
-			float fThreshold = (float) Math.cos(Math.PI / 8);
 
-			if (this.velocity.x > fThreshold) {
+		if (moving == true) {
+			this.velocity.set(this.destination.x - this.position.x, this.destination.y - this.position.y, 0);
+			this.velocity.nor(); // Normalizes the value to be used
+
+			float threshold = (float) Math.cos(Math.PI / 8);
+
+			if (this.velocity.x > threshold) {
 				this.velocity.x = this.speed;
 				this.velocity.y = 0;
-			} else if (this.velocity.x < -fThreshold) {
+			} else if (this.velocity.x < -threshold) {
 				this.velocity.x = -this.speed;
 				this.velocity.y = 0;
-			} else if (this.velocity.y > fThreshold) {
+			} else if (this.velocity.y > threshold) {
 				this.velocity.x = 0;
 				this.velocity.y = this.speed;
-			} else if (this.velocity.y < -fThreshold) {
+			} else if (this.velocity.y < -threshold) {
 				this.velocity.x = 0;
 				this.velocity.y = -this.speed;
 			} else if (this.velocity.x > 0 && this.velocity.y > 0) {
@@ -228,28 +224,29 @@ public class Player extends Entity implements Disposable, InputProcessor {
 			} else if (this.velocity.x < 0 && this.velocity.y > 0) {
 				this.velocity.x = -this.speed;
 				this.velocity.y = this.speed;
-			} else if (this.velocity.x < 0 && this.velocity.y < 0)
-			{
+			} else if (this.velocity.x < 0 && this.velocity.y < 0) {
 				this.velocity.x = -this.speed;
 				this.velocity.y = -this.speed;
 			}
 		}
 		
 		updateDirection();
-	}	
-	
+	}
+
 //	private void adjustVelocity() {
 //		// adjust diagonal velocity
-//		if (velocity.x != 0 && velocity.y != 0) {
-//			if (velocity.x < 0)
-//				velocity.x = (float) (-0.5f * Math.sqrt(2*speed*speed));
-//			else
-//				velocity.x = (float) (0.5f * Math.sqrt(2*speed*speed));
-//			
-//			if (velocity.y < 0)
-//				velocity.y = (float) (-0.5f * Math.sqrt(2*speed*speed));
-//			else
-//				velocity.y = (float) (0.5f * Math.sqrt(2*speed*speed));
+//		if (this.velocity.x != 0 && this.velocity.y != 0) {
+//			if (this.velocity.x < 0) {
+//				this.velocity.x = (float) (-0.5f * Math.sqrt(2 * this.speed * this.speed));
+//			} else {
+//				this.velocity.x = (float) (0.5f * Math.sqrt(2 * this.speed * this.speed));
+//			}
+//
+//			if (this.velocity.y < 0) {
+//				this.velocity.y = (float) (-0.5f * Math.sqrt(2 * this.speed * this.speed));
+//			} else {
+//				this.velocity.y = (float) (0.5f * Math.sqrt(2 * this.speed * this.speed));
+//			}
 //		}
 //	}
 	
