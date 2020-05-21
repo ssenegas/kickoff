@@ -3,6 +3,7 @@ package com.senegas.kickoff.entities;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -11,7 +12,8 @@ import com.senegas.kickoff.screens.Match;
 import com.senegas.kickoff.tactics.Tactic;
 import com.senegas.kickoff.tactics.Tactic424;
 
-import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_TOP_EDGE_Y;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_HEIGHT_IN_PX;
 
 /**
  * Team
@@ -25,7 +27,7 @@ public class Team implements Disposable {
 	private Direction direction;
 	private Color mainColor;
 	private Texture texture;
-	private Array<Player> players = new Array<Player>();
+    private Array<Player> players = new Array<>();
 	private Player closest;
 
     /**
@@ -39,7 +41,7 @@ public class Team implements Disposable {
 		this.match = match;
 		this.name = name;
 		this.direction = direction;
-        mainColor = (direction == Direction.NORTH ? new Color(Color.RED) : new Color(Color.BLUE));
+        this.mainColor = (direction == Direction.NORTH ? new Color(Color.RED) : new Color(Color.BLUE));
         this.texture = (direction == Direction.NORTH ? new Texture("entities/style1a.png") : new Texture("entities/style1b.png"));
 
 		createPlayers();
@@ -51,10 +53,10 @@ public class Team implements Disposable {
 	 */
 	private void createPlayers() {
 		float x = 0;
-		float y = (int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + 16 + (direction == Direction.NORTH ? -16: 16));
+        float y = (int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + 16 + (this.direction == Direction.NORTH ? -16 : 16));
 
         for (int i = 0; i < 10; i++) {
-			this.players.add(new Player(texture, this, new Vector3(x, y, 0)));
+            this.players.add(new Player(this.texture, this, new Vector3(x, y, 0)));
 			x -= Player.SPRITE_WIDTH;
 		}
 	}
@@ -63,7 +65,7 @@ public class Team implements Disposable {
 		Vector3 playerPosition = new Vector3(0,
 				(int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + 16),
 				0);
-		playerPosition.add(352, Player.SPRITE_HEIGHT * (direction == Direction.NORTH ? -1: 1), 0);
+        playerPosition.add(352, Player.SPRITE_HEIGHT * (this.direction == Direction.NORTH ? -1 : 1), 0);
 
 		for (Player player : this.players) {
 			player.setDestination(playerPosition);
@@ -85,7 +87,9 @@ public class Team implements Disposable {
 
 	public boolean isReady() {
 		for (Player player : this.players) {
-			if (!player.inPosition()) return false;
+            if (!player.inPosition()) {
+                return false;
+            }
 		}
 
 		return true;
@@ -101,12 +105,12 @@ public class Team implements Disposable {
         }
 	}
 
-	public void showDebug() {
-        if (direction == Direction.NORTH) {
+    public void showDebug(ShapeRenderer shapeBatch, Vector3 position) {
+        if (this.direction == Direction.NORTH) {
             for (Player player : this.players) {
-                player.showBounds(match.getCamera());
+                player.showBounds(shapeBatch);
             }
-            this.tactic.showRegionAndExpectedPlayerLocation(match.getCamera(), match.getBall());
+            this.tactic.showRegionAndExpectedPlayerLocation(shapeBatch, position);
         }
     }
 	
@@ -120,26 +124,26 @@ public class Team implements Disposable {
 
 	public Player calculateClosestPlayer(Vector3 position) {
 		float shortestDistance = 0f;
-		closest = null;
+        this.closest = null;
 		for (Player player : this.players) {
 			float distance = player.getPosition().dst2(position);
-			if (closest == null || distance < shortestDistance) {
-				closest = player;
+            if (this.closest == null || distance < shortestDistance) {
+                this.closest = player;
 				shortestDistance = distance;
 			}
 		}
-		return closest;
+        return this.closest;
 	}
 
 	public void setupThrowIn(Vector3 position, boolean attack) {
 		calculateClosestPlayer(position);
 		if (attack) {
-			closest.setDestination(position);
+            this.closest.setDestination(position);
 		}
 	}
 
 	public void setupKickoff(boolean attack) {
-		tactic.setupKickoff(attack);
+        this.tactic.setupKickoff(attack);
 	}
 	
 	/**
@@ -171,7 +175,7 @@ public class Team implements Disposable {
      * @return
      */
     public Color getMainColor() {
-        return mainColor;
+        return this.mainColor;
     }
 	
 	@Override

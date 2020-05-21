@@ -5,17 +5,17 @@ import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Timer;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.screens.Match;
 
-import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_TOP_EDGE_Y;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_HEIGHT_IN_PX;
 
 public enum MatchState implements State<Match> {
 
     INTRODUCTION() {
         @Override
-        public void enter(final Match match) {
+        public void enter(Match match) {
             match.crowd.play(0.2f);
             match.getHomeTeam().setupIntroduction();
             match.getAwayTeam().setupIntroduction();
@@ -31,7 +31,7 @@ public enum MatchState implements State<Match> {
         }
 
         @Override
-        public void update(final Match match) {
+        public void update(Match match) {
             if (match.getHomeTeam().isReady() && match.getAwayTeam().isReady()) {
 //                float delay = 8; // seconds
 //                Timer.schedule(new Timer.Task(){
@@ -56,7 +56,7 @@ public enum MatchState implements State<Match> {
 
     PREPAREFORKICKOFF() {
         @Override
-        public void enter(final Match match) {
+        public void enter(Match match) {
             match.getCameraHelper().setTarget(match.getPitch().getCenterSpot());
             match.getHomeTeam().setupKickoff(true);
             match.getAwayTeam().setupKickoff(false);
@@ -90,8 +90,9 @@ public enum MatchState implements State<Match> {
         public void update(Match match) {
             match.getCameraHelper().setPosition(MathUtils.clamp(match.getBall().getPosition().x, match.getCamera().viewportWidth / 2 * match.getCamera().zoom, Pitch.WIDTH - match.getCamera().viewportWidth / 2 * match.getCamera().zoom),
                     MathUtils.clamp(match.getBall().getPosition().y, match.getCamera().viewportHeight / 2 * match.getCamera().zoom, Pitch.HEIGHT - match.getCamera().viewportHeight / 2 * match.getCamera().zoom));
-            match.getHomeTeam().getTactic().update(match.getBall());
-            match.getAwayTeam().getTactic().update(match.getBall());
+
+            match.getHomeTeam().getTactic().update(match.getBall().getPosition());
+            match.getAwayTeam().getTactic().update(match.getBall().getPosition());
         }
 
         @Override

@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Joystick
 {	
 	private float MaxDistance = 2000.0f; //in pixels non sqrt
-	private float MaxDistanceSqrt = (float)Math.sqrt((double)MaxDistance);
+	private float MaxDistanceSqrt = (float)Math.sqrt((double) this.MaxDistance);
 	
 	private float CentreX = -1;
 	private float CentreY = -1;
@@ -33,64 +33,64 @@ public class Joystick
 	
 	public void SetMaxDistance(float maxDistanceInPixels)
 	{
-		MaxDistance = (float)Math.pow((double)maxDistanceInPixels, 2);
-		MaxDistanceSqrt = maxDistanceInPixels;
+		this.MaxDistance = (float)Math.pow((double)maxDistanceInPixels, 2);
+		this.MaxDistanceSqrt = maxDistanceInPixels;
 	}
 	
 	public void Update(float delta)
 	{
-		if (FingerId == -1)
+		if (this.FingerId == -1)
 			return;
 		
-		if (Gdx.input.isTouched(FingerId) == false)
+		if (Gdx.input.isTouched(this.FingerId) == false)
 		{
-			FingerId = -1;
-			
-			CentreX = -1;
-			CentreY = -1;
+			this.FingerId = -1;
+
+			this.CentreX = -1;
+			this.CentreY = -1;
 			
 			return;
 		}
-		
-		
-		CurrentX = Gdx.input.getX(FingerId);
-		CurrentY = Gdx.input.getY(FingerId);
+
+
+		this.CurrentX = Gdx.input.getX(this.FingerId);
+		this.CurrentY = Gdx.input.getY(this.FingerId);
 		
 		//Reverse height, so we get graphics height instead of touch height (touch 0,0 = top left; graphics 0,0 = bottom left)
-		CurrentY = Gdx.graphics.getHeight() - CurrentY;		
+		this.CurrentY = Gdx.graphics.getHeight() - this.CurrentY;
 		
 		//On first touch, set the centre
-		if (CentreX == -1 && CentreY == -1)
+		if (this.CentreX == -1 && this.CentreY == -1)
 		{
-			CentreX = CurrentX;
-			CentreY = CurrentY;
+			this.CentreX = this.CurrentX;
+			this.CentreY = this.CurrentY;
 		}
 		
-		float x = CentreX - CurrentX;
-		float y = CentreY - CurrentY;
+		float x = this.CentreX - this.CurrentX;
+		float y = this.CentreY - this.CurrentY;
 		
 		float dis = (x * x) + (y * y);
 				
-		if (dis > MaxDistance)
+		if (dis > this.MaxDistance)
 		{			
 			dis = (float)Math.sqrt((double)dis);
 			
-			float dif = dis - MaxDistanceSqrt;			
+			float dif = dis - this.MaxDistanceSqrt;
+
+			this.CentreVector.x = this.CentreX;
+			this.CentreVector.y = this.CentreY;
+
+			this.CentreVector.sub(this.CurrentX, this.CurrentY);
+			this.CentreVector.nor(); // Direction
+			this.CentreVector.scl(dif);
+
+			this.CentreX -= this.CentreVector.x;
+			this.CentreY -= this.CentreVector.y;
 			
-			CentreVector.x = CentreX;
-			CentreVector.y = CentreY;
-			
-			CentreVector.sub(CurrentX, CurrentY);
-			CentreVector.nor(); // Direction
-			CentreVector.scl(dif);
-			
-			CentreX -= CentreVector.x;
-			CentreY -= CentreVector.y;
-			
-			if (!Area.contains(CentreX, CentreY))
+			if (!this.Area.contains(this.CentreX, this.CentreY))
 			{
-				CentreX += CentreVector.x;
-				CentreY += CentreVector.y;
+				this.CentreX += this.CentreVector.x;
+				this.CentreY += this.CentreVector.y;
 			}
 		}
 		
@@ -98,47 +98,47 @@ public class Joystick
 	
 	public Vector2 Value()
 	{
-		if (FingerId == -1)
+		if (this.FingerId == -1)
 		{
-			tmp.x = 0;
-			tmp.y = 0;			
+			this.tmp.x = 0;
+			this.tmp.y = 0;
 		}
 		else
 		{
-			tmp.x = CentreX - CurrentX;
-			tmp.y = CentreY - CurrentY;
-			
-			tmp.y *= -1;
-			tmp.x *= -1;
+			this.tmp.x = this.CentreX - this.CurrentX;
+			this.tmp.y = this.CentreY - this.CurrentY;
+
+			this.tmp.y *= -1;
+			this.tmp.x *= -1;
 		
-			float length = tmp.len();
-			float percentage = length / MaxDistanceSqrt;
+			float length = this.tmp.len();
+			float percentage = length / this.MaxDistanceSqrt;
 			
-			if (percentage < DeadZone)
+			if (percentage < this.DeadZone)
 			{
-				tmp.x = 0; 
-				tmp.y = 0;
+				this.tmp.x = 0;
+				this.tmp.y = 0;
 			}
 			else
-			{			
-				tmp.nor();
-				tmp.scl(percentage);			
+			{
+				this.tmp.nor();
+				this.tmp.scl(percentage);
 			}
 			
 		}
 		
-		return tmp;
+		return this.tmp;
 	}
 	
 	public void Draw(ShapeRenderer shapeRenderer)
 	{
-		if (FingerId == -1)
+		if (this.FingerId == -1)
 			return;
 		
 		shapeRenderer.begin(ShapeType.Filled);
 		
-		shapeRenderer.circle(CentreX, CentreY, (float)Math.sqrt((double)MaxDistance) );
-		shapeRenderer.circle(CurrentX, CurrentY, 10);
+		shapeRenderer.circle(this.CentreX, this.CentreY, (float)Math.sqrt((double) this.MaxDistance) );
+		shapeRenderer.circle(this.CurrentX, this.CurrentY, 10);
 		
 		shapeRenderer.end();
 	}

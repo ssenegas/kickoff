@@ -8,9 +8,10 @@ import com.senegas.kickoff.KickOff;
 
 public abstract class AbstractScreen implements Screen {
 
-    protected final KickOff app;
+    private static final String TAG = AbstractScreen.class.getSimpleName();
 
-    Stage stage;
+    protected final KickOff app;
+    protected Stage stage;
 
     public AbstractScreen(final KickOff app) {
         this.app = app;
@@ -29,11 +30,16 @@ public abstract class AbstractScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
+        this.stage.getViewport().update(width, height, true);
     }
 
     @Override
     public void dispose() {
+        Gdx.app.log(TAG, "dispose");
         this.stage.dispose();
+    }
+
+    public final KickOff getApp() {
+        return this.app;
     }
 }

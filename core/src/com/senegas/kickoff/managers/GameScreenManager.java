@@ -19,25 +19,25 @@ public class GameScreenManager {
         SETTINGS
     }
 
-    public GameScreenManager(final KickOff app){
+    public GameScreenManager(KickOff app) {
         this.app = app;
 
         initGameScreens();
         setScreen(STATE.MAIN_MENU);
     }
 
-    private void initGameScreens(){
-        this.gameScreens = new HashMap<STATE, AbstractScreen>();
-        this.gameScreens.put(STATE.MAIN_MENU, new MainMenu(app));
-        this.gameScreens.put(STATE.PLAY, new Match(app));
+    private void initGameScreens() {
+        this.gameScreens = new HashMap<>();
+        this.gameScreens.put(STATE.MAIN_MENU, new MainMenu(this.app));
+        this.gameScreens.put(STATE.PLAY, new Match(this.app));
     }
 
-    public void setScreen(STATE nextScreen){
-        app.setScreen(gameScreens.get(nextScreen));
+    public void setScreen(STATE nextScreen) {
+        this.app.setScreen(this.gameScreens.get(nextScreen));
     }
 
-    public void dispose(){
-        for(AbstractScreen screen : gameScreens.values()){
+    public void dispose() {
+        for (AbstractScreen screen : this.gameScreens.values()) {
             if (screen != null){
                 screen.dispose();
             }

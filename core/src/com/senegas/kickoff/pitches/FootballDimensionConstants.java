@@ -1,7 +1,5 @@
 package com.senegas.kickoff.pitches;
 
-import com.badlogic.gdx.math.Vector3;
-
 public final class FootballDimensionConstants {
 	/* 1 inch = 2,54 cm */
 	/* 1 foot -> 12 inches -> 30.48 cm */

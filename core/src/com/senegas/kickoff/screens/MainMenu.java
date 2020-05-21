@@ -1,9 +1,6 @@
 package com.senegas.kickoff.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -17,8 +14,9 @@ import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.managers.GameScreenManager;
 
 public class MainMenu extends AbstractScreen {
+	private static final String TAG = MainMenu.class.getSimpleName();
 	
-	private Stage stage;
+	private Stage menustage;
 	private TextureAtlas atlas;
 	private Skin skin;
 	private Table table;
@@ -36,45 +34,45 @@ public class MainMenu extends AbstractScreen {
 
 	@Override
 	public void show() {
-		stage = new Stage();
+		this.menustage = new Stage();
 		
-		Gdx.input.setInputProcessor(stage);
-		
-		atlas = new TextureAtlas("ui/button.pack");
-		skin = new Skin(atlas);
-		
-		table = new Table(skin);
-		table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		
-		white = new BitmapFont(Gdx.files.internal("font/white.fnt"), false);
+		Gdx.input.setInputProcessor(this.menustage);
+
+        this.atlas = new TextureAtlas("ui/button.pack");
+        this.skin = new Skin(this.atlas);
+
+        this.table = new Table(this.skin);
+        this.table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        this.white = new BitmapFont(Gdx.files.internal("font/white.fnt"), false);
 		
 		TextButtonStyle textButtonStyle = new TextButtonStyle();
-		textButtonStyle.up = skin.getDrawable("button.up");
-		textButtonStyle.down = skin.getDrawable("button.down");
+		textButtonStyle.up = this.skin.getDrawable("button.up");
+		textButtonStyle.down = this.skin.getDrawable("button.down");
 		textButtonStyle.pressedOffsetX = 1;
 		textButtonStyle.pressedOffsetY = -1;
-		textButtonStyle.font = white;
-		
-		buttonPlay = new TextButton("PLAY", textButtonStyle);
-		buttonPlay.addListener(new ClickListener() {
+		textButtonStyle.font = this.white;
+
+        this.buttonPlay = new TextButton("PLAY", textButtonStyle);
+        this.buttonPlay.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				app.gsm.setScreen(GameScreenManager.STATE.PLAY);
+                MainMenu.this.app.gsm.setScreen(GameScreenManager.STATE.PLAY);
 			}
 		});
-		buttonPlay.pad(15);
-		
-		table.add(buttonPlay);
-		table.debug();
-		stage.addActor(table);
+        this.buttonPlay.pad(15);
+
+        this.table.add(this.buttonPlay);
+        this.table.debug();
+		this.menustage.addActor(this.table);
 	}
 
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-        
-		stage.act(delta);
-		stage.draw();
+
+		this.menustage.act(delta);
+		this.menustage.draw();
 	}
 
 	@Override
@@ -99,8 +97,11 @@ public class MainMenu extends AbstractScreen {
 
 	@Override
 	public void dispose() {
-		stage.dispose();
-		skin.dispose();
+		super.dispose();
+		Gdx.app.log(TAG, "dispose");
+
+		this.menustage.dispose();
+		this.skin.dispose();
 	}
 
 }

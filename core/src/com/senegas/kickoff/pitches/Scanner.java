@@ -3,12 +3,23 @@ package com.senegas.kickoff.pitches;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
+import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.entities.Player;
 import com.senegas.kickoff.screens.Match;
 
-import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.GOAL_AREA_HEIGHT_IN_PX;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.HALF_GOAL_AREA_WIDTH_IN_PX;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.HALF_PENALTY_AREA_WIDTH_IN_PX;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.HALF_PITCH_HEIGHT_IN_PX;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.HALF_PITCH_WIDTH_IN_PX;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_TOP_EDGE_X;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_TOP_EDGE_Y;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.PENALTY_AREA_HEIGHT_IN_PX;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_HEIGHT_IN_PX;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_WIDTH_IN_PX;
 
 /**
  * Scanner
@@ -16,203 +27,208 @@ import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
  *
  */
 public class Scanner {
+    private static final String TAG = Scanner.class.getSimpleName();
+
     private static final int BALL_RADIUS = 2;
     private static final int PLAYER_RADIUS = 4;
 
     private int zoomFactor;
+    private float ratio;
     private boolean isVisible;
     private static final int[] ZOOM = {112, 92, 78, 230, 144};
     private boolean defaultMode;
+    private boolean withBackground;
     private Vector2 origin;
     private Match match;
-
     /**
      * Constructor
-     * @param m the match
+     * @param match the match
      */
-    public Scanner(Match m) {
-        this.match = m;
+    public Scanner(Match match) {
+        this.match = match;
         this.isVisible = true;
         this.zoomFactor = 3;
+        this.ratio = (float) (ZOOM[this.zoomFactor] / PITCH_WIDTH_IN_PX);
         this.defaultMode = true;
-        this.origin = new Vector2(18, Gdx.graphics.getHeight() - 26);
+        this.withBackground = true;
+        this.origin = new Vector2(18, KickOff.V_HEIGHT - 26);
+
+        Gdx.app.log(TAG, "constructor");
     }
 
     /**
      * Draw the scanner
      */
-    public void draw() {
-        float ratio = (float) (ZOOM[zoomFactor] / PITCH_WIDTH_IN_PX);
-        //Gdx.app.log("Scanner", "graphics.getHeight " + Gdx.graphics.getHeight());
-        this.origin.y = Gdx.graphics.getHeight() - 26 - (float) PITCH_HEIGHT_IN_PX * ratio;
+    public void draw(ShapeRenderer shapeBatch) {
+        this.origin.y = KickOff.V_HEIGHT - 26 - (float) PITCH_HEIGHT_IN_PX * this.ratio;
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-        drawPitch(ratio, true);
-        drawBall(ratio);
-        drawPlayers(ratio);
+        if (this.withBackground) {
+            drawTranslucentPitchBackground(shapeBatch);
+        }
+        drawPitch(shapeBatch);
+        drawBall(shapeBatch);
+        drawPlayers(shapeBatch);
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
-    private void drawPlayers(float ratio) {
-        match.shapeRenderer.begin(ShapeType.Filled);
+    private void drawPlayers(ShapeRenderer shapeBatch) {
+        shapeBatch.begin(ShapeType.Filled);
 
         // Players positions
-        Color homeColor = match.getHomeTeam().getMainColor();
-        match.shapeRenderer.setColor(new Color(homeColor.r, homeColor.g, homeColor.b, 0.6f));
-        for (Player player : match.getHomeTeam().getPlayers()) {
-            drawPlayer(ratio, player);
+        Color homeColor = this.match.getHomeTeam().getMainColor();
+        shapeBatch.setColor(new Color(homeColor.r, homeColor.g, homeColor.b, 0.6f));
+        for (Player player : this.match.getHomeTeam().getPlayers()) {
+            drawPlayer(shapeBatch, player);
         }
-        Color awayColor = match.getAwayTeam().getMainColor();
-        match.shapeRenderer.setColor(new Color(awayColor.r, awayColor.g, awayColor.b, 0.6f));
-        for (Player player : match.getAwayTeam().getPlayers())
-            drawPlayer(ratio, player);
+        Color awayColor = this.match.getAwayTeam().getMainColor();
+        shapeBatch.setColor(new Color(awayColor.r, awayColor.g, awayColor.b, 0.6f));
+        for (Player player : this.match.getAwayTeam().getPlayers()) {
+            drawPlayer(shapeBatch, player);
+        }
 
-        match.shapeRenderer.end();
+        shapeBatch.end();
     }
 
-    private void drawPlayer(float ratio, Player player) {
-        match.shapeRenderer.circle((float)(this.origin.x + (player.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
-                (float)(this.origin.y + (player.getPosition().y - OUTER_TOP_EDGE_Y ) * ratio), PLAYER_RADIUS);
+    private void drawPlayer(ShapeRenderer shapeBatch, Player player) {
+        shapeBatch.circle((float) (this.origin.x + (player.getPosition().x - OUTER_TOP_EDGE_X) * this.ratio),
+                (float) (this.origin.y + (player.getPosition().y - OUTER_TOP_EDGE_Y) * this.ratio), PLAYER_RADIUS);
 
         // old fashion with line instead circle
-/*        match.shapeRenderer.line( (float)(this.origin.x + (player.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
+/*        app.shapeBatch.line( (float)(this.origin.x + (player.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
 				(float)(this.origin.y + (player.getPosition().y - OUTER_TOP_EDGE_Y ) * ratio),
 				(float)(this.origin.x + 1 + (player.getPosition().x - OUTER_TOP_EDGE_X ) * ratio),  // + 1 for width
 				(float)(this.origin.y + (player.getPosition().y - OUTER_TOP_EDGE_Y ) * ratio));*/
     }
 
-    private void drawBall(float ratio) {
-        match.shapeRenderer.begin(ShapeType.Filled);
+    private void drawBall(ShapeRenderer shapeBatch) {
+        shapeBatch.begin(ShapeType.Filled);
         // Ball position
-        match.shapeRenderer.setColor(new Color(1.0f, 1.0f, 1.0f, 0.6f));
-        match.shapeRenderer.circle((float)(this.origin.x + (match.getBall().getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
-                (float)(this.origin.y + (match.getBall().getPosition().y - OUTER_TOP_EDGE_Y ) * ratio), BALL_RADIUS);
+        shapeBatch.setColor(new Color(1.0f, 1.0f, 1.0f, 0.6f));
+        shapeBatch.circle((float) (this.origin.x + (this.match.getBall().getPosition().x - OUTER_TOP_EDGE_X) * this.ratio),
+                (float) (this.origin.y + (this.match.getBall().getPosition().y - OUTER_TOP_EDGE_Y) * this.ratio), BALL_RADIUS);
         // old fashion with line instead circle
-        /*		match.shapeRenderer.line( (float)(this.origin.x + (match.getBall().getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
+        /*		app.shapeBatch.line( (float)(this.origin.x + (match.getBall().getPosition().x - OUTER_TOP_EDGE_X ) * ratio),
 				(float)(this.origin.y + (match.getBall().getPosition().y - OUTER_TOP_EDGE_Y ) * ratio),
 				(float)(this.origin.x + 1 + (match.getBall().getPosition().x - OUTER_TOP_EDGE_X ) * ratio),  // + 1 for width
 				(float)(this.origin.y + (match.getBall().getPosition().y - OUTER_TOP_EDGE_Y ) * ratio));*/
-        match.shapeRenderer.end();
+        shapeBatch.end();
     }
 
-    private void drawPitch(float ratio, boolean withBackground) {
+    private void drawTranslucentPitchBackground(ShapeRenderer shapeBatch) {
+        shapeBatch.begin(ShapeType.Filled);
+        shapeBatch.setColor(new Color(0x3f3f3f1f));
+        // Translucent background pitch
+        shapeBatch.rect(this.origin.x, this.origin.y, (float) PITCH_WIDTH_IN_PX * this.ratio, (float) PITCH_HEIGHT_IN_PX * this.ratio);
+        shapeBatch.end();
+    }
 
-        if (withBackground) {
-            drawTranslucentPitchBackground(ratio);
-        }
-
-        match.shapeRenderer.begin(ShapeType.Line);
-        match.shapeRenderer.setColor(new Color(0x1f1f1f3f));
+    private void drawPitch(ShapeRenderer shapeBatch) {
+        shapeBatch.begin(ShapeType.Line);
+        shapeBatch.setColor(new Color(0x1f1f1f3f));
         Gdx.gl.glLineWidth(2);
 
-        drawPitchBoundary(ratio);
-        drawGoalAreas(ratio);
-        drawPenaltyAreas(ratio);
+        drawPitchBoundary(shapeBatch);
+        drawGoalAreas(shapeBatch);
+        drawPenaltyAreas(shapeBatch);
 
-        match.shapeRenderer.end();
+        shapeBatch.end();
     }
 
-    private void drawPitchBoundary(float ratio) {
+    private void drawPitchBoundary(ShapeRenderer shapeBatch) {
         // Pitch border
-        match.shapeRenderer.rect(this.origin.x, this.origin.y,
-                (float) PITCH_WIDTH_IN_PX * ratio, (float) PITCH_HEIGHT_IN_PX * ratio);
+        shapeBatch.rect(this.origin.x, this.origin.y,
+                (float) PITCH_WIDTH_IN_PX * this.ratio, (float) PITCH_HEIGHT_IN_PX * this.ratio);
         // Half way horizontal line
-        match.shapeRenderer.line( (float)(this.origin.x), (float)(this.origin.y + HALF_PITCH_HEIGHT_IN_PX * ratio),
-                (float)(this.origin.x + PITCH_WIDTH_IN_PX * ratio), (float)(this.origin.y + HALF_PITCH_HEIGHT_IN_PX * ratio));
+        shapeBatch.line((float) (this.origin.x), (float) (this.origin.y + HALF_PITCH_HEIGHT_IN_PX * this.ratio),
+                (float) (this.origin.x + PITCH_WIDTH_IN_PX * this.ratio), (float) (this.origin.y + HALF_PITCH_HEIGHT_IN_PX * this.ratio));
     }
 
-    private void drawGoalAreas(float ratio) {
+    private void drawGoalAreas(ShapeRenderer shapeBatch) {
         // Goal area horizontal lines
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + GOAL_AREA_HEIGHT_IN_PX * ratio),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + GOAL_AREA_HEIGHT_IN_PX * ratio));
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + GOAL_AREA_HEIGHT_IN_PX * this.ratio),
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + GOAL_AREA_HEIGHT_IN_PX * this.ratio));
 
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + (PITCH_HEIGHT_IN_PX - GOAL_AREA_HEIGHT_IN_PX) * ratio),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + (PITCH_HEIGHT_IN_PX - GOAL_AREA_HEIGHT_IN_PX) * ratio));
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + (PITCH_HEIGHT_IN_PX - GOAL_AREA_HEIGHT_IN_PX) * this.ratio),
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + (PITCH_HEIGHT_IN_PX - GOAL_AREA_HEIGHT_IN_PX) * this.ratio));
 
 
         // Goal area vertical lines
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
                 (float)(this.origin.y),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + GOAL_AREA_HEIGHT_IN_PX * ratio));
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + GOAL_AREA_HEIGHT_IN_PX * this.ratio));
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
                 (float)(this.origin.y),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + GOAL_AREA_HEIGHT_IN_PX * ratio));
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + GOAL_AREA_HEIGHT_IN_PX * this.ratio));
 
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + (PITCH_HEIGHT_IN_PX - GOAL_AREA_HEIGHT_IN_PX) * ratio),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + PITCH_HEIGHT_IN_PX * ratio));
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + (PITCH_HEIGHT_IN_PX - GOAL_AREA_HEIGHT_IN_PX) * ratio),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + PITCH_HEIGHT_IN_PX * ratio));
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + (PITCH_HEIGHT_IN_PX - GOAL_AREA_HEIGHT_IN_PX) * this.ratio),
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + PITCH_HEIGHT_IN_PX * this.ratio));
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + (PITCH_HEIGHT_IN_PX - GOAL_AREA_HEIGHT_IN_PX) * this.ratio),
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_GOAL_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + PITCH_HEIGHT_IN_PX * this.ratio));
     }
 
-    private void drawPenaltyAreas(float ratio) {
+    private void drawPenaltyAreas(ShapeRenderer shapeBatch) {
         // Penalty area horizontal lines
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + PENALTY_AREA_HEIGHT_IN_PX * ratio),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + PENALTY_AREA_HEIGHT_IN_PX * ratio));
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + PENALTY_AREA_HEIGHT_IN_PX * this.ratio),
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + PENALTY_AREA_HEIGHT_IN_PX * this.ratio));
 
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + (PITCH_HEIGHT_IN_PX - PENALTY_AREA_HEIGHT_IN_PX) * ratio),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + (PITCH_HEIGHT_IN_PX - PENALTY_AREA_HEIGHT_IN_PX) * ratio));
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + (PITCH_HEIGHT_IN_PX - PENALTY_AREA_HEIGHT_IN_PX) * this.ratio),
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + (PITCH_HEIGHT_IN_PX - PENALTY_AREA_HEIGHT_IN_PX) * this.ratio));
 
         // Penalty area vertical lines
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
                 (float)(this.origin.y),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + PENALTY_AREA_HEIGHT_IN_PX * ratio));
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + PENALTY_AREA_HEIGHT_IN_PX * this.ratio));
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
                 (float)(this.origin.y),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + PENALTY_AREA_HEIGHT_IN_PX * ratio));
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + PENALTY_AREA_HEIGHT_IN_PX * this.ratio));
 
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + (PITCH_HEIGHT_IN_PX - PENALTY_AREA_HEIGHT_IN_PX) * ratio),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + PITCH_HEIGHT_IN_PX * ratio));
-        match.shapeRenderer.line( (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + (PITCH_HEIGHT_IN_PX - PENALTY_AREA_HEIGHT_IN_PX) * ratio),
-                (float)(this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * ratio),
-                (float)(this.origin.y + PITCH_HEIGHT_IN_PX * ratio));
-    }
-
-    private void drawTranslucentPitchBackground(float ratio) {
-        match.shapeRenderer.begin(ShapeType.Filled);
-        match.shapeRenderer.setColor(new Color(0x3f3f3f1f));
-        // Translucent background pitch
-        match.shapeRenderer.rect(this.origin.x, this.origin.y, (float) PITCH_WIDTH_IN_PX * ratio, (float) PITCH_HEIGHT_IN_PX * ratio);
-        match.shapeRenderer.end();
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + (PITCH_HEIGHT_IN_PX - PENALTY_AREA_HEIGHT_IN_PX) * this.ratio),
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX - HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + PITCH_HEIGHT_IN_PX * this.ratio));
+        shapeBatch.line((float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + (PITCH_HEIGHT_IN_PX - PENALTY_AREA_HEIGHT_IN_PX) * this.ratio),
+                (float) (this.origin.x + (HALF_PITCH_WIDTH_IN_PX + HALF_PENALTY_AREA_WIDTH_IN_PX) * this.ratio),
+                (float) (this.origin.y + PITCH_HEIGHT_IN_PX * this.ratio));
     }
 
     /**
      * Toggle the scanner visibility
      */
     public void switchVisible()	{
-        isVisible = !isVisible;
+        this.isVisible = !this.isVisible;
     }
 
     public void switchMode() {
-        defaultMode = !defaultMode;
+        this.defaultMode = !this.defaultMode;
     }
 
     /**
      * Toggle the zoom factor
      */
     public void toggleZoom() {
-        zoomFactor++;
-        zoomFactor = zoomFactor % (ZOOM.length);
+        this.zoomFactor++;
+        this.zoomFactor = this.zoomFactor % (ZOOM.length);
+        this.ratio = (float) (ZOOM[this.zoomFactor] / PITCH_WIDTH_IN_PX);
     }
 }

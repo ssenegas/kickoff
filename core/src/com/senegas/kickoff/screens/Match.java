@@ -2,19 +2,16 @@ package com.senegas.kickoff.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Logger;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
@@ -23,15 +20,17 @@ import com.senegas.kickoff.entities.Team;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.pitches.PitchFactory;
 import com.senegas.kickoff.pitches.Scanner;
+import com.senegas.kickoff.scenes.Hud;
 import com.senegas.kickoff.states.MatchState;
 import com.senegas.kickoff.utils.CameraHelper;
 import com.senegas.kickoff.utils.PitchUtils;
+import com.senegas.kickoff.utils.Stopwatch;
 
-import static com.badlogic.gdx.math.Intersector.intersectLines;
-import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
-//import static com.senegas.kickoff.states.MatchState.INPLAY;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.CM_PER_PIXEL;
 import static com.senegas.kickoff.states.MatchState.INPLAY;
 import static com.senegas.kickoff.states.MatchState.THROW_IN;
+
+//import static com.senegas.kickoff.states.MatchState.INPLAY;
 
 /**
  * Match
@@ -39,8 +38,11 @@ import static com.senegas.kickoff.states.MatchState.THROW_IN;
  * @author Sébastien Sénégas
  */
 public class Match extends AbstractScreen {
+    private static final String TAG = Match.class.getSimpleName();
+
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
+    private ScreenViewport viewport;
     private CameraHelper cameraHelper;
     private BitmapFont font;
     private SpriteBatch batch;
@@ -50,9 +52,11 @@ public class Match extends AbstractScreen {
     private Ball ball;
     private Team home;
     private Team away;
+    private Integer scoreHome;
+    private Integer scoreAway;
     private Player lastTouch;
-
-    public ShapeRenderer shapeRenderer;
+    private Hud hud;
+    private Stopwatch stopwatch;
 
     public StateMachine<Match, MatchState> stateMachine;
     public Sound crowd;
@@ -68,18 +72,29 @@ public class Match extends AbstractScreen {
     public Match(final KickOff app) {
         super(app);
 
+        this.scoreHome = 0;
+        this.scoreAway = 0;
+
         this.camera = new OrthographicCamera();
-        //camera.setToOrtho(true);
+        this.camera.setToOrtho(false, KickOff.V_WIDTH, KickOff.V_HEIGHT);
+        app.batch.setProjectionMatrix(this.camera.combined);
+        //app.shapeBatch.setProjectionMatrix(camera.combined);
+
+        this.viewport = new ScreenViewport();
+
         this.cameraHelper = new CameraHelper();
         this.cameraHelper.setZoom(.35f);
 
         this.pitch = PitchFactory.getInstance().make(Pitch.Type.CLASSIC);
-        this.renderer = new OrthogonalTiledMapRenderer(pitch.getTiledMap());
+        this.renderer = new OrthogonalTiledMapRenderer(this.pitch.getTiledMap(), app.batch);
 
-        Vector2 centerSpot = pitch.getCenterSpot();
+        Vector2 centerSpot = this.pitch.getCenterSpot();
         this.ball = new Ball(new Vector3(centerSpot.x, centerSpot.y, 320));
-        this.home = new Team(this, "TeamA", Direction.NORTH);
-        this.away = new Team(this, "TeamB", Direction.SOUTH);
+        this.home = new Team(this, "Team A", Direction.NORTH);
+        this.away = new Team(this, "Team B", Direction.SOUTH);
+
+        this.hud = new Hud(this);
+        this.stopwatch = new Stopwatch(3);
 
         this.scanner = new Scanner(this);
 
@@ -88,158 +103,170 @@ public class Match extends AbstractScreen {
         //cameraController = new OrthoCamController(camera);
         //Gdx.input.setInputProcessor(player);
 
-        font = new BitmapFont();
-        batch = new SpriteBatch();
-        stateMachine = new DefaultStateMachine<Match, MatchState>(this);
-        shapeRenderer = new ShapeRenderer();
+        this.font = new BitmapFont();
+        this.batch = new SpriteBatch();
+        this.stateMachine = new DefaultStateMachine<Match, MatchState>(this);
+
+        Gdx.app.log(TAG, "constructor");
     }
 
     @Override
     public void show() {
-        stateMachine.changeState(MatchState.INTRODUCTION);
+        this.stateMachine.changeState(MatchState.INTRODUCTION);
     }
 
     @Override
     public void update(float deltaTime) {
-        stateMachine.update();
-        home.update(deltaTime);
-        away.update(deltaTime);
-        ball.update(deltaTime);
         handleInput();
-        cameraHelper.update(deltaTime);
+
+        this.stateMachine.update();
+        this.home.update(deltaTime);
+        this.away.update(deltaTime);
+        this.ball.update(deltaTime);
         checkCollisions();
-        cameraHelper.applyTo(camera);
+
+        this.cameraHelper.update(deltaTime);
+        this.cameraHelper.applyTo(this.camera);
+
+        this.hud.update(deltaTime);
+        this.stopwatch.update(deltaTime);
     }
 
     @Override
     public void render(float deltaTime) {
         super.render(deltaTime);
-//        Gdx.gl.glClearColor(0, 0, 0, 1);
-//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        this.renderer.setView(this.camera);
+        this.renderer.render();
 
-//        boolean gameIsRunning = true;
-//
-//    	if(!gameIsRunning) {
-//    		double cx = (Pitch.PITCH_WIDTH_IN_PX/2 + Pitch.OUTER_TOP_EDGE_X - 8);
-//    		double cy = (Pitch.PITCH_HEIGHT_IN_PX/2 + Pitch.OUTER_TOP_EDGE_Y + 8) - (camera.viewportHeight/2);
-//
-//    		camera.position.x = (float) MathUtils.clamp( cx + ((Pitch.PITCH_WIDTH_IN_PX/2) * Math.sin(angx)), camera.viewportWidth/2 * camera.zoom, Pitch.WIDTH - camera.viewportWidth/2 * camera.zoom);
-//    		camera.position.y = (float) MathUtils.clamp( cy + ((Pitch.PITCH_HEIGHT_IN_PX/2) * Math.cos(angy)), camera.viewportHeight/2 * camera.zoom, Pitch.HEIGHT - camera.viewportHeight/2 * camera.zoom);
-//
-//    		angx += incx;
-//    		angy += incy;
-//    	}
-//    	else
-//    	{
+        // renders overlays for tactic and ball position
+        this.app.shapeBatch.setProjectionMatrix(camera.combined);
+        this.home.showDebug(this.app.shapeBatch, this.ball.getPosition());
+        this.ball.showPosition(this.app.shapeBatch);
 
-//    	}
+        // renders entities
+        this.app.batch.begin();
 
-        renderer.setView(camera);
-        renderer.render();
-        renderer.getBatch().begin();
-        home.draw(renderer.getBatch());
-        away.draw(renderer.getBatch());
-        ball.draw(renderer.getBatch());
-        renderer.getBatch().end();
-        scanner.draw();
+        this.home.draw(this.app.batch);
+        this.away.draw(this.app.batch);
+        this.ball.draw(this.app.batch);
+
+        // renders stopwatch
+        this.app.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        this.stopwatch.draw(this.app.batch);
 
         if (DEBUG) {
             displayDebugInfo();
         }
+
+        this.app.batch.end();
+
+
+
+        this.app.shapeBatch.setProjectionMatrix(this.batch.getProjectionMatrix());
+        this.scanner.draw(this.app.shapeBatch);
+
+        //app.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        //this.hud.stage.draw();
     }
 
     private void displayDebugInfo() {
-        this.home.showDebug();
-        this.ball.showPosition(this.camera);
+        this.app.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 
         Player player = this.home.getPlayers().get(0);
-        Vector2 ballLocation = PitchUtils.globalToPitch(ball.getPosition().x, ball.getPosition().y);
-        ballLocation = new Vector2(ball.getPosition().x, ball.getPosition().y);
+        Vector2 ballLocation = PitchUtils.globalToPitch(this.ball.getPosition().x, this.ball.getPosition().y);
+        ballLocation = new Vector2(this.ball.getPosition().x, this.ball.getPosition().y);
 
-        batch.begin();
-        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
-        font.draw(batch, "Player: " + (int) player.getPosition().x + ", " +
+        this.font.draw(this.app.batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
+        this.font.draw(this.app.batch, "Player: " + (int) player.getPosition().x + ", " +
                                           (int) player.getPosition().y, 10, 40);
 
-        font.draw(batch, "Ball: " + (int) ballLocation.x + ", " +
+        this.font.draw(this.app.batch, "Ball: " + (int) ballLocation.x + ", " +
                                         (int) ballLocation.y + ", " +
-                                        (int) ball.getPosition().z, 10, 60);
+                                        (int) this.ball.getPosition().z, 10, 60);
 
-        font.draw(batch, "Ball Last Pos.: " + (int) ball.getLastPosition().x + ", " +
-                (int) ball.getLastPosition().y + ", " +
-                (int) ball.getLastPosition().z, 10, 80);
+        this.font.draw(this.app.batch, "Ball Last Pos.: " + (int) this.ball.getLastPosition().x + ", " +
+                (int) this.ball.getLastPosition().y + ", " +
+                (int) this.ball.getLastPosition().z, 10, 80);
 
-        font.draw(batch, this.home.getTactic().getName(), 10, 100);
-        font.draw(batch, this.stateMachine.getCurrentState().toString(), 10, 120);
-        batch.end();
+        this.font.draw(this.app.batch, this.home.getTactic().getName(), 10, 100);
+        this.font.draw(this.app.batch, this.stateMachine.getCurrentState().toString(), 10, 120);
     }
 
     public void setLastPlayerTouch(Player player) {
-        lastTouch = player;
+        this.lastTouch = player;
     }
 
     public Player getLastPlayerTouch() {
-        return lastTouch;
+        return this.lastTouch;
     }
 
     public Team getLastTeamTouch() {
-        if (lastTouch == null) return null;
-        return lastTouch.getTeam();
+        if (this.lastTouch == null) return null;
+        return this.lastTouch.getTeam();
     }
 
     /**
      * Check collisions
      */
     private void checkCollisions() {
-        if (stateMachine.getCurrentState() == INPLAY) {
-            for (Player player : home.getPlayers()) {
-                if (player.getBounds().contains(ball.getPosition().x, ball.getPosition().y)) {
+        if (this.stateMachine.getCurrentState() == INPLAY) {
+            for (Player player : this.home.getPlayers()) {
+                if (player.getBounds().contains(this.ball.getPosition().x, this.ball.getPosition().y)) {
                     this.setLastPlayerTouch(player);
-                    if (ball.getPosition().z < player.height() / CM_PER_PIXEL) { //!Reimp move constant elsewhere
-                        ball.applyForce(player.speed() * 1.125f + 30.0f, player.getDirection());
+                    if (this.ball.getPosition().z < player.height() / CM_PER_PIXEL) { //!Reimp move constant elsewhere
+                        this.ball.applyForce(player.speed() * 1.125f + 30.0f, player.getDirection());
                     }
                 }
             }
-            if (pitch.crossesSideLine(ball.getLastPosition(), ball.getPosition())) {
-                stateMachine.changeState(THROW_IN);
+            if (this.pitch.crossesSideLine(this.ball.getLastPosition(), this.ball.getPosition())) {
+                this.stateMachine.changeState(THROW_IN);
             }
         }
     }
 
     @Override
     public void resize(int width, int height) {
-        camera.viewportHeight = height;
-        camera.viewportWidth = width;
+        this.camera.viewportHeight = height;
+        this.camera.viewportWidth = width;
+    }
+
+    public Integer getScoreHome() {
+        return this.scoreHome;
+    }
+
+    public Integer getScoreAway() {
+        return this.scoreAway;
     }
 
     public Team getHomeTeam() {
-        return home;
+        return this.home;
     }
 
     public Team getAwayTeam(){
-        return away;
+        return this.away;
     }
 
     public Ball getBall() {
-        return ball;
+        return this.ball;
     }
 
     public Pitch getPitch() {
-        return pitch;
+        return this.pitch;
     }
 
     public OrthographicCamera getCamera() {
-        return camera;
+        return this.camera;
     }
 
     public CameraHelper getCameraHelper() {
-        return cameraHelper;
+        return this.cameraHelper;
     }
 
     @Override
     public void hide() {
-        dispose();
+        Gdx.app.log(TAG, "hide");
+        //dispose();
     }
 
     @Override
@@ -252,38 +279,40 @@ public class Match extends AbstractScreen {
 
     @Override
     public void dispose() {
-        renderer.dispose();
-        pitch.dispose();
-        home.dispose();
-        away.dispose();
-        ball.dispose();
-        shapeRenderer.dispose();
-        crowd.dispose();
-        whistle.dispose();
+        super.dispose();
+        Gdx.app.log(TAG, "dispose");
+
+        this.renderer.dispose();
+        this.pitch.dispose();
+        this.home.dispose();
+        this.away.dispose();
+        this.ball.dispose();
+        this.crowd.dispose();
+        this.whistle.dispose();
     }
 
     private void handleInput() {
         if (Gdx.input.isKeyPressed(Input.Keys.O)) {
-            cameraHelper.setZoom(cameraHelper.getZoom() + 0.02f);
+            this.cameraHelper.setZoom(this.cameraHelper.getZoom() + 0.02f);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.I)) {
-            cameraHelper.setZoom(cameraHelper.getZoom() - 0.02f);
+            this.cameraHelper.setZoom(this.cameraHelper.getZoom() - 0.02f);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            ball.applyForce(400, 6);
+            this.ball.applyForce(400, 6);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-            ball.applyForce(400, 2);
+            this.ball.applyForce(400, 2);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            ball.applyForce(400, 0);
+            this.ball.applyForce(400, 0);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
-            ball.applyForce(400, 4);
+            this.ball.applyForce(400, 4);
         }
         // handle scanner zoom
         if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-            scanner.toggleZoom();
+            this.scanner.toggleZoom();
         }
 //        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 //                if (camera.position.x > 0 + camera.viewportWidth)

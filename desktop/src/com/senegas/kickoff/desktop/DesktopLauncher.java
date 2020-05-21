@@ -10,8 +10,8 @@ public class DesktopLauncher {
 		config.title = KickOff.TITLE + " v" + KickOff.VERSION;
 		config.vSyncEnabled = true;
 		config.useGL30 = true;
-		config.width = 1280;
-		config.height = 720;
+		config.width = KickOff.APP_DESKTOP_WIDTH;
+		config.height = KickOff.APP_DESKTOP_HEIGHT;
 		new LwjglApplication(new KickOff(), config);
 	}
 }

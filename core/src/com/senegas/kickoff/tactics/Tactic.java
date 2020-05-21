@@ -3,7 +3,6 @@ package com.senegas.kickoff.tactics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
@@ -13,14 +12,14 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
-import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player.Direction;
 import com.senegas.kickoff.entities.Team;
 import com.senegas.kickoff.utils.PitchUtils;
 
 import java.io.IOException;
 
-import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_HEIGHT_IN_PX;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_WIDTH_IN_PX;
 
 /**
  * Any tactic must be a subclass of Tactic
@@ -79,8 +78,6 @@ public class Tactic {
 	private final static float REGION_WIDTH_IN_PX = (float) (PITCH_WIDTH_IN_PX / REGION_COLUMNS);
 	private final static float REGION_HEIGHT_IN_PX = (float) (PITCH_HEIGHT_IN_PX / REGION_ROWS);
 	
-	private ShapeRenderer shapeRenderer = new ShapeRenderer(); // mainly used for debug purpose
-	
 	private String name;
 	private Team team;
 	private Vector2[][] locations;
@@ -127,7 +124,7 @@ public class Tactic {
 		Element root = new XmlReader().parse(Gdx.files.internal(fileName));
 
 		this.name = root.get("name");
-		Gdx.app.log("Tactic", "Loading " + name + "...");
+		Gdx.app.log("Tactic", "Loading " + this.name + "...");
 
 		Array<Element> players = root.getChildrenByName("player");
 		int playerIndex = 0;
@@ -156,12 +153,12 @@ public class Tactic {
 		return this.name;
 	}
 	
-	public void update(Ball ball) {
-		int regionIndex = getRegionIndex(ball, this.team);
+	public void update(Vector3 position) {
+		int regionIndex = getRegionIndex(position, this.team);
 		//Gdx.app.log("Tactic", "region index: " + regionIndex);
 		for (int playerIndex = 0; playerIndex < 10; playerIndex++) {
-			Vector3 playerLocation = PitchUtils.pitchToGlobal(team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].x : (float)PITCH_WIDTH_IN_PX - locations[playerIndex][regionIndex].x,
-                                                              team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].y : (float)PITCH_HEIGHT_IN_PX - locations[playerIndex][regionIndex].y);
+			Vector3 playerLocation = PitchUtils.pitchToGlobal(this.team.getDirection() == Direction.NORTH ? this.locations[playerIndex][regionIndex].x : (float)PITCH_WIDTH_IN_PX - this.locations[playerIndex][regionIndex].x,
+					this.team.getDirection() == Direction.NORTH ? this.locations[playerIndex][regionIndex].y : (float)PITCH_HEIGHT_IN_PX - this.locations[playerIndex][regionIndex].y);
 			this.team.getPlayers().get(playerIndex).setDestination(playerLocation);
 		}
 	}
@@ -169,8 +166,8 @@ public class Tactic {
 	public void setupKickoff(boolean attack) {
 	    int regionIndex = attack ? Location.kickoff_own.ordinal() : Location.kickoff_def.ordinal();
         for (int playerIndex = 0; playerIndex < 10; playerIndex++) {
-            Vector3 playerLocation = PitchUtils.pitchToGlobal(team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].x : (float)PITCH_WIDTH_IN_PX - locations[playerIndex][regionIndex].x,
-                    team.getDirection() == Direction.NORTH ? locations[playerIndex][regionIndex].y : (float)PITCH_HEIGHT_IN_PX - locations[playerIndex][regionIndex].y);
+            Vector3 playerLocation = PitchUtils.pitchToGlobal(this.team.getDirection() == Direction.NORTH ? this.locations[playerIndex][regionIndex].x : (float)PITCH_WIDTH_IN_PX - this.locations[playerIndex][regionIndex].x,
+					this.team.getDirection() == Direction.NORTH ? this.locations[playerIndex][regionIndex].y : (float)PITCH_HEIGHT_IN_PX - this.locations[playerIndex][regionIndex].y);
             this.team.getPlayers().get(playerIndex).setDestination(playerLocation);
         }
     }
@@ -201,16 +198,16 @@ public class Tactic {
 	* My team side      WIDTH
 	* </pre>
 	 * Get the region index according to the ball position and team's direction
-	 * @param ball
+	 * @param position
 	 * @param team
 	 * @return region index
 	 */
-	public static int getRegionIndex(Ball ball, Team team)
+	public static int getRegionIndex(Vector3 position, Team team)
 	{
-		Vector2 ballLocation = PitchUtils.globalToPitch(ball.getPosition().x, ball.getPosition().y);
+		Vector2 pitchPosition = PitchUtils.globalToPitch(position.x, position.y);
 		
-		int xCoord = new Double(ballLocation.x / REGION_WIDTH_IN_PX).intValue();
-		int yCoord = new Double(ballLocation.y / REGION_HEIGHT_IN_PX).intValue();
+		int xCoord = new Double(pitchPosition.x / REGION_WIDTH_IN_PX).intValue();
+		int yCoord = new Double(pitchPosition.y / REGION_HEIGHT_IN_PX).intValue();
 
 		xCoord = xCoord < 0 ? 0 : (xCoord >= REGION_COLUMNS ? REGION_COLUMNS - 1 : xCoord);
 		yCoord = yCoord < 0 ? 0 : (yCoord >= REGION_ROWS ? REGION_ROWS - 1 : yCoord);
@@ -222,37 +219,35 @@ public class Tactic {
 	
 	/**
 	 * Debug only method that displays active region and tactic's player home location
-	 * @param camera
-	 * @param ball
+	 * @param shapeBatch
+	 * @param position
 	 */
-	public void showRegionAndExpectedPlayerLocation(OrthographicCamera camera, Ball ball) {
+	public void showRegionAndExpectedPlayerLocation(ShapeRenderer shapeBatch, Vector3 position) {
 		// enable transparency
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-		shapeRenderer.setProjectionMatrix(camera.combined);
-
 		// draw active region
-		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.setColor(new Color(0.8f, 0, 0, 0.2f));
+		shapeBatch.begin(ShapeType.Filled);
 
-		int regionIndex = getRegionIndex(ball, this.team);
+		shapeBatch.setColor(new Color(0.8f, 0, 0, 0.2f));
+		int regionIndex = getRegionIndex(position, this.team);
 		Rectangle region = this.regions.get(regionIndex);
 		Vector3 regionLocation = PitchUtils.pitchToGlobal(region.x, region.y);
-		shapeRenderer.rect(regionLocation.x, regionLocation.y, region.width, region.height);
+		shapeBatch.rect(regionLocation.x, regionLocation.y, region.width, region.height);
 
 		// draw player location
 		for (int playerIndex = 0; playerIndex < 10; playerIndex++) {
-			shapeRenderer.setColor(new Color(1.0f, 0.5f, 0, 0.4f));
+			shapeBatch.setColor(new Color(1.0f, 0.5f, 0, 0.4f));
 			Vector3 playerLocation = this.team.getPlayers().get(playerIndex).getDestination();
-			shapeRenderer.circle(playerLocation.x, playerLocation.y, 8);
+			shapeBatch.circle(playerLocation.x, playerLocation.y, 8);
 		}
 
-		shapeRenderer.end();
+		shapeBatch.end();
+
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 	
 	public void dispose() {
-		shapeRenderer.dispose();
 	}
 }

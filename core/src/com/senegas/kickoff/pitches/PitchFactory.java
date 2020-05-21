@@ -4,11 +4,12 @@ import com.senegas.kickoff.pitches.Pitch.Type;
 
 public class PitchFactory {
 
-    private PitchFactory() {}
-
     private static PitchFactory INSTANCE = new PitchFactory();
 
-    public static PitchFactory getInstance() {
+	private PitchFactory() {
+	}
+
+	public static PitchFactory getInstance() {
         return INSTANCE;
     }
 
@@ -18,7 +19,7 @@ public class PitchFactory {
 	 * @return a pitch
 	 */
 	public Pitch make(Type pitchType)
-	{ 
+	{
 		switch( pitchType )
 		{
 	        case CLASSIC:        return new ClassicPitch();

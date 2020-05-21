@@ -16,17 +16,17 @@ public class CameraHelper {
     private Vector2 target;
 
     public CameraHelper () {
-        position = new Vector2();
-        zoom = 1.0f;
+        this.position = new Vector2();
+        this.zoom = 1.0f;
     }
 
     public void update (float deltaTime) {
         if (!hasTarget()) return;
 
-        position.lerp(target, FOLLOW_SPEED * deltaTime);
+        this.position.lerp(this.target, this.FOLLOW_SPEED * deltaTime);
 
         // Prevent camera from moving down too far
-        position.y = Math.max(-1f, position.y);
+        this.position.y = Math.max(-1f, this.position.y);
     }
 
     public void setPosition (float x, float y) {
@@ -34,19 +34,19 @@ public class CameraHelper {
     }
 
     public Vector2 getPosition () {
-        return position;
+        return this.position;
     }
 
     public void addZoom (float amount) {
-        setZoom(zoom + amount);
+        setZoom(this.zoom + amount);
     }
 
     public void setZoom (float zoom) {
-        this.zoom = MathUtils.clamp(zoom, MAX_ZOOM_IN, MAX_ZOOM_OUT);
+        this.zoom = MathUtils.clamp(zoom, this.MAX_ZOOM_IN, this.MAX_ZOOM_OUT);
     }
 
     public float getZoom () {
-        return zoom;
+        return this.zoom;
     }
 
     public void setTarget (Vector2 target) {
@@ -54,11 +54,11 @@ public class CameraHelper {
     }
 
     public Vector2 getTarget () {
-        return target;
+        return this.target;
     }
 
     public boolean hasTarget () {
-        return target != null;
+        return this.target != null;
     }
 
     public boolean hasTarget (Vector2 target) {
@@ -66,9 +66,9 @@ public class CameraHelper {
     }
 
     public void applyTo (OrthographicCamera camera) {
-        camera.position.x = position.x;
-        camera.position.y = position.y;
-        camera.zoom = zoom;
+        camera.position.x = this.position.x;
+        camera.position.y = this.position.y;
+        camera.zoom = this.zoom;
         camera.update();
     }
 }

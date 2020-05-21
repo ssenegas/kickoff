@@ -5,14 +5,18 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.Segment;
 import com.badlogic.gdx.utils.Disposable;
 import com.senegas.kickoff.entities.Ball;
 
-import static com.badlogic.gdx.math.Intersector.intersectLines;
 import static com.badlogic.gdx.math.Intersector.intersectSegments;
-import static com.badlogic.gdx.math.Intersector.pointLineSide;
-import static com.senegas.kickoff.pitches.FootballDimensionConstants.*;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_BOTTOM_GOAL_LINE_Y;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_LEFT_TOUCHLINE_X;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_RIGHT_TOUCHLINE_X;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_TOP_EDGE_X;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_TOP_EDGE_Y;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_TOP_GOAL_LINE_Y;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_HEIGHT_IN_PX;
+import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_WIDTH_IN_PX;
 
 /**
  * base class for Pitch
@@ -43,9 +47,9 @@ public abstract class Pitch implements Disposable {
 	 */
 	public Pitch(String fileName, float friction) {
 		Gdx.app.log("Pitch", "Load tile map " + fileName);
-		tiledMap = new TmxMapLoader().load(fileName);
+		this.tiledMap = new TmxMapLoader().load(fileName);
 		this.friction = friction;
-		lastIntersection = new Vector2();
+		this.lastIntersection = new Vector2();
 	}
 	
 	/**
@@ -53,7 +57,7 @@ public abstract class Pitch implements Disposable {
 	 * @return TiledMap
 	 */
 	public TiledMap getTiledMap() {
-		return tiledMap;
+		return this.tiledMap;
 	}
 	
 	/**
@@ -62,12 +66,12 @@ public abstract class Pitch implements Disposable {
 	 */
 	public float getFriction()
 	{
-		return friction;
+		return this.friction;
 	}
 	
 	@Override
 	public void dispose() {
-		tiledMap.dispose();		
+		this.tiledMap.dispose();
 	}
 
 	public Vector2 getCenterSpot() {
@@ -82,14 +86,14 @@ public abstract class Pitch implements Disposable {
 		Vector2 sideLineStart = new Vector2(OUTER_LEFT_TOUCHLINE_X, OUTER_TOP_GOAL_LINE_Y);
 		Vector2 sideLineEnd = new Vector2(OUTER_LEFT_TOUCHLINE_X, OUTER_BOTTOM_GOAL_LINE_Y);
 
-		if (intersectSegments(start, end, sideLineStart, sideLineEnd, lastIntersection)) {
+		if (intersectSegments(start, end, sideLineStart, sideLineEnd, this.lastIntersection)) {
 			return true;
 		}
 
 		sideLineStart = new Vector2(OUTER_RIGHT_TOUCHLINE_X, OUTER_TOP_GOAL_LINE_Y);
 		sideLineEnd = new Vector2(OUTER_RIGHT_TOUCHLINE_X, OUTER_BOTTOM_GOAL_LINE_Y);
 
-		if (intersectSegments(start, end, sideLineStart, sideLineEnd, lastIntersection)) {
+		if (intersectSegments(start, end, sideLineStart, sideLineEnd, this.lastIntersection)) {
 			return true;
 		}
 
@@ -97,7 +101,7 @@ public abstract class Pitch implements Disposable {
 	}
 
 	public Vector2 getLastIntersection() {
-		return lastIntersection;
+		return this.lastIntersection;
 	}
 
 }

@@ -16,19 +16,19 @@ public class OrthoCamController extends InputAdapter {
 
 	@Override
 	public boolean touchDragged (int x, int y, int pointer) {
-		camera.unproject(curr.set(x, y, 0));
-		if (!(last.x == -1 && last.y == -1 && last.z == -1)) {
-			camera.unproject(delta.set(last.x, last.y, 0));
-			delta.sub(curr);
-			camera.position.add(delta.x, delta.y, 0);
+        this.camera.unproject(this.curr.set(x, y, 0));
+		if (!(this.last.x == -1 && this.last.y == -1 && this.last.z == -1)) {
+            this.camera.unproject(this.delta.set(this.last.x, this.last.y, 0));
+            this.delta.sub(this.curr);
+            this.camera.position.add(this.delta.x, this.delta.y, 0);
 		}
-		last.set(x, y, 0);
+        this.last.set(x, y, 0);
 		return false;
 	}
 
 	@Override
 	public boolean touchUp (int x, int y, int pointer, int button) {
-		last.set(-1, -1, -1);
+        this.last.set(-1, -1, -1);
 		return false;
 	}
 }

@@ -23,7 +23,7 @@ public abstract class Entity {
      * @return the entity's position
      */
     public Vector3 getPosition() {
-        return position;
+        return this.position;
     }
 
     /**
@@ -39,7 +39,7 @@ public abstract class Entity {
      * @return the entity's velocity
      */
     public Vector3 getVelocity() {
-        return velocity;
+        return this.velocity;
     }
 
     /**
@@ -51,6 +51,6 @@ public abstract class Entity {
     }
 
     public Texture getTexture() {
-        return texture;
+        return this.texture;
     }
 }
