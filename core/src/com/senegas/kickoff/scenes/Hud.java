@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.senegas.kickoff.screens.Match;
+import com.senegas.kickoff.screens.MatchScreen;
 
 public class Hud implements Disposable {
     public Stage stage;
@@ -22,9 +22,9 @@ public class Hud implements Disposable {
     private Label timerLabel;
     private Label scoreLabel;
 
-    private Match match;
+    private MatchScreen match;
 
-    public Hud(Match match) {
+    public Hud(MatchScreen match) {
         this.match = match;
 
         this.timeCount = 3 * 60;

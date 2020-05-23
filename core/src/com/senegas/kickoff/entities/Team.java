@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.senegas.kickoff.entities.Player.Direction;
-import com.senegas.kickoff.screens.Match;
+import com.senegas.kickoff.screens.MatchScreen;
 import com.senegas.kickoff.tactics.Tactic;
 import com.senegas.kickoff.tactics.Tactic424;
 
@@ -22,7 +22,7 @@ import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_HEIGH
  */
 public class Team implements Disposable {
     private Tactic tactic;
-	private Match match;
+	private MatchScreen match;
 	private String name;
 	private Direction direction;
 	private Color mainColor;
@@ -36,13 +36,13 @@ public class Team implements Disposable {
      * @param name the team name
      * @param direction the team's direction
 	 */
-	public Team(Match match, String name, Direction direction) {
+	public Team(MatchScreen match, String name, Direction direction) {
 		this.tactic = new Tactic424(this);
 		this.match = match;
 		this.name = name;
 		this.direction = direction;
         this.mainColor = (direction == Direction.NORTH ? new Color(Color.RED) : new Color(Color.BLUE));
-        this.texture = (direction == Direction.NORTH ? new Texture("entities/style1a.png") : new Texture("entities/style1b.png"));
+		this.texture = (direction == Direction.NORTH ? this.match.getApp().assets.get("entities/style1a.png") : this.match.getApp().assets.get("entities/style1b.png"));
 
 		createPlayers();
 		setupIntroduction();
@@ -183,7 +183,6 @@ public class Team implements Disposable {
 		for (Player player : this.players) {
 			player.dispose();
 		}
-		this.texture.dispose();
 		this.tactic.dispose();
 	}
 }

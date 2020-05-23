@@ -2,8 +2,10 @@ package com.senegas.kickoff.managers;
 
 import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.screens.AbstractScreen;
-import com.senegas.kickoff.screens.MainMenu;
-import com.senegas.kickoff.screens.Match;
+import com.senegas.kickoff.screens.LoadingScreen;
+import com.senegas.kickoff.screens.MainMenuScreen;
+import com.senegas.kickoff.screens.MatchScreen;
+import com.senegas.kickoff.screens.SplashScreen;
 
 import java.util.HashMap;
 
@@ -16,6 +18,8 @@ public class GameScreenManager {
     public enum STATE {
         MAIN_MENU,
         PLAY,
+        LOADING,
+        SPLASH,
         SETTINGS
     }
 
@@ -23,13 +27,15 @@ public class GameScreenManager {
         this.app = app;
 
         initGameScreens();
-        setScreen(STATE.MAIN_MENU);
+        setScreen(STATE.LOADING);
     }
 
     private void initGameScreens() {
         this.gameScreens = new HashMap<>();
-        this.gameScreens.put(STATE.MAIN_MENU, new MainMenu(this.app));
-        this.gameScreens.put(STATE.PLAY, new Match(this.app));
+        this.gameScreens.put(STATE.LOADING, new LoadingScreen(this.app));
+        this.gameScreens.put(STATE.SPLASH, new SplashScreen(this.app));
+        this.gameScreens.put(STATE.MAIN_MENU, new MainMenuScreen(this.app));
+        this.gameScreens.put(STATE.PLAY, new MatchScreen(this.app));
     }
 
     public void setScreen(STATE nextScreen) {
@@ -38,7 +44,7 @@ public class GameScreenManager {
 
     public void dispose() {
         for (AbstractScreen screen : this.gameScreens.values()) {
-            if (screen != null){
+            if (screen != null) {
                 screen.dispose();
             }
         }

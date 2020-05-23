@@ -7,18 +7,18 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.senegas.kickoff.pitches.Pitch;
-import com.senegas.kickoff.screens.Match;
+import com.senegas.kickoff.screens.MatchScreen;
 
 import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_TOP_EDGE_Y;
 import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_HEIGHT_IN_PX;
 
-public enum MatchState implements State<Match> {
+public enum MatchState implements State<MatchScreen> {
 
     INTRODUCTION() {
         private float elapsedTimeInSeconds;
 
         @Override
-        public void enter(Match match) {
+        public void enter(MatchScreen match) {
             match.crowd.play(0.2f);
             match.getHomeTeam().setupIntroduction();
             match.getAwayTeam().setupIntroduction();
@@ -34,7 +34,7 @@ public enum MatchState implements State<Match> {
         }
 
         @Override
-        public void update(Match match) {
+        public void update(MatchScreen match) {
             this.elapsedTimeInSeconds += Gdx.graphics.getDeltaTime();
             //System.out.println("startTime: " + this.elapsedTimeInSeconds);
             boolean timeOut = (this.elapsedTimeInSeconds > 7);
@@ -45,11 +45,11 @@ public enum MatchState implements State<Match> {
         }
 
         @Override
-        public void exit(Match match) {
+        public void exit(MatchScreen match) {
         }
 
         @Override
-        public boolean onMessage(Match match, Telegram telegram) {
+        public boolean onMessage(MatchScreen match, Telegram telegram) {
             return false;
         }
     },
@@ -58,41 +58,42 @@ public enum MatchState implements State<Match> {
         private float elapsedTimeInSeconds;
 
         @Override
-        public void enter(Match match) {
+        public void enter(MatchScreen match) {
             match.getCameraHelper().setTarget(match.getPitch().getCenterSpot());
             match.getHomeTeam().setupKickoff(true);
             match.getAwayTeam().setupKickoff(false);
         }
 
         @Override
-        public void update(Match match) {
-            this.elapsedTimeInSeconds += Gdx.graphics.getDeltaTime();
-            boolean timeOut = (this.elapsedTimeInSeconds > 3);
-
-            if (match.getHomeTeam().isReady() && match.getAwayTeam().isReady() && timeOut) {
-                match.stateMachine.changeState(INPLAY);
+        public void update(MatchScreen match) {
+            if (match.getHomeTeam().isReady() && match.getAwayTeam().isReady()) {
+                this.elapsedTimeInSeconds += Gdx.graphics.getDeltaTime();
+                boolean timeOut = (this.elapsedTimeInSeconds > 2);
+                if (timeOut) {
+                    match.stateMachine.changeState(INPLAY);
+                }
             }
         }
 
         @Override
-        public void exit(Match match) {
+        public void exit(MatchScreen match) {
             match.whistle.play(0.2f);
         }
 
         @Override
-        public boolean onMessage(Match match, Telegram telegram) {
+        public boolean onMessage(MatchScreen match, Telegram telegram) {
             return false;
         }
     },
 
     INPLAY() {
         @Override
-        public void enter(Match match) {
+        public void enter(MatchScreen match) {
             match.getCameraHelper().setTarget(null);
         }
 
         @Override
-        public void update(Match match) {
+        public void update(MatchScreen match) {
             match.getCameraHelper().setPosition(MathUtils.clamp(match.getBall().getPosition().x, match.getCamera().viewportWidth / 2 * match.getCamera().zoom, Pitch.WIDTH - match.getCamera().viewportWidth / 2 * match.getCamera().zoom),
                     MathUtils.clamp(match.getBall().getPosition().y, match.getCamera().viewportHeight / 2 * match.getCamera().zoom, Pitch.HEIGHT - match.getCamera().viewportHeight / 2 * match.getCamera().zoom));
 
@@ -101,19 +102,19 @@ public enum MatchState implements State<Match> {
         }
 
         @Override
-        public void exit(Match match) {
+        public void exit(MatchScreen match) {
 
         }
 
         @Override
-        public boolean onMessage(Match match, Telegram telegram) {
+        public boolean onMessage(MatchScreen match, Telegram telegram) {
             return false;
         }
     },
 
     THROW_IN() {
         @Override
-        public void enter(Match match) {
+        public void enter(MatchScreen match) {
             match.getHomeTeam().setupThrowIn(new Vector3(match.getPitch().getLastIntersection(), 0), match.getLastTeamTouch() == match.getHomeTeam());
             match.getAwayTeam().setupThrowIn(new Vector3(match.getPitch().getLastIntersection(), 0), match.getLastTeamTouch() == match.getAwayTeam());
             match.getCameraHelper().setTarget(match.getPitch().getLastIntersection());
@@ -121,30 +122,30 @@ public enum MatchState implements State<Match> {
         }
 
         @Override
-        public void update(Match match) {
+        public void update(MatchScreen match) {
         }
 
         @Override
-        public void exit(Match match) {
+        public void exit(MatchScreen match) {
 
         }
 
         @Override
-        public boolean onMessage(Match match, Telegram telegram) {
+        public boolean onMessage(MatchScreen match, Telegram telegram) {
             return false;
         }
     };
 
     @Override
-    public void enter(Match match) {
+    public void enter(MatchScreen match) {
     }
 
     @Override
-    public void exit(Match match) {
+    public void exit(MatchScreen match) {
     }
 
     @Override
-    public boolean onMessage(Match match, Telegram telegram) {
+    public boolean onMessage(MatchScreen match, Telegram telegram) {
         // We don't use messaging in this example
         return false;
     }

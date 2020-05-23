@@ -2,10 +2,10 @@ package com.senegas.kickoff.pitches;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
+import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.entities.Ball;
 
 import static com.badlogic.gdx.math.Intersector.intersectSegments;
@@ -42,12 +42,12 @@ public abstract class Pitch implements Disposable {
 	
 	/**
 	 * Constructor
-	 * @param fileName the tile map file name
+	 * @param tmxMap the tile map file name
 	 * @param friction the friction coefficient
 	 */
-	public Pitch(String fileName, float friction) {
-		Gdx.app.log("Pitch", "Load tile map " + fileName);
-		this.tiledMap = new TmxMapLoader().load(fileName);
+	public Pitch(KickOff app, String tmxMap, float friction) {
+		Gdx.app.log("Pitch", "Load tile map " + tmxMap);
+		this.tiledMap = app.assets.get(tmxMap);
 		this.friction = friction;
 		this.lastIntersection = new Vector2();
 	}

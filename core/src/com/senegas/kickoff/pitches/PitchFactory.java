@@ -1,5 +1,6 @@
 package com.senegas.kickoff.pitches;
 
+import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.pitches.Pitch.Type;
 
 public class PitchFactory {
@@ -18,16 +19,22 @@ public class PitchFactory {
 	 * @param pitchType
 	 * @return a pitch
 	 */
-	public Pitch make(Type pitchType)
+	public Pitch make(KickOff app, Type pitchType)
 	{
 		switch( pitchType )
 		{
-	        case CLASSIC:        return new ClassicPitch();
-	        case WET:            return new WetPitch();
-	        case SOGGY:          return new SoggyPitch();
-	        case ARTIFICIAL:     return new ArtificialPitch();
-	        case PLAYERMANAGER:  return new PlayerManagerPitch();
-	        default:             return new ClassicPitch();
+			case CLASSIC:
+				return new ClassicPitch(app);
+			case WET:
+				return new WetPitch(app);
+			case SOGGY:
+				return new SoggyPitch(app);
+			case ARTIFICIAL:
+				return new ArtificialPitch(app);
+			case PLAYERMANAGER:
+				return new PlayerManagerPitch(app);
+			default:
+				return new ClassicPitch(app);
 	    }
 	}
 }

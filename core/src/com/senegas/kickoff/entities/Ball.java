@@ -1,15 +1,16 @@
 package com.senegas.kickoff.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.senegas.kickoff.KickOff;
 
 /**
  * Ball entity class
@@ -60,16 +61,20 @@ public class Ball extends Entity {
     private float speed = 0;
     private Player owner = null;
     private Vector3 lastPosition;
+    private Sound bounce;
 
     /**
      * Constructor
      *
+     * @param app
      * @param position position of the ball
      */
-    public Ball(Vector3 position) {
-        super(new Texture("entities/ball.png"), position);
+    public Ball(KickOff app, Vector3 position) {
+        super(app.assets.get("entities/ball.png"), position);
         this.frames = TextureRegion.split(this.texture, SPRITE_WIDTH, SPRITE_HEIGHT);
         this.lastPosition = new Vector3(getPosition());
+
+        this.bounce = app.assets.get("sounds/bounce.ogg");
     }
 
     /**
@@ -155,6 +160,10 @@ public class Ball extends Entity {
             this.velocity.z = -this.velocity.z;
             this.position.z += this.velocity.z;
 
+            if (this.velocity.z > 0.9f) {
+                this.bounce.play(0.2f);
+            }
+
             this.velocity.z -= this.velocity.z / 4;
             this.velocity.x -= this.velocity.x / 32;
             this.velocity.y -= this.velocity.y / 32;
@@ -196,7 +205,6 @@ public class Ball extends Entity {
     }
 
     public void dispose() {
-        this.texture.dispose();
     }
 }
 

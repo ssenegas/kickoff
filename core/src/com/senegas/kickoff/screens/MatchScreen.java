@@ -34,8 +34,8 @@ import static com.senegas.kickoff.states.MatchState.THROW_IN;
  *
  * @author Sébastien Sénégas
  */
-public class Match extends AbstractScreen {
-    private static final String TAG = Match.class.getSimpleName();
+public class MatchScreen extends AbstractScreen {
+    private static final String TAG = MatchScreen.class.getSimpleName();
 
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
@@ -54,9 +54,10 @@ public class Match extends AbstractScreen {
     private Hud hud;
     private Stopwatch stopwatch;
 
-    public StateMachine<Match, MatchState> stateMachine;
+    public StateMachine<MatchScreen, MatchState> stateMachine;
     public Sound crowd;
     public Sound whistle;
+    public Sound dribble;
 
     private static final boolean DEBUG = true;
 
@@ -65,7 +66,7 @@ public class Match extends AbstractScreen {
 //	private static float incx = 0.001f;
 //	private static float incy = 0.0013f;
 
-    public Match(KickOff app) {
+    public MatchScreen(KickOff app) {
         super(app);
 
         this.scoreHome = 0;
@@ -79,11 +80,23 @@ public class Match extends AbstractScreen {
         this.cameraHelper = new CameraHelper();
         this.cameraHelper.setZoom(.35f);
 
-        this.pitch = PitchFactory.getInstance().make(Pitch.Type.CLASSIC);
-        this.renderer = new OrthogonalTiledMapRenderer(this.pitch.getTiledMap(), app.batch);
+
+        //cameraController = new OrthoCamController(camera);
+        //Gdx.input.setInputProcessor(player);
+
+        this.font = new BitmapFont();
+        this.stateMachine = new DefaultStateMachine<>(this);
+
+        Gdx.app.log(TAG, "constructor");
+    }
+
+    @Override
+    public void show() {
+        this.pitch = PitchFactory.getInstance().make(this.app, Pitch.Type.CLASSIC);
+        this.renderer = new OrthogonalTiledMapRenderer(this.pitch.getTiledMap(), this.app.batch);
 
         Vector2 centerSpot = this.pitch.getCenterSpot();
-        this.ball = new Ball(new Vector3(centerSpot.x, centerSpot.y, 320));
+        this.ball = new Ball(this.app, new Vector3(centerSpot.x, centerSpot.y, 320));
         this.home = new Team(this, "Team A", Direction.NORTH);
         this.away = new Team(this, "Team B", Direction.SOUTH);
 
@@ -92,20 +105,10 @@ public class Match extends AbstractScreen {
 
         this.scanner = new Scanner(this);
 
-        this.crowd =  Gdx.audio.newSound(Gdx.files.internal("sounds/crowd.ogg"));
-        this.whistle = Gdx.audio.newSound(Gdx.files.internal("sounds/whistle.ogg"));
-        //cameraController = new OrthoCamController(camera);
-        //Gdx.input.setInputProcessor(player);
+        this.crowd = this.app.assets.get("sounds/crowd.ogg");
+        this.whistle = this.app.assets.get("sounds/whistle.ogg");
+        this.dribble = this.app.assets.get("sounds/dribble.ogg");
 
-        this.font = new BitmapFont();
-        this.batch = new SpriteBatch();
-        this.stateMachine = new DefaultStateMachine<>(this);
-
-        Gdx.app.log(TAG, "constructor");
-    }
-
-    @Override
-    public void show() {
         this.stateMachine.changeState(MatchState.INTRODUCTION);
     }
 
@@ -155,9 +158,7 @@ public class Match extends AbstractScreen {
 
         this.app.batch.end();
 
-
-
-        this.app.shapeBatch.setProjectionMatrix(this.batch.getProjectionMatrix());
+        this.app.shapeBatch.setProjectionMatrix(this.app.batch.getProjectionMatrix());
         this.scanner.draw(this.app.shapeBatch);
 
         //app.batch.setProjectionMatrix(hud.stage.getCamera().combined);
@@ -212,6 +213,7 @@ public class Match extends AbstractScreen {
                     setLastPlayerTouch(player);
                     if (this.ball.getPosition().z < player.height() / CM_PER_PIXEL) { //!Reimp move constant elsewhere
                         this.ball.applyForce(player.speed() * 1.125f + 30.0f, player.getDirection()); // 1.125f + 30.0f is the magic number
+                        this.dribble.play(0.2f);
                     }
                 }
             }
@@ -279,12 +281,6 @@ public class Match extends AbstractScreen {
         Gdx.app.log(TAG, "dispose");
 
         this.renderer.dispose();
-        this.pitch.dispose();
-        this.home.dispose();
-        this.away.dispose();
-        this.ball.dispose();
-        this.crowd.dispose();
-        this.whistle.dispose();
     }
 
     private void handleInput() {

@@ -13,8 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.managers.GameScreenManager;
 
-public class MainMenu extends AbstractScreen {
-	private static final String TAG = MainMenu.class.getSimpleName();
+public class MainMenuScreen extends AbstractScreen {
+	private static final String TAG = MainMenuScreen.class.getSimpleName();
 	
 	private Stage menustage;
 	private TextureAtlas atlas;
@@ -23,7 +23,7 @@ public class MainMenu extends AbstractScreen {
 	private TextButton buttonPlay;
 	private BitmapFont white;
 
-	public MainMenu(final KickOff app) {
+	public MainMenuScreen(KickOff app) {
 		super(app);
 	}
 
@@ -57,7 +57,7 @@ public class MainMenu extends AbstractScreen {
         this.buttonPlay.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-                MainMenu.this.app.gsm.setScreen(GameScreenManager.STATE.PLAY);
+				MainMenuScreen.this.app.gsm.setScreen(GameScreenManager.STATE.PLAY);
 			}
 		});
         this.buttonPlay.pad(15);

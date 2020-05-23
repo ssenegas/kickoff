@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.entities.Player;
-import com.senegas.kickoff.screens.Match;
+import com.senegas.kickoff.screens.MatchScreen;
 
 import static com.senegas.kickoff.pitches.FootballDimensionConstants.GOAL_AREA_HEIGHT_IN_PX;
 import static com.senegas.kickoff.pitches.FootballDimensionConstants.HALF_GOAL_AREA_WIDTH_IN_PX;
@@ -39,13 +39,13 @@ public class Scanner {
     private boolean defaultMode;
     private boolean withBackground;
     private Vector2 origin;
-    private Match match;
+    private MatchScreen match;
 
     /**
      * Constructor
      * @param match the match
      */
-    public Scanner(Match match) {
+    public Scanner(MatchScreen match) {
         this.match = match;
         this.isVisible = true;
         this.zoomFactor = 3;
