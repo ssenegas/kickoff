@@ -6,6 +6,7 @@ import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.senegas.kickoff.pitches.FootballDimensionConstants;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.screens.MatchScreen;
 
@@ -115,14 +116,32 @@ public enum MatchState implements State<MatchScreen> {
     THROW_IN() {
         @Override
         public void enter(MatchScreen match) {
+            long id = match.whistle.play(0.2f);
             match.getHomeTeam().setupThrowIn(new Vector3(match.getPitch().getLastIntersection(), 0), match.getLastTeamTouch() == match.getHomeTeam());
             match.getAwayTeam().setupThrowIn(new Vector3(match.getPitch().getLastIntersection(), 0), match.getLastTeamTouch() == match.getAwayTeam());
             match.getCameraHelper().setTarget(match.getPitch().getLastIntersection());
-            long id = match.whistle.play(0.2f);
         }
 
         @Override
         public void update(MatchScreen match) {
+            //match.getPitch().showLastIntersection(match.getApp().shapeBatch);
+            if (match.getHomeTeam().isReady() && match.getAwayTeam().isReady()) {
+                animateThrowIn(match);
+                match.stateMachine.changeState(INPLAY);
+            }
+        }
+
+        private void animateThrowIn(MatchScreen match) {
+            Vector3 position = new Vector3(match.getPitch().getLastIntersection(), 20);
+            int direction = 0;
+            if (match.getPitch().getLastIntersection().x < FootballDimensionConstants.HALF_PITCH_WIDTH_IN_PX) { // right side
+                direction = 90;
+                match.getBall().setPosition(position.add(5, 0, 0));
+            } else { // left side
+                direction = 270;
+                match.getBall().setPosition(position.add(-5, 0, 0));
+            }
+            match.getBall().applyForce(200, direction);
         }
 
         @Override
