@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<tactic version="1.0" name="zxcross" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tactic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zxcross" version="2.0" xsi:noNamespaceSchemaLocation="tactic.xsd">
     <player shirt="2">
         <region name="area1">
             <x>450</x>
@@ -49,35 +49,35 @@
             <x>456</x>
             <y>1032</y>
         </region>
-        <region name="corner1">
+        <region name="kickoff_own">
             <x>752</x>
             <y>330</y>
         </region>
-        <region name="corner2">
+        <region name="kickoff_def">
             <x>160</x>
             <y>330</y>
         </region>
-        <region name="corner3">
+        <region name="goalkick_own">
             <x>270</x>
             <y>252</y>
         </region>
-        <region name="corner4">
+        <region name="goalkick_def">
             <x>534</x>
             <y>432</y>
         </region>
-        <region name="kickoff_own">
+        <region name="corner1">
             <x>432</x>
             <y>36</y>
         </region>
-        <region name="kickoff_def">
+        <region name="corner2">
             <x>354</x>
             <y>1188</y>
         </region>
-        <region name="goalkick_own">
+        <region name="corner3">
             <x>480</x>
             <y>30</y>
         </region>
-        <region name="goalkick_def">
+        <region name="corner4">
             <x>528</x>
             <y>1188</y>
         </region>
@@ -131,35 +131,35 @@
             <x>732</x>
             <y>1086</y>
         </region>
-        <region name="corner1">
+        <region name="kickoff_own">
             <x>160</x>
             <y>330</y>
         </region>
-        <region name="corner2">
+        <region name="kickoff_def">
             <x>752</x>
             <y>330</y>
         </region>
-        <region name="corner3">
+        <region name="goalkick_own">
             <x>630</x>
             <y>252</y>
         </region>
-        <region name="corner4">
+        <region name="goalkick_def">
             <x>384</x>
             <y>438</y>
         </region>
-        <region name="kickoff_own">
+        <region name="corner1">
             <x>474</x>
             <y>42</y>
         </region>
-        <region name="kickoff_def">
+        <region name="corner2">
             <x>510</x>
             <y>1266</y>
         </region>
-        <region name="goalkick_own">
+        <region name="corner3">
             <x>426</x>
             <y>18</y>
         </region>
-        <region name="goalkick_def">
+        <region name="corner4">
             <x>402</x>
             <y>1266</y>
         </region>
@@ -213,35 +213,35 @@
             <x>630</x>
             <y>1236</y>
         </region>
-        <region name="corner1">
+        <region name="kickoff_own">
             <x>306</x>
             <y>500</y>
         </region>
-        <region name="corner2">
+        <region name="kickoff_def">
             <x>654</x>
             <y>504</y>
         </region>
-        <region name="corner3">
+        <region name="goalkick_own">
             <x>552</x>
             <y>486</y>
         </region>
-        <region name="corner4">
+        <region name="goalkick_def">
             <x>390</x>
             <y>636</y>
         </region>
-        <region name="kickoff_own">
+        <region name="corner1">
             <x>462</x>
             <y>24</y>
         </region>
-        <region name="kickoff_def">
+        <region name="corner2">
             <x>438</x>
             <y>1296</y>
         </region>
-        <region name="goalkick_own">
+        <region name="corner3">
             <x>450</x>
             <y>42</y>
         </region>
-        <region name="goalkick_def">
+        <region name="corner4">
             <x>474</x>
             <y>1296</y>
         </region>
@@ -295,35 +295,35 @@
             <x>438</x>
             <y>684</y>
         </region>
-        <region name="corner1">
+        <region name="kickoff_own">
             <x>468</x>
             <y>234</y>
         </region>
-        <region name="corner2">
+        <region name="kickoff_def">
             <x>450</x>
             <y>246</y>
         </region>
-        <region name="corner3">
+        <region name="goalkick_own">
             <x>456</x>
             <y>180</y>
         </region>
-        <region name="corner4">
+        <region name="goalkick_def">
             <x>450</x>
             <y>210</y>
         </region>
-        <region name="kickoff_own">
+        <region name="corner1">
             <x>432</x>
             <y>6</y>
         </region>
-        <region name="kickoff_def">
+        <region name="corner2">
             <x>462</x>
             <y>1002</y>
         </region>
-        <region name="goalkick_own">
+        <region name="corner3">
             <x>480</x>
             <y>12</y>
         </region>
-        <region name="goalkick_def">
+        <region name="corner4">
             <x>450</x>
             <y>1002</y>
         </region>
@@ -377,35 +377,35 @@
             <x>756</x>
             <y>750</y>
         </region>
-        <region name="corner1">
+        <region name="kickoff_own">
             <x>456</x>
             <y>366</y>
         </region>
-        <region name="corner2">
+        <region name="kickoff_def">
             <x>450</x>
             <y>366</y>
         </region>
-        <region name="corner3">
+        <region name="goalkick_own">
             <x>456</x>
             <y>354</y>
         </region>
-        <region name="corner4">
+        <region name="goalkick_def">
             <x>456</x>
             <y>336</y>
         </region>
-        <region name="kickoff_own">
+        <region name="corner1">
             <x>474</x>
             <y>12</y>
         </region>
-        <region name="kickoff_def">
+        <region name="corner2">
             <x>480</x>
             <y>678</y>
         </region>
-        <region name="goalkick_own">
+        <region name="corner3">
             <x>444</x>
             <y>6</y>
         </region>
-        <region name="goalkick_def">
+        <region name="corner4">
             <x>432</x>
             <y>678</y>
         </region>
@@ -459,35 +459,35 @@
             <x>828</x>
             <y>1272</y>
         </region>
-        <region name="corner1">
+        <region name="kickoff_own">
             <x>168</x>
             <y>654</y>
         </region>
-        <region name="corner2">
+        <region name="kickoff_def">
             <x>588</x>
             <y>618</y>
         </region>
-        <region name="corner3">
+        <region name="goalkick_own">
             <x>672</x>
             <y>798</y>
         </region>
-        <region name="corner4">
+        <region name="goalkick_def">
             <x>210</x>
             <y>648</y>
         </region>
-        <region name="kickoff_own">
+        <region name="corner1">
             <x>504</x>
             <y>24</y>
         </region>
-        <region name="kickoff_def">
+        <region name="corner2">
             <x>504</x>
             <y>1338</y>
         </region>
-        <region name="goalkick_own">
+        <region name="corner3">
             <x>420</x>
             <y>42</y>
         </region>
-        <region name="goalkick_def">
+        <region name="corner4">
             <x>408</x>
             <y>1338</y>
         </region>
@@ -541,35 +541,35 @@
             <x>456</x>
             <y>1290</y>
         </region>
-        <region name="corner1">
+        <region name="kickoff_own">
             <x>606</x>
             <y>500</y>
         </region>
-        <region name="corner2">
+        <region name="kickoff_def">
             <x>252</x>
             <y>504</y>
         </region>
-        <region name="corner3">
+        <region name="goalkick_own">
             <x>330</x>
             <y>486</y>
         </region>
-        <region name="corner4">
+        <region name="goalkick_def">
             <x>522</x>
             <y>642</y>
         </region>
-        <region name="kickoff_own">
+        <region name="corner1">
             <x>456</x>
             <y>60</y>
         </region>
-        <region name="kickoff_def">
+        <region name="corner2">
             <x>24</x>
             <y>1368</y>
         </region>
-        <region name="goalkick_own">
+        <region name="corner3">
             <x>492</x>
             <y>24</y>
         </region>
-        <region name="goalkick_def">
+        <region name="corner4">
             <x>888</x>
             <y>1368</y>
         </region>
@@ -623,35 +623,35 @@
             <x>486</x>
             <y>1344</y>
         </region>
-        <region name="corner1">
+        <region name="kickoff_own">
             <x>408</x>
             <y>654</y>
         </region>
-        <region name="corner2">
+        <region name="kickoff_def">
             <x>396</x>
             <y>570</y>
         </region>
-        <region name="corner3">
+        <region name="goalkick_own">
             <x>450</x>
             <y>642</y>
         </region>
-        <region name="corner4">
+        <region name="goalkick_def">
             <x>456</x>
             <y>762</y>
         </region>
-        <region name="kickoff_own">
+        <region name="corner1">
             <x>468</x>
             <y>378</y>
         </region>
-        <region name="kickoff_def">
+        <region name="corner2">
             <x>426</x>
             <y>1344</y>
         </region>
-        <region name="goalkick_own">
+        <region name="corner3">
             <x>450</x>
             <y>276</y>
         </region>
-        <region name="goalkick_def">
+        <region name="corner4">
             <x>486</x>
             <y>1344</y>
         </region>
@@ -705,35 +705,35 @@
             <x>444</x>
             <y>1362</y>
         </region>
-        <region name="corner1">
+        <region name="kickoff_own">
             <x>450</x>
             <y>672</y>
         </region>
-        <region name="corner2">
+        <region name="kickoff_def">
             <x>510</x>
             <y>570</y>
         </region>
-        <region name="corner3">
+        <region name="goalkick_own">
             <x>444</x>
             <y>924</y>
         </region>
-        <region name="corner4">
+        <region name="goalkick_def">
             <x>462</x>
             <y>1074</y>
         </region>
-        <region name="kickoff_own">
+        <region name="corner1">
             <x>492</x>
             <y>744</y>
         </region>
-        <region name="kickoff_def">
+        <region name="corner2">
             <x>468</x>
             <y>1362</y>
         </region>
-        <region name="goalkick_own">
+        <region name="corner3">
             <x>456</x>
             <y>708</y>
         </region>
-        <region name="goalkick_def">
+        <region name="corner4">
             <x>444</x>
             <y>1362</y>
         </region>
@@ -787,35 +787,35 @@
             <x>414</x>
             <y>1296</y>
         </region>
-        <region name="corner1">
+        <region name="kickoff_own">
             <x>732</x>
             <y>654</y>
         </region>
-        <region name="corner2">
+        <region name="kickoff_def">
             <x>324</x>
             <y>618</y>
         </region>
-        <region name="corner3">
+        <region name="goalkick_own">
             <x>222</x>
             <y>816</y>
         </region>
-        <region name="corner4">
+        <region name="goalkick_def">
             <x>720</x>
             <y>648</y>
         </region>
-        <region name="kickoff_own">
+        <region name="corner1">
             <x>132</x>
             <y>18</y>
         </region>
-        <region name="kickoff_def">
+        <region name="corner2">
             <x>252</x>
             <y>1374</y>
         </region>
-        <region name="goalkick_own">
+        <region name="corner3">
             <x>804</x>
             <y>18</y>
         </region>
-        <region name="goalkick_def">
+        <region name="corner4">
             <x>630</x>
             <y>1374</y>
         </region>
