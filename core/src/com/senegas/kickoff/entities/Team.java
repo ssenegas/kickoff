@@ -2,15 +2,15 @@ package com.senegas.kickoff.entities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.senegas.kickoff.entities.Player.Direction;
 import com.senegas.kickoff.screens.MatchScreen;
 import com.senegas.kickoff.tactics.Tactic;
 import com.senegas.kickoff.tactics.Tactic424;
+import com.senegas.kickoff.utils.Direction;
 
 import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_TOP_EDGE_Y;
 import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_HEIGHT_IN_PX;
@@ -57,7 +57,7 @@ public class Team implements Disposable {
 
         for (int i = 0; i < 10; i++) {
             this.players.add(new Player(this.texture, this, new Vector3(x, y, 0)));
-			x -= Player.SPRITE_WIDTH;
+			x -= Player.SPRITE_SIZE;
 		}
 	}
 
@@ -65,10 +65,10 @@ public class Team implements Disposable {
 		Vector3 playerPosition = new Vector3(0,
 				(int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + 16),
 				0);
-        playerPosition.add(352, Player.SPRITE_HEIGHT * (this.direction == Direction.NORTH ? -1 : 1), 0);
+        playerPosition.add(352, Player.SPRITE_SIZE * (this.direction == Direction.NORTH ? -1 : 1), 0);
 
 		for (Player player : this.players) {
-			player.setDestination(playerPosition);
+			player.setDestination(new Vector3(playerPosition));
 			playerPosition.sub(16, 0, 0);
 		}
 		//setControlState(Player::None);
@@ -91,7 +91,6 @@ public class Team implements Disposable {
                 return false;
             }
 		}
-
 		return true;
 	}
 
@@ -99,9 +98,9 @@ public class Team implements Disposable {
 	 * Draw the team's players
 	 * @param batch
 	 */
-	public void draw(Batch batch) {
+	public void draw(SpriteBatch batch) {
         for (Player player : this.players) {
-            player.draw(batch);
+            player.render(batch);
         }
 	}
 
@@ -180,9 +179,6 @@ public class Team implements Disposable {
 	
 	@Override
 	public void dispose() {
-		for (Player player : this.players) {
-			player.dispose();
-		}
 		this.tactic.dispose();
 	}
 }

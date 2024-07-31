@@ -65,7 +65,7 @@ public class CameraHelper {
         return hasTarget() && this.target.equals(target);
     }
 
-    public void applyTo (OrthographicCamera camera) {
+    public void applyTo(OrthographicCamera camera) {
         camera.position.x = this.position.x;
         camera.position.y = this.position.y;
         camera.zoom = this.zoom;

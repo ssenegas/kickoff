@@ -76,7 +76,7 @@ public abstract class Pitch implements Disposable {
 
 	public Vector2 getCenterSpot() {
 		return new Vector2((int) (PITCH_WIDTH_IN_PX / 2 + OUTER_TOP_EDGE_X),
-                           (int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + Ball.SPRITE_HEIGHT));
+                           (int) (PITCH_HEIGHT_IN_PX / 2 + OUTER_TOP_EDGE_Y + Ball.SPRITE_SIZE));
 	}
 
 	public boolean crossesSideLine(Vector3 lastPosition, Vector3 position) {

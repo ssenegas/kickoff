@@ -12,8 +12,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
-import com.senegas.kickoff.entities.Player.Direction;
 import com.senegas.kickoff.entities.Team;
+import com.senegas.kickoff.utils.Direction;
 import com.senegas.kickoff.utils.PitchUtils;
 
 import java.io.IOException;
@@ -206,8 +206,8 @@ public class Tactic {
 	{
 		Vector2 pitchPosition = PitchUtils.globalToPitch(position.x, position.y);
 		
-		int xCoord = new Double(pitchPosition.x / REGION_WIDTH_IN_PX).intValue();
-		int yCoord = new Double(pitchPosition.y / REGION_HEIGHT_IN_PX).intValue();
+		int xCoord = Double.valueOf(pitchPosition.x / REGION_WIDTH_IN_PX).intValue();
+		int yCoord = Double.valueOf(pitchPosition.y / REGION_HEIGHT_IN_PX).intValue();
 
 		xCoord = xCoord < 0 ? 0 : (xCoord >= REGION_COLUMNS ? REGION_COLUMNS - 1 : xCoord);
 		yCoord = yCoord < 0 ? 0 : (yCoord >= REGION_ROWS ? REGION_ROWS - 1 : yCoord);

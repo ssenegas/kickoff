@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.senegas.kickoff.pitches.FootballDimensionConstants;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.screens.MatchScreen;
+import com.senegas.kickoff.utils.Direction;
 
 import static com.senegas.kickoff.pitches.FootballDimensionConstants.OUTER_TOP_EDGE_Y;
 import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_HEIGHT_IN_PX;
@@ -141,7 +142,10 @@ public enum MatchState implements State<MatchScreen> {
                 direction = 270;
                 match.getBall().setPosition(position.add(-5, 0, 0));
             }
-            match.getBall().applyForce(200, direction);
+            Vector3 dv = Direction.EAST.getDirectionVector();
+            Vector3 velocity = dv.scl(200);
+            velocity.z = 80;
+            match.getBall().kick(velocity, null);
         }
 
         @Override

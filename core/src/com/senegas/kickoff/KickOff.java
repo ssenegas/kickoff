@@ -11,7 +11,7 @@ import com.senegas.kickoff.managers.GameScreenManager;
 public class KickOff extends Game {
 	
 	public static String TITLE = "Open Kick Off";
-    public static String VERSION = "0.4";
+    public static String VERSION = "0.5.1";
     public static int APP_DESKTOP_WIDTH = 1280;
     public static int APP_DESKTOP_HEIGHT = 800;
 

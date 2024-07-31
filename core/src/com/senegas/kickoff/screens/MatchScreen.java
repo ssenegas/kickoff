@@ -14,7 +14,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.entities.Ball;
 import com.senegas.kickoff.entities.Player;
-import com.senegas.kickoff.entities.Player.Direction;
 import com.senegas.kickoff.entities.Team;
 import com.senegas.kickoff.pitches.Pitch;
 import com.senegas.kickoff.pitches.PitchFactory;
@@ -22,6 +21,7 @@ import com.senegas.kickoff.pitches.Scanner;
 import com.senegas.kickoff.scenes.Hud;
 import com.senegas.kickoff.states.MatchState;
 import com.senegas.kickoff.utils.CameraHelper;
+import com.senegas.kickoff.utils.Direction;
 import com.senegas.kickoff.utils.PitchUtils;
 import com.senegas.kickoff.utils.Stopwatch;
 
@@ -92,11 +92,12 @@ public class MatchScreen extends AbstractScreen {
 
     @Override
     public void show() {
-        this.pitch = PitchFactory.getInstance().make(this.app, Pitch.Type.CLASSIC);
+        this.pitch = PitchFactory.getInstance().make(this.app, Pitch.Type.PLAYERMANAGER);
         this.renderer = new OrthogonalTiledMapRenderer(this.pitch.getTiledMap(), this.app.batch);
 
         Vector2 centerSpot = this.pitch.getCenterSpot();
-        this.ball = new Ball(this.app, new Vector3(centerSpot.x, centerSpot.y, 320));
+        this.ball = new Ball(this.app.assets.get("entities/ball.png"),
+                new Vector3(centerSpot.x, centerSpot.y, 320));
         this.home = new Team(this, "Team A", Direction.NORTH);
         this.away = new Team(this, "Team B", Direction.SOUTH);
 
@@ -120,6 +121,7 @@ public class MatchScreen extends AbstractScreen {
         this.home.update(deltaTime);
         this.away.update(deltaTime);
         this.ball.update(deltaTime);
+
         checkCollisions();
 
         this.cameraHelper.update(deltaTime);
@@ -139,14 +141,14 @@ public class MatchScreen extends AbstractScreen {
         // renders overlays for tactic and ball position
         this.app.shapeBatch.setProjectionMatrix(this.camera.combined);
         this.home.showDebug(this.app.shapeBatch, this.ball.getPosition());
-        this.ball.showPosition(this.app.shapeBatch);
+        //this.ball.showPosition(this.app.shapeBatch);
 
         // renders entities
         this.app.batch.begin();
 
         this.home.draw(this.app.batch);
         this.away.draw(this.app.batch);
-        this.ball.draw(this.app.batch);
+        this.ball.render(this.app.batch);
 
         // renders stopwatch
         this.app.batch.setProjectionMatrix(this.hud.stage.getCamera().combined);
@@ -212,7 +214,10 @@ public class MatchScreen extends AbstractScreen {
                 if (player.getBounds().contains(this.ball.getPosition().x, this.ball.getPosition().y)) {
                     setLastPlayerTouch(player);
                     if (this.ball.getPosition().z < player.height() / CM_PER_PIXEL) { //!Reimp move constant elsewhere
-                        this.ball.applyForce(player.speed() * 1.125f + 30.0f, player.getDirection()); // 1.125f + 30.0f is the magic number
+                        Vector3 dv = player.getDirection().getDirectionVector();
+                        Vector3 velocity = dv.scl(player.speed() * 1.125f + 30.0f);
+                        velocity.z = 80;
+                        ball.kick(velocity, player);
                         this.dribble.play(0.2f);
                     }
                 }
@@ -291,20 +296,38 @@ public class MatchScreen extends AbstractScreen {
             this.cameraHelper.setZoom(this.cameraHelper.getZoom() - 0.02f);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            this.ball.applyForce(400, 6);
+            Vector3 dv = Direction.WEST.getDirectionVector();
+            Vector3 velocity = dv.scl(400 * 1.125f + 30.0f);
+            velocity.z = 200;
+            this.ball.kick(velocity, null);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-            this.ball.applyForce(400, 2);
+            Vector3 dv = Direction.EAST.getDirectionVector();
+            Vector3 velocity = dv.scl(400 * 1.125f + 30.0f);
+            velocity.z = 200;
+            this.ball.kick(velocity, null);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            this.ball.applyForce(400, 0);
+            Vector3 dv = Direction.NORTH.getDirectionVector();
+            Vector3 velocity = dv.scl(400 * 1.125f + 30.0f);
+            velocity.z = 200;
+            this.ball.kick(velocity, null);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
-            this.ball.applyForce(400, 4);
+            Vector3 dv = Direction.SOUTH.getDirectionVector();
+            Vector3 velocity = dv.scl(400 * 1.125f + 30.0f);
+            velocity.z = 200;
+            this.ball.kick(velocity, null);
         }
         // handle scanner zoom
         if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
             this.scanner.toggleZoom();
+        }
+
+        if (Gdx.input.isTouched()) {
+            Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+            this.home.getPlayers().get(0).setDestination(touchPos);
         }
 //        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 //                if (camera.position.x > 0 + camera.viewportWidth)
