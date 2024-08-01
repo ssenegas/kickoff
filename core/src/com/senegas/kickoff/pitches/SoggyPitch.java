@@ -1,11 +1,16 @@
 package com.senegas.kickoff.pitches;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.senegas.kickoff.KickOff;
 
 public class SoggyPitch extends Pitch {
 
-	public SoggyPitch(KickOff app) {
-		super(app, "pitches/soggy.tmx", 1.125f);
+	public SoggyPitch(AssetManager assetManager) {
+		super(assetManager, "pitches/soggy.tmx", 1.125f);
 	}
-	
+
+	@Override
+	public String getDescription() {
+		return "Soggy pitch";
+	}
 }

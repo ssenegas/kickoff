@@ -1,6 +1,7 @@
 package com.senegas.kickoff.pitches;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -24,17 +25,13 @@ import static com.senegas.kickoff.pitches.FootballDimensionConstants.PITCH_WIDTH
  *
  */
 public abstract class Pitch implements Disposable {
-	
-	public enum Type {
-		CLASSIC, WET, SOGGY, ARTIFICIAL, PLAYERMANAGER
-	}
-	
-	public final static int MAP_WIDTH_IN_TILE = 80;
-	public final static int MAP_HEIGHT_IN_TILE = 96;	
-	public static final int TILE_WIDTH_IN_PIXEL = 16;
-    public static final int  TILE_HEIGHT_IN_PIXEL = 16;
-	public static final int HEIGHT = MAP_HEIGHT_IN_TILE * TILE_HEIGHT_IN_PIXEL;
-	public static final int WIDTH = MAP_WIDTH_IN_TILE * TILE_WIDTH_IN_PIXEL;
+
+	private static final int MAP_WIDTH_IN_TILE = 80;
+	private static final int MAP_HEIGHT_IN_TILE = 96;
+	private static final int TILE_IN_PIXEL = 16;
+
+	public static final int HEIGHT = MAP_HEIGHT_IN_TILE * TILE_IN_PIXEL;
+	public static final int WIDTH = MAP_WIDTH_IN_TILE * TILE_IN_PIXEL;
 	
 	private TiledMap tiledMap;
 	private float friction;
@@ -45,9 +42,9 @@ public abstract class Pitch implements Disposable {
 	 * @param tmxMap the tile map file name
 	 * @param friction the friction coefficient
 	 */
-	public Pitch(KickOff app, String tmxMap, float friction) {
+	public Pitch(AssetManager assetManager, String tmxMap, float friction) {
 		Gdx.app.log("Pitch", "Load tile map " + tmxMap);
-		this.tiledMap = app.assets.get(tmxMap);
+		this.tiledMap = assetManager.get(tmxMap);
 		this.friction = friction;
 		this.lastIntersection = new Vector2();
 	}
@@ -64,8 +61,7 @@ public abstract class Pitch implements Disposable {
 	 * Get the friction coefficient
 	 * @return float
 	 */
-	public float getFriction()
-	{
+	public float getFriction() {
 		return this.friction;
 	}
 	
@@ -104,4 +100,5 @@ public abstract class Pitch implements Disposable {
 		return this.lastIntersection;
 	}
 
+	public abstract String getDescription();
 }

@@ -1,40 +1,40 @@
 package com.senegas.kickoff.pitches;
 
-import com.senegas.kickoff.KickOff;
-import com.senegas.kickoff.pitches.Pitch.Type;
+import com.badlogic.gdx.assets.AssetManager;
 
-public class PitchFactory {
+public enum PitchFactory {
 
-    private static PitchFactory INSTANCE = new PitchFactory();
+    INSTANCE;
 
-	private PitchFactory() {
+	private AssetManager assetManager;
+
+	public void initialize(AssetManager assetManager) {
+		this.assetManager = assetManager;
 	}
-
-	public static PitchFactory getInstance() {
-        return INSTANCE;
-    }
 
 	/**
 	 * Make a pitch
-	 * @param pitchType
+	 * @param type
 	 * @return a pitch
 	 */
-	public Pitch make(KickOff app, Type pitchType)
-	{
-		switch( pitchType )
-		{
+	public Pitch createPitch(PitchType type) {
+		switch (type) {
 			case CLASSIC:
-				return new ClassicPitch(app);
+				return new ClassicPitch(assetManager);
 			case WET:
-				return new WetPitch(app);
+				return new WetPitch(assetManager);
 			case SOGGY:
-				return new SoggyPitch(app);
+				return new SoggyPitch(assetManager);
 			case ARTIFICIAL:
-				return new ArtificialPitch(app);
-			case PLAYERMANAGER:
-				return new PlayerManagerPitch(app);
+				return new ArtificialPitch(assetManager);
+			case PLAYER_MANAGER:
+				return new PlayerManagerPitch(assetManager);
 			default:
-				return new ClassicPitch(app);
+				throw new IllegalArgumentException("Unknown pitch type: " + type);
 	    }
+	}
+
+	public enum PitchType {
+		CLASSIC, WET, SOGGY, ARTIFICIAL, PLAYER_MANAGER
 	}
 }

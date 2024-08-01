@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.senegas.kickoff.managers.GameScreenManager;
+import com.senegas.kickoff.pitches.PitchFactory;
 
 public class KickOff extends Game {
 	
@@ -30,6 +31,7 @@ public class KickOff extends Game {
         this.shapeBatch = new ShapeRenderer();
 
         this.assets = new AssetManager();
+        PitchFactory.INSTANCE.initialize(this.assets);
         this.gsm = new GameScreenManager(this);
 	}
 

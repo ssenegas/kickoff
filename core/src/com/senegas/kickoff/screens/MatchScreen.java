@@ -92,7 +92,7 @@ public class MatchScreen extends AbstractScreen {
 
     @Override
     public void show() {
-        this.pitch = PitchFactory.getInstance().make(this.app, Pitch.Type.PLAYERMANAGER);
+        this.pitch = PitchFactory.INSTANCE.createPitch(PitchFactory.PitchType.CLASSIC);
         this.renderer = new OrthogonalTiledMapRenderer(this.pitch.getTiledMap(), this.app.batch);
 
         Vector2 centerSpot = this.pitch.getCenterSpot();
