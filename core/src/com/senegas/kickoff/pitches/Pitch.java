@@ -6,7 +6,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
-import com.senegas.kickoff.KickOff;
 import com.senegas.kickoff.entities.Ball;
 
 import static com.badlogic.gdx.math.Intersector.intersectSegments;
